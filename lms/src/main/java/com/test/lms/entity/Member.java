@@ -15,8 +15,6 @@ import lombok.Setter;
 @Entity
 public class Member {
     
-    
-    
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberNum; // 회원번호
