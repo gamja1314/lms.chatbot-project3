@@ -2,44 +2,43 @@ package com.test.lms.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor 
 public class Member {
     
-    // 테이블 :[ 멤버(관리자role) 퀴즈(코드 문제풀이 시 : ),  ], controller 기능 구현 x, service클래스 부터 
     
-    @Id
+    
+    @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberNum;
+    private Long memberNum; // 회원번호
 
-    private String memberId;
+    @Column(unique = true, length = 30)
+    private String username;    // 아이디
 
-    private String pwd;
+    @Column(nullable = false, length = 50)
+    private String password;    // 비밀번호
 
-    private LocalDateTime birth;
-    
-    private String phoneNum;
+    @Column(unique = true, length = 30)
+    private String nickname;    // 닉네임
 
-    private String memberName;
+    @Column(nullable = false, length = 30)
+    private String email;   // 이메일
 
-    private String email;
+    @Column(length = 20)
+    private String userRank;    // 랭크
 
-    private String gender;
+    @Column(length = 20)
+    private String role;    // 권한
 
-    private String addr;
-
-    private LocalDateTime createTime;
+    private LocalDateTime createTime;   // 가입날짜
 
 }

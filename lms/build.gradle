@@ -38,12 +38,26 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 
+
 	implementation 'org.springframework.ai:spring-ai-anthropic-spring-boot-starter:1.0.0-M2'
 
     //스프링 ai에서 클로드ai 의존성 추가
  
 
 	
+
+	//Junit 테스트용 코드추가
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	
+	// spring security 사용
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// createform @NotEmpty 사용
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+
 }
 
 tasks.named('test') {

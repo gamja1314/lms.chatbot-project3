@@ -21,7 +21,7 @@ function App() {
       <header className="App-header">
         <h1>Spring Boot + React 연동 예제</h1>
         <p>
-          Spring Boot에서 받은 메시지: <br />
+          Spring Boot에서 받은 메시지: <br/>
           <strong>{message}</strong>
         </p>
       </header>
