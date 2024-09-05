@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +19,7 @@ public class Member {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberNum;
+    private Long id;
 
     @Column(unique = true)
     private String username;
@@ -32,7 +33,7 @@ public class Member {
     @Column(nullable = false)
     private String email;
 
-    private String rank;
+    private String memberRank;
 
     private String role;
 
