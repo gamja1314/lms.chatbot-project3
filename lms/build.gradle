@@ -32,6 +32,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
+	//Junit 테스트용 코드추가
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	
 	// spring security 사용
@@ -39,6 +44,7 @@ dependencies {
 
 	// createform @NotEmpty 사용
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 }
 
 tasks.named('test') {

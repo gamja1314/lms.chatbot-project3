@@ -27,7 +27,7 @@ public class QuizAnswer {
 
     //회원이 제출한 답변을 문제와 함께 표시
     public String showQuizAnswer(){
-        return "문제 : " + quiz.getQuiz() + "정답 : " + answerSave;
+        return "문제 : " + quiz.getQuiz() + " 정답 : " + answerSave;
     }
 
 }
