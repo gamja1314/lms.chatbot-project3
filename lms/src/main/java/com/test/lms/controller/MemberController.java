@@ -46,11 +46,9 @@ public class MemberController {
         if (bindingResult.hasErrors()) {
             return "member/signup";
         }
-
+     
         try {
- 
-
-        memberService.create(memberCreateForm.getUsername(),
+        	memberService.create(memberCreateForm.getUsername(),
                              memberCreateForm.getPassword(),
                              memberCreateForm.getNickname(),
                              memberCreateForm.getEmail());

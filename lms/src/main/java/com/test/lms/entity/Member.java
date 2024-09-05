@@ -24,7 +24,7 @@ public class Member {
     @Column(unique = true, length = 30)
     private String username;    // 아이디
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String password;    // 비밀번호
 
     @Column(unique = true, length = 30)
