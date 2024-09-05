@@ -23,6 +23,8 @@ public class Quiz {
     //정답
     private String answer;
 
+
+
     //출력예시
     public String quizAnswer(){
         return "문제 : " + quiz + "정답 : " + answer;

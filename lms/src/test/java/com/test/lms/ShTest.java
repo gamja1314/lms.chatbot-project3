@@ -10,7 +10,7 @@ import com.test.lms.entity.QuizAnswer;
 public class ShTest {
 
     @Test
-    public static void test(String[] args){
+    public void testQuizAnswer(){
 
         Quiz q = new Quiz();
         q.setQuiz("현장맞춤 AI 자바 스프링부트 담당 강사 이름은?");
