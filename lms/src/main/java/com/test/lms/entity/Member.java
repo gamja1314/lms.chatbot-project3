@@ -16,26 +16,29 @@ import lombok.Setter;
 public class Member {
     
     
-    @Id
+    
+    @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberNum;
+    private Long memberNum; // 회원번호
 
-    @Column(unique = true)
-    private String username;
+    @Column(unique = true, length = 30)
+    private String username;    // 아이디
 
-    @Column(nullable = false)
-    private String password;
+    @Column(nullable = false, length = 50)
+    private String password;    // 비밀번호
 
-    @Column(unique = true)
-    private String nickname;
+    @Column(unique = true, length = 30)
+    private String nickname;    // 닉네임
 
-    @Column(nullable = false)
-    private String email;
+    @Column(nullable = false, length = 30)
+    private String email;   // 이메일
 
-    private String rank;
+    @Column(length = 20)
+    private String userRank;    // 랭크
 
-    private String role;
+    @Column(length = 20)
+    private String role;    // 권한
 
-    private LocalDateTime createTime;
+    private LocalDateTime createTime;   // 가입날짜
 
 }
