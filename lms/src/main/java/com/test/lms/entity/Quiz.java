@@ -28,10 +28,8 @@ public class Quiz {
     @Column(nullable=false)
     private String correct;
 
-    // //카테고리와 매핑
-    // @ManyToOne
-    // @JoinColumn(name = "id")
-    // private Category cateId;
+    @Column(nullable=false)
+    private String rank;
 
     private LocalDateTime createDate;
 

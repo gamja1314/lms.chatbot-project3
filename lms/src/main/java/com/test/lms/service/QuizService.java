@@ -1,6 +1,5 @@
 package com.test.lms.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.test.lms.entity.Member;
@@ -21,6 +20,7 @@ public class QuizService {
         private final MemberRepository memberRepository;
         private final QuizAnswerRepository quizAnswerRepository;
 
+        
         //사용자가 퀴즈 정답 제출할때 호출
         public void submitAnswer(Long quizId, String correct, boolean isPublic, Long Id){
 
