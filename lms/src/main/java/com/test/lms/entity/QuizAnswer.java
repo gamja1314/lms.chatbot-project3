@@ -24,7 +24,7 @@ public class QuizAnswer {
     private Quiz quiz;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name="member_id")
     private Member member;
 
     private String answer;
