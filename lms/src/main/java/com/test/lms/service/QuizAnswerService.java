@@ -18,8 +18,6 @@ public class QuizAnswerService {
 	private final QuizRepository quizRepository;
     private final QuizAnswerRepository quizAnswerRepository;
 
-    public List<QuizAnswer> getQuizAnswer(Long quizId){
-
     	Quiz quiz = quizRepository.findById(quizId).orElse(null);
     	
         List<QuizAnswer> quizAnswers = quizAnswerRepository.findByQuiz(quiz);

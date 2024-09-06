@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -24,7 +27,7 @@ const SignUp = () => {
       alert('비밀번호가 일치하지 않습니다.');
       return;
     }
-
+  
     try {
       const response = await fetch('http://localhost:8282/api/member/signup', {
         method: 'POST',
@@ -32,7 +35,6 @@ const SignUp = () => {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        redirect: 'follow',
         body: JSON.stringify({
           username: formData.username,
           password: formData.password,
@@ -41,13 +43,19 @@ const SignUp = () => {
         }),
       });
   
-      if (response.ok) {
-        const data = await response.text();
-        alert(data); // "회원가입이 완료되었습니다." 메시지 표시
-        // 성공 후 처리 (예: 로그인 페이지로 리다이렉트)
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        const data = await response.json();
+        if (response.ok) {
+          alert(data.message || "회원가입이 완료되었습니다.");
+          navigate('/login');
+        } else {
+          alert(`회원가입 실패: ${data.error || "알 수 없는 오류가 발생했습니다."}`);
+        }
       } else {
-        const errorMessage = await response.text();
-        alert(`회원가입 실패: ${errorMessage}`);
+        const text = await response.text();
+        console.error('Unexpected response:', text);
+        alert('서버에서 예상치 못한 응답을 받았습니다.');
       }
     } catch (error) {
       console.error('Error:', error);

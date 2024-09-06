@@ -15,28 +15,24 @@ import lombok.Setter;
 @Setter
 public class QuizAnswer {
 
-    //PK
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //퀴즈와 회원 각각 매핑
     @ManyToOne
-    @JoinColumn(name="quiz_id")
+    @JoinColumn(name = "quiz_id")
     private Quiz quiz;
+
     @ManyToOne
     @JoinColumn(name="member_id")
     private Member member;
 
-    //답변을 저장하는 테이블
     private String answer;
 
-      //퀴즈 정답 공개 여부 (true:공개 false:비공개)
-    @Column(nullable=false)
+    @Column(nullable = false)
     private boolean isPublic;
 
-        //회원이 제출한 답변을 문제와 함께 표시
-    public String showQuizAnswer(){
+    public String showQuizAnswer() {
         return "문제 : " + quiz.getTitle() + " 정답 : " + answer;
     }
 }
