@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,11 +16,13 @@ import lombok.Setter;
 @Entity
 public class Member {
     
-    
-    
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    private Long id;
+
     private Long memberNum; // 회원번호
+
 
     @Column(unique = true, length = 30)
     private String username;    // 아이디
@@ -33,8 +36,12 @@ public class Member {
     @Column(nullable = false, length = 30)
     private String email;   // 이메일
 
+
+    private String memberRank;
+
     @Column(length = 20)
     private String userRank;    // 랭크
+
 
     @Column(length = 20)
     private String role;    // 권한

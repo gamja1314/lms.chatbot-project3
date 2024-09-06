@@ -1,31 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { Header, Footer } from './components/layout';
+import AppRoutes from './AppRoutes';  // AppRoutes.js가 src 폴더 직접 아래에 있다고 가정
+
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App() {
-  const [message, setMessage] = useState('Loading...');
-
-  useEffect(() => {
-    axios.get('http://localhost:8080/api/message')
-      .then(response => {
-        setMessage(response.data.content);
-      })
-      .catch(error => {
-        console.error('Error fetching data: ', error);
-        setMessage('Error loading message');
-      });
-  }, []);
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Spring Boot + React 연동 예제</h1>
-        <p>
-          Spring Boot에서 받은 메시지: <br/>
-          <strong>{message}</strong>
-        </p>
-      </header>
-    </div>
+    <Router>
+        <Header />
+        <div className="App min-vh-100">
+          <main>
+            <AppRoutes />
+          </main>
+        </div>
+        <Footer />
+    </Router>
   );
 }
 

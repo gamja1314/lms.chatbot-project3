@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Sidebar, Main, Header, Footer } from '@/components/ui/layout';
+import { Layout, Sidebar, Main, Header, Footer } from '@/components/layout';
 
 const CodingTestPage = () => {
   return (

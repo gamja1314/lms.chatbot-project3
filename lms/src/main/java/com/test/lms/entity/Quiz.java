@@ -1,5 +1,8 @@
 package com.test.lms.entity;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,15 +21,20 @@ public class Quiz {
     private long id;
 
     //퀴즈 내용
-    private String quiz;
+    @Column(nullable=false)
+    private String title;
 
-    //정답
-    private String answer;
+    //퀴즈의 정답
+    @Column(nullable=false)
+    private String correct;
 
+    @Column(nullable=false)
+    private String rank;
 
+    private LocalDateTime createDate;
 
     //출력예시
     public String quizAnswer(){
-        return "문제 : " + quiz + "정답 : " + answer;
+        return "문제 : " + title + "정답 : " + correct;
     }
 }

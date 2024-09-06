@@ -1,8 +1,12 @@
 package com.test.lms.service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.ArrayList;
 
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class MemberService implements UserDetailsService{
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -25,14 +29,14 @@ public class MemberService {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
         }
 
-        if (memberRepository.findByUsername(email).isPresent()) {
+        if (memberRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
         Member member = new Member();
 
         member.setUsername(username);
-        member.setPassword(passwordEncoder.encode(password));
+        member.setPassword(passwordEncoder.encode(password)); 
         member.setNickname(nickname);
         member.setEmail(email);
         member.setCreateTime(LocalDateTime.now());
@@ -40,14 +44,13 @@ public class MemberService {
         this.memberRepository.save(member);
         return member;
     }
+    
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다.: " + username));
 
-    // 로그인 
-    public Optional<Member> login(String username, String password) {
-        Optional<Member> memberOpt = memberRepository.findByUsername(username);
-        if (memberOpt.isPresent() && passwordEncoder.matches(password, memberOpt.get().getPassword())) {
-            return memberOpt;
-        } else {
-            return Optional.empty();
-        }
+        return new User(member.getUsername(), member.getPassword(), new ArrayList<>());
     }
+    
 }

@@ -1,9 +1,11 @@
 package com.test.lms.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,16 +20,23 @@ public class QuizAnswer {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
-    //여러개의 답변을 하나의 퀴즈에 연결
+    //퀴즈와 회원 각각 매핑
     @ManyToOne
+    @JoinColumn(name="quiz_id")
     private Quiz quiz;
+    @ManyToOne
+    @JoinColumn(name="member_id")
+    private Member member;
 
     //답변을 저장하는 테이블
-    private String answerSave;
+    private String answer;
 
-    //회원이 제출한 답변을 문제와 함께 표시
+      //퀴즈 정답 공개 여부 (true:공개 false:비공개)
+    @Column(nullable=false)
+    private boolean isPublic;
+
+        //회원이 제출한 답변을 문제와 함께 표시
     public String showQuizAnswer(){
-        return "문제 : " + quiz.getQuiz() + " 정답 : " + answerSave;
+        return "문제 : " + quiz.getTitle() + " 정답 : " + answer;
     }
-
 }
