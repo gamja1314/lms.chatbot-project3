@@ -44,12 +44,12 @@ public class QuizService {
 
         public Quiz updateQuiz(Quiz quiz){
                 
-                if(quiz == null || quiz.getId() == 0L ) {
+                if(quiz == null || quiz.getQuizId() == 0L ) {
                 throw  new IllegalArgumentException("존재하지 않는 퀴즈 정보입니다.");
                 }
 
                 //기존레슨 정보 DB에서 조회
-                Quiz existingQuiz = quizRepository.findById(quiz.getId()).orElseThrow(() -> new EntityNotFoundException("해당 퀴즈를 찾을 수 없습니다. ID :" + quiz.getId()));
+                Quiz existingQuiz = quizRepository.findById(quiz.getQuizId()).orElseThrow(() -> new EntityNotFoundException("해당 퀴즈를 찾을 수 없습니다. ID :" + quiz.getQuizId()));
 
                 existingQuiz.setTitle(quiz.getTitle()); //제목 수정
                 existingQuiz.setCorrect(quiz.getCorrect()); //정답 수정

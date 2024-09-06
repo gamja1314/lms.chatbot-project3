@@ -1,5 +1,7 @@
 package com.test.lms.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +18,7 @@ public class Quiz {
     //PK
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long quizId;
+    private Long quizId;
 
     //퀴즈 내용
     @Column(nullable=false)
