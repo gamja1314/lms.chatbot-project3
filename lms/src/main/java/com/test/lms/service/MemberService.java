@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberService implements UserDetailsService{
 
     private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     // 회원 가입
     public Member create(String username, String password, String nickname, String email) {
@@ -27,14 +28,14 @@ public class MemberService implements UserDetailsService{
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
         }
 
-        if (memberRepository.findByUsername(email).isPresent()) {
+        if (memberRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
         Member member = new Member();
 
         member.setUsername(username);
-        member.setPassword(password);
+        member.setPassword(passwordEncoder.encode(password)); 
         member.setNickname(nickname);
         member.setEmail(email);
         member.setCreateTime(LocalDateTime.now());
