@@ -1,5 +1,7 @@
 package com.test.lms.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 
 import com.test.lms.entity.Member;
@@ -20,7 +22,43 @@ public class QuizService {
         private final MemberRepository memberRepository;
         private final QuizAnswerRepository quizAnswerRepository;
 
-        
+        //퀴즈 생성
+        public Quiz create(String title, String correct, String quizRank){
+
+                Quiz quiz = new Quiz();
+
+                quiz.setTitle(title);
+                quiz.setCorrect(correct);
+                quiz.setQuizRank(quizRank);
+                quiz.setCreateDate(LocalDateTime.now());
+
+                return quizRepository.save(quiz);
+        }
+
+        //퀴즈 삭제
+        public void delete(Quiz quiz){
+                this.quizRepository.delete(quiz);
+        }
+
+        //퀴즈 수정
+
+        public Quiz updateQuiz(Quiz quiz){
+                
+                if(quiz == null || quiz.getId() == 0L ) {
+                throw  new IllegalArgumentException("존재하지 않는 퀴즈 정보입니다.");
+                }
+
+                //기존레슨 정보 DB에서 조회
+                Quiz existingQuiz = quizRepository.findById(quiz.getId()).orElseThrow(() -> new EntityNotFoundException("해당 퀴즈를 찾을 수 없습니다. ID :" + quiz.getId()));
+
+                existingQuiz.setTitle(quiz.getTitle()); //제목 수정
+                existingQuiz.setCorrect(quiz.getCorrect()); //정답 수정
+                existingQuiz.setQuizRank(quiz.getQuizRank()); //랭크 수정
+
+                return quizRepository.save(existingQuiz);
+        }
+
+
         //사용자가 퀴즈 정답 제출할때 호출
         public void submitAnswer(Long quizId, String correct, boolean isPublic, Long Id){
 

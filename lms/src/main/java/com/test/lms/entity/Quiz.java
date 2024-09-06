@@ -29,7 +29,7 @@ public class Quiz {
     private String correct;
 
     @Column(nullable=false)
-    private String rank;
+    private String quizRank;
 
     private LocalDateTime createDate;
 
