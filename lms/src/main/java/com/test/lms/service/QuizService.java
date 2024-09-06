@@ -78,7 +78,7 @@ public class QuizService {
                 //DB에 저장
                 quizAnswerRepository.save(quizAnswer);
 
-         }
+        }
         
         public Quiz getQuizAnswer(Long quizId, Long Id){
                 
@@ -88,7 +88,7 @@ public class QuizService {
                 Member member = memberRepository.findById(Id).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
                 QuizAnswer quizAnswer = quizAnswerRepository.findById(Id).orElseThrow(() -> new EntityNotFoundException());
                 // 정답이 비공개이면 정답을 숨겨줌
-                if (!quizAnswer.isPublic() && !quizAnswer.getMember().getId().equals(member.getId())){
+                if (!quizAnswer.isPublic() && !quizAnswer.getMember().getMemberNum().equals(member.getMemberNum())){
                         quizAnswer.setAnswer(null);
                 }
                 
