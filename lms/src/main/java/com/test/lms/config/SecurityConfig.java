@@ -2,6 +2,7 @@ package com.test.lms.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,8 +27,8 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http, 
-                                                       UserDetailsService userDetailsService, 
-                                                       BCryptPasswordEncoder passwordEncoder) throws Exception {
+                                                        UserDetailsService userDetailsService, 
+                                                        BCryptPasswordEncoder passwordEncoder) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder)
@@ -35,23 +36,55 @@ public class SecurityConfig {
                 .build();
     }
 
+    // @Bean
+    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    //     http
+    //         .cors((cors) -> cors.and())
+    //         .csrf((csrf) -> csrf.disable())
+    //         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+    //             .requestMatchers("/member/signup", "/member/login", "/index", "/css/**", "/js/**", "/", "/api/**").permitAll() 
+    //             .anyRequest().authenticated()
+    //         )
+    //         .formLogin(formLogin -> formLogin
+    //             .loginPage("/member/login")
+    //             .loginProcessingUrl("/member/login")
+    //             .permitAll()
+    //         )
+    //         .logout(logout -> logout
+    //             .logoutUrl("/member/logout")
+    //             .logoutSuccessUrl("/index") 
+    //             .permitAll()
+    //         );
+    //     return http.build();
+    // }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors((cors) -> cors.and())
+            .csrf((csrf) -> csrf.disable())
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/member/signup", "/member/login", "/index", "/css/**", "/js/**", "/").permitAll() 
+                .requestMatchers("/member/signup", "/member/login", "/index", "/css/**", "/js/**", "/", "/api/**").permitAll() 
                 .anyRequest().authenticated()
             )
             .formLogin(formLogin -> formLogin
-                .loginPage("/member/login")
-                .loginProcessingUrl("/member/login")
-                .successHandler(loginSuccessHandler())
-                .failureHandler(loginFailureHandler())
-                .permitAll()  
+                .loginProcessingUrl("/api/member/login")
+                .successHandler((request, response, authentication) -> {
+                    response.setStatus(HttpStatus.OK.value());
+                    response.getWriter().write("{\"message\":\"Login successful\"}");
+                })
+                .failureHandler((request, response, exception) -> {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.getWriter().write("{\"error\":\"Login failed: " + exception.getMessage() + "\"}");
+                })
+                .permitAll()
             )
             .logout(logout -> logout
-                .logoutUrl("/member/logout")
-                .logoutSuccessUrl("/index") 
+                .logoutUrl("/api/member/logout")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    response.setStatus(HttpStatus.OK.value());
+                    response.getWriter().write("{\"message\":\"Logout successful\"}");
+                })
                 .permitAll()
             );
         return http.build();
@@ -72,4 +105,5 @@ public class SecurityConfig {
             response.sendRedirect("/member/login?error");
         };
     }
+    
 }
