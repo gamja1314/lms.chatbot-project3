@@ -1,9 +1,12 @@
 package com.test.lms.controller;
 
+import java.security.Principal;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.test.lms.createform.MemberCreateForm;
+import com.test.lms.entity.Member;
 import com.test.lms.service.MemberService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,7 +63,7 @@ public class MemberController {
 
         redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다.");
         return "redirect:/member/login";
-    }
+    }	
     
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
@@ -70,5 +74,15 @@ public class MemberController {
         return "redirect:/index";
     }
     
+    @GetMapping("/mypage")
+    public String mypage(Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        String username = principal.getName();
+        Member member = memberService.findByUsername(username);
+        model.addAttribute("member", member);
+        return "mypage";
+    }
 
 }
