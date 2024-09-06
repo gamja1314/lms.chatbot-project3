@@ -16,7 +16,7 @@ public class QuizAnswerService {
 
     public List<QuizAnswer> getQuizAnswer(Long quizId){
 
-        List<QuizAnswer> quizAnswers = quizAnswerRepository.findByQuizId(quizId);
+        List<QuizAnswer> quizAnswers = quizAnswerRepository.findByQuiz_Id(quizId);
 
         return quizAnswers;
     }    
