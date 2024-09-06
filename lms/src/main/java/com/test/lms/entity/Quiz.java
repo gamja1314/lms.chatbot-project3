@@ -1,12 +1,12 @@
 package com.test.lms.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +18,7 @@ public class Quiz {
     //PK
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long quizId;
+    private long id;
 
     //퀴즈 내용
     @Column(nullable=false)
@@ -28,10 +28,10 @@ public class Quiz {
     @Column(nullable=false)
     private String correct;
 
-    //카테고리와 매핑
-    @ManyToOne
-    @JoinColumn(name = "id")
-    private Category id;
+    @Column(nullable=false)
+    private String rank;
+
+    private LocalDateTime createDate;
 
     //출력예시
     public String quizAnswer(){

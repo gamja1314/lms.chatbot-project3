@@ -22,6 +22,8 @@ public class QuizAnswerService {
 
         Quiz quiz = quizRepository.findById(quizId).orElse(null);
         List<QuizAnswer> quizAnswers = quizAnswerRepository.findByQuiz(quiz);
+      
+        List<QuizAnswer> quizAnswers = quizAnswerRepository.findByQuiz_Id(quizId);
 
         return quizAnswers;
     }    
