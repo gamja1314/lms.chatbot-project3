@@ -2,6 +2,7 @@ package com.test.lms.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.test.lms.entity.Member;
+import com.test.lms.exception.DataNotFoundException;
+import com.test.lms.repository.ExpRepository;
 import com.test.lms.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,7 @@ public class MemberService implements UserDetailsService{
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final ExpRepository expRepository;
 
     // 회원 가입
     public Member create(String username, String password, String nickname, String email) {
@@ -53,4 +57,37 @@ public class MemberService implements UserDetailsService{
         return new User(member.getUsername(), member.getPassword(), new ArrayList<>());
     }
     
+    // 회원 경험치 계산
+    public int getTotalExpPoints(Member member) {
+        Integer totalExp = expRepository.findTotalExpByMember(member);
+        return totalExp != null ? totalExp : 0;
+    }
+
+    // 랭크 업데이트 
+    public void updateRank(Member member) {
+        int totalExp = getTotalExpPoints(member);
+
+        if (totalExp >= 20000) {
+            member.setUserRank("Master");
+        } else if (totalExp >= 10000) {
+            member.setUserRank("Diamond");
+        } else if (totalExp >= 5000) {
+            member.setUserRank("Gold");
+        } else if (totalExp >= 1000) {
+            member.setUserRank("Silver");
+        } else {
+            member.setUserRank("Bronze");
+        }
+        
+        memberRepository.save(member);
+    }
+
+	public Member findByUsername(String username) {
+		Optional<Member> Member = this.memberRepository.findByUsername(username);
+		if (Member.isPresent()) {
+			return Member.get();
+		} else {
+			throw new DataNotFoundException("회원정보를 찾을 수 없습니다.");
+		}
+	}
 }
