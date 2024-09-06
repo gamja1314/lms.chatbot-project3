@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,9 +21,11 @@ public class QuizAnswer {
     private Long id;
 
     //퀴즈와 회원 각각 매핑
-    // @OneToOne
+    @ManyToOne
+    @JoinColumn(name="quiz_id")
     private Quiz quiz;
-    // @OneToOne
+    @ManyToOne
+    @JoinColumn(name="member_id")
     private Member member;
 
     //답변을 저장하는 테이블

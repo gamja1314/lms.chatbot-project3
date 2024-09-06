@@ -7,5 +7,5 @@ import com.test.lms.entity.QuizAnswer;
 
 public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Long> {
 
-    List<QuizAnswer> findByQuizId(Long quizId);
+    List<QuizAnswer> findByQuiz_Id(Long quizId);
 }
