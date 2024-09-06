@@ -58,7 +58,7 @@ import org.springframework.web.bind.annotation.GetMapping;
     	 		+ "입력: \"ac\"\r\n"
     	 		+ "출력: \"a\" 또는 \"c\"" ; 
     	 log.info("QUiz"+quiz);
-         log.info("물어본질문"+message);
+         log.info("물어본질문!"+message);
          
 
          message = systemPrompt+quiz+message;
