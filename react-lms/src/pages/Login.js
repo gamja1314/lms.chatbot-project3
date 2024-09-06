@@ -1,11 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSignup = () => {
     navigate('/signup');
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    const response = await fetch('http:localhost:8282/member/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username,
+            password,
+        }),
+        credentials: 'include', //세션 관리용 쿠키를 포함.
+    });
+
+    if (response.ok) {
+        alert('Login 성공!');
+        navigate('/');
+        console.log(username);
+    } else{
+        setErrorMessage('Login 실패!');
+    }
   };
 
   return (
@@ -17,20 +44,20 @@ const Login = () => {
               <h2 className="mb-0">로그인</h2>
             </div>
             <div className="card-body">
-              <form action='localhost:8282/member/login' method='POST'>
+              <form onSubmit={handleLogin} method='POST'>
                 <div className="mb-3">
-                  <input type="email" className="form-control" placeholder="이메일을 입력해 주세요"
-                  />
+                  <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control" placeholder="아이디 입력해 주세요" />
                 </div>
                 <div className="mb-3">
                   <div className="input-group">
-                    <input type="password" className="form-control" placeholder="비밀번호를 입력해 주세요"/>
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control" placeholder="비밀번호를 입력해 주세요" />
                   </div>
                 </div>
                 <div className="d-grid">
                   <button type="submit" className="btn btn-secondary">로그인하기</button>
                 </div>
               </form>
+              {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
               <div className="mt-3 text-center">
                 <button onClick={handleSignup} className="btn btn-link">이메일 회원가입</button>
               </div>
