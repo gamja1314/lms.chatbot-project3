@@ -22,14 +22,14 @@ public class QuizTest {
         
         q1.setTitle("기초 산수 문제 - 1 + 1 = ?");
         q1.setCorrect("창문");
-        q1.setCreateDate(LocalDateTime.now());
+//        q1.setCreateDate(LocalDateTime.now());
         this.quizRepository.save(q1);
 
         Quiz q2 = new Quiz();
 
         q2.setTitle("기초 산수 문제 - 2 + 2 = ?");
         q2.setCorrect("4");
-        q2.setCreateDate(LocalDateTime.now());
+//        q2.setCreateDate(LocalDateTime.now());
         this.quizRepository.save(q2);
     }
 }
