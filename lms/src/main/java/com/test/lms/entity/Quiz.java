@@ -26,6 +26,11 @@ public class Quiz {
     @Column(nullable=false)
     private String correct;
 
+    @Column(nullable=false)
+    private String quizRank;
+
+    private LocalDateTime createDate;
+
     //출력예시
     public String quizAnswer(){
         return "문제 : " + title + "정답 : " + correct;

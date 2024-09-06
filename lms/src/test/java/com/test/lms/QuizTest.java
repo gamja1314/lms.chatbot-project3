@@ -8,28 +8,26 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.test.lms.entity.Quiz;
 import com.test.lms.repository.QuizRepository;
+import com.test.lms.service.QuizService;
+
 
 @SpringBootTest
 public class QuizTest {
 
     @Autowired
-    private QuizRepository quizRepository;
+    private QuizService quizService;
+    // private QuizRepository quizRepository;
+    
 
     @Test
     void quizTest(){
 
         Quiz q1 = new Quiz();
         
-        q1.setTitle("기초 산수 문제 - 1 + 1 = ?");
-        q1.setCorrect("창문");
-//        q1.setCreateDate(LocalDateTime.now());
-        this.quizRepository.save(q1);
+        String quizRank = "D";
+        String title = "자바 웹 페이지 개발툴의 이름은?";
+        String correct = "Spring Boot";
+        quizService.create(title, correct, quizRank);
 
-        Quiz q2 = new Quiz();
-
-        q2.setTitle("기초 산수 문제 - 2 + 2 = ?");
-        q2.setCorrect("4");
-//        q2.setCreateDate(LocalDateTime.now());
-        this.quizRepository.save(q2);
     }
 }
