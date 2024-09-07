@@ -2,6 +2,10 @@ package com.test.lms.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.test.lms.entity.Member;
@@ -26,6 +30,11 @@ public class QuizService {
         public List<Quiz> getAllQuizzes(){
                 return quizRepository.findAll();
         }
+
+        //퀴즈 디테일 가져오기
+        public Quiz getQuizById(Long quizId){
+                return quizRepository.findById(quizId).orElseThrow(()->new EntityNotFoundException("퀴즈를 찾을 수 없습니다! ID : " + quizId));
+        }     
 
         //퀴즈 생성
         public Quiz create(String title, String content, String correct, String quizRank){
@@ -63,6 +72,12 @@ public class QuizService {
                 existingQuiz.setQuizRank(quiz.getQuizRank()); //랭크 수정
 
                 return quizRepository.save(existingQuiz);
+        }
+
+        //페이징 처리
+        public Page<Quiz> getList(int page){
+                Pageable pageable = PageRequest.of(page,10);
+                return this.quizRepository.findAll(pageable);
         }
 
 
