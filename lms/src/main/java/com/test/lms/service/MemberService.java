@@ -72,10 +72,10 @@ public class MemberService implements UserDetailsService{
 	   @Transactional
 	    public void updateMemberRank(Long memberNum) {
 	        Member member = memberRepository.findById(memberNum)
-	            .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+	            .orElseThrow(() -> new DataNotFoundException("회원을 찾을 수 없습니다."));
 	        
 	        Exp exp = expRepository.findByMember(member)
-	            .orElseThrow(() -> new RuntimeException("회원의 경험치를 찾을 수 없습니다."));
+	            .orElseThrow(() -> new DataNotFoundException("회원의 경험치를 찾을 수 없습니다."));
 	        
 	        int expPoints = exp.getExpPoints();
 	        String newRank;
@@ -84,10 +84,14 @@ public class MemberService implements UserDetailsService{
 	            newRank = "bronze";
 	        } else if (expPoints < 200) {
 	            newRank = "silver";
-	        } else {
+	        } else if (expPoints < 300) {
 	            newRank = "gold";
+	        } else if (expPoints < 500) {
+	        	newRank = "diamond";
+	        } else {
+	        	newRank = "master";
 	        }
-
+	        
 	        member.setUserRank(newRank);
 	        memberRepository.save(member);
 	    }
