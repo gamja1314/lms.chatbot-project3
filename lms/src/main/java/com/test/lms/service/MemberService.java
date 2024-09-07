@@ -100,7 +100,7 @@ public class MemberService implements UserDetailsService{
 	    @Transactional
 	    public void addExpPoints(Long memberNum, int points) {
 	        Member member = memberRepository.findById(memberNum)
-	            .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+	            .orElseThrow(() -> new DataNotFoundException("회원을 찾을 수 없습니다."));
 	        
 	        Exp exp = expRepository.findByMember(member)
 	            .orElse(new Exp());
@@ -112,5 +112,9 @@ public class MemberService implements UserDetailsService{
 	        updateMemberRank(memberNum);
 	    }
 	
-	
+	    // 회원 경험치 조회
+	    public Exp findExpByMember(Member member) {
+	        return expRepository.findByMember(member)
+	                .orElseThrow(() -> new DataNotFoundException("회원의 경험치를 찾을 수 없습니다."));
+	    }
 }
