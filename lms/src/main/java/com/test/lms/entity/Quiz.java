@@ -20,9 +20,13 @@ public class Quiz {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long quizId;
 
-    //퀴즈 내용
+    //퀴즈 제목
     @Column(nullable=false)
     private String title;
+
+    //퀴즈 내용
+    @Column(nullable=false)
+    private String content;
 
     //퀴즈의 정답
     @Column(nullable=false)

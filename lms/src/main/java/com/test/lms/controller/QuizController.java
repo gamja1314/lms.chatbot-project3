@@ -23,6 +23,17 @@ public class QuizController {
     private final QuizService quizService;
     private final QuizAnswerService quizAnswerService;
 
+    //퀴즈 리스트 보기
+    @GetMapping("/quizList")
+    public String quizList(Model model){
+        //모든 퀴즈 리스트를 가져옴
+        model.addAttribute("quizList", quizService.getAllQuizzes());
+        return "quizList";
+    }
+
+
+
+
     @PostMapping("/submit")
     public ResponseEntity<String> submitQuiz(@RequestParam Long quizId, @RequestParam String correct, @RequestParam boolean isPublic, @RequestParam Long Id){ 
         

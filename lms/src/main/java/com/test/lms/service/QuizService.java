@@ -1,7 +1,7 @@
 package com.test.lms.service;
 
 import java.time.LocalDateTime;
-
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.test.lms.entity.Member;
@@ -22,12 +22,18 @@ public class QuizService {
         private final MemberRepository memberRepository;
         private final QuizAnswerRepository quizAnswerRepository;
 
+        //모든 퀴즈 리스트 가져오기
+        public List<Quiz> getAllQuizzes(){
+                return quizRepository.findAll();
+        }
+
         //퀴즈 생성
-        public Quiz create(String title, String correct, String quizRank){
+        public Quiz create(String title, String content, String correct, String quizRank){
 
                 Quiz quiz = new Quiz();
 
                 quiz.setTitle(title);
+                quiz.setContent(content);
                 quiz.setCorrect(correct);
                 quiz.setQuizRank(quizRank);
                 quiz.setCreateDate(LocalDateTime.now());
@@ -52,6 +58,7 @@ public class QuizService {
                 Quiz existingQuiz = quizRepository.findById(quiz.getQuizId()).orElseThrow(() -> new EntityNotFoundException("해당 퀴즈를 찾을 수 없습니다. ID :" + quiz.getQuizId()));
 
                 existingQuiz.setTitle(quiz.getTitle()); //제목 수정
+                existingQuiz.setContent(quiz.getContent()); //내용 수정
                 existingQuiz.setCorrect(quiz.getCorrect()); //정답 수정
                 existingQuiz.setQuizRank(quiz.getQuizRank()); //랭크 수정
 
@@ -80,6 +87,8 @@ public class QuizService {
 
         }
         
+
+
         public Quiz getQuizAnswer(Long quizId, Long Id){
                 
                 //퀴즈 ID로 퀴즈 찾기
