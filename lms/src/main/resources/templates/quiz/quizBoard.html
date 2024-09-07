@@ -1,0 +1,56 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+    <h1>퀴즈 리스트</h1>
+<form>
+    <table>
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성일</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="quiz : ${quizBoard}">
+                <td th:text="${quiz.quizId}"></td>
+                <td th:text="${quiz.title}"></td>
+                <td th:text="${quiz.quizRank}"></td>
+                <td th:text="${question.createDate}"></td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퀴즈 게시판</title>
+</head>
+<body>
+    <h1>퀴즈 게시판</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>내용</th>
+                <th>난이도</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 퀴즈 리스트 출력 -->
+            <tr th:each="quiz, iterStat : ${quizBoard}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:href="@{quiz/}"></td>
+                <td th:text="${quiz.quizRank}"></td>
+                <td>
+                    <a th:href="@{/quiz/view/{quizId}(quizId=${quiz.quizId})}">정답 보기</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

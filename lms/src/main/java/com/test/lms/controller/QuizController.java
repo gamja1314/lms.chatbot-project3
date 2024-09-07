@@ -24,14 +24,15 @@ public class QuizController {
     private final QuizAnswerService quizAnswerService;
 
     //퀴즈 리스트 보기
-    @GetMapping("/quizList")
+    @GetMapping("/quizBoard")
     public String quizList(Model model){
         //모든 퀴즈 리스트를 가져옴
-        model.addAttribute("quizList", quizService.getAllQuizzes());
-        return "quizList";
+        model.addAttribute("quizBoard", quizService.getAllQuizzes());
+        return "quiz/quizBoard";
     }
 
-
+    //퀴즈 상세내역
+    
 
 
     @PostMapping("/submit")
