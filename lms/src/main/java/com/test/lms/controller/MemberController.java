@@ -74,6 +74,7 @@ public class MemberController {
         return "redirect:/index";
     }
     
+    // 마이 페이지
     @GetMapping("/mypage")
     public String mypage(Model model, Principal principal) {
         if (principal == null) {
