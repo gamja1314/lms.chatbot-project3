@@ -1,5 +1,6 @@
 package com.test.lms.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.test.lms.entity.Quiz;
 import com.test.lms.service.QuizAnswerService;
 import com.test.lms.service.QuizService;
 
@@ -24,14 +26,24 @@ public class QuizController {
     private final QuizAnswerService quizAnswerService;
 
     //퀴즈 리스트 보기
-    @GetMapping("/quizList")
-    public String quizList(Model model){
+    @GetMapping("/quizBoard")
+    public String quizBoard(Model model, @RequestParam(value="page", defaultValue="0")int page){
         //모든 퀴즈 리스트를 가져옴
-        model.addAttribute("quizList", quizService.getAllQuizzes());
-        return "quizList";
+        Page<Quiz> paging = this.quizService.getList(page);
+        model.addAttribute("paging", paging);
+        return "quiz/quizBoard";
+        // model.addAttribute("quizBoard", quizService.getAllQuizzes());
+        // return "quiz/quizBoard";
     }
 
-
+    //퀴즈 상세내역
+    @GetMapping("/quizDetail/{quizId}")
+    public String quizDetail(@PathVariable("quizId") Long quizId, Model model){
+        
+        model.addAttribute("quizDetail", quizService.getQuizById(quizId));
+        return "quiz/quizDetail";
+          
+    }
 
 
     @PostMapping("/submit")
