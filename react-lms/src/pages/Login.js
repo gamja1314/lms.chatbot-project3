@@ -14,7 +14,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http:localhost:8282/member/login', {
+    const response = await fetch('/member/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ const Login = () => {
     if (response.ok) {
         alert('Login 성공!');
         navigate('/');
-        console.log(username);
+        console.log("로그인 한 유저"+username);
     } else{
         setErrorMessage('Login 실패!');
     }
