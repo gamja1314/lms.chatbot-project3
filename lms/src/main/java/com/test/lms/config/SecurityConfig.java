@@ -24,6 +24,7 @@ public class SecurityConfig {
 
     private UserDetailsService userDetailsService;
     
+    
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -39,28 +40,6 @@ public class SecurityConfig {
                 .and()
                 .build();
     }
-
-    // @Bean
-    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    //     http
-    //         .cors((cors) -> cors.and())
-    //         .csrf((csrf) -> csrf.disable())
-    //         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-    //             .requestMatchers("/member/signup", "/member/login", "/index", "/css/**", "/js/**", "/", "/api/**").permitAll() 
-    //             .anyRequest().authenticated()
-    //         )
-    //         .formLogin(formLogin -> formLogin
-    //             .loginPage("/member/login")
-    //             .loginProcessingUrl("/member/login")
-    //             .permitAll()
-    //         )
-    //         .logout(logout -> logout
-    //             .logoutUrl("/member/logout")
-    //             .logoutSuccessUrl("/index") 
-    //             .permitAll()
-    //         );
-    //     return http.build();
-    // }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -85,7 +64,12 @@ public class SecurityConfig {
                     response.getWriter().write("{\"message\":\"Logout successful\"}");
                 })
                 .permitAll()
-            );
+            )
+            .rememberMe(rememberMe -> rememberMe
+                    .key("uniqueAndSecretKey")  // RememberMe를 위한 키
+                    .tokenValiditySeconds(86400) // 1일 동안 RememberMe 유지
+                    .userDetailsService(userDetailsService)
+                ); 
         return http.build();
     }
 
@@ -113,4 +97,26 @@ public class SecurityConfig {
         };
     }
     
+    
+    // @Bean
+    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    //     http
+    //         .cors((cors) -> cors.and())
+    //         .csrf((csrf) -> csrf.disable())
+    //         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+    //             .requestMatchers("/member/signup", "/member/login", "/index", "/css/**", "/js/**", "/", "/api/**").permitAll() 
+    //             .anyRequest().authenticated()
+    //         )
+    //         .formLogin(formLogin -> formLogin
+    //             .loginPage("/member/login")
+    //             .loginProcessingUrl("/member/login")
+    //             .permitAll()
+    //         )
+    //         .logout(logout -> logout
+    //             .logoutUrl("/member/logout")
+    //             .logoutSuccessUrl("/index") 
+    //             .permitAll()
+    //         );
+    //     return http.build();
+    // }
 }
