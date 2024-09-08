@@ -37,9 +37,6 @@ public class Member {
     @Column(length = 20)
     private String role;    // 권한
     
-    @Column(nullable = false, length = 128)
-    private String token;
-
     private LocalDateTime createTime;   // 가입날짜
 
 }
