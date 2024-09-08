@@ -6,20 +6,18 @@
 </head>
 <body>
     <h1>quiz</h1>
-    <p>제목 : <span th:text="${quiz.title}"></span></p>
-    <p>내용 : <span th:text="${quiz.content}"></span></p>
+    <p>제목 : <span th:text="${quizDetail.title}"></span></p>
+    <p>내용 : <span th:text="${quizDetail.content}"></span></p>
 
     <h2>정답 입력 및 제출</h2>
     <form action="/quiz/submit" method="post">
-        <input type="hidden" name="quizId" th:value="${quiz.quizId}">
+        <input type="hidden" name="quizId" th:value="${quizDetail.quizId}">
+        
         <label for="correct">정답:</label>
         <input type="text" id="correct" name="correct"><br><br>
         
         <label for="isPublic">정답 공개 여부:</label>
         <input type="checkbox" id="isPublic" name="isPublic"><br><br>
-        
-        <label for="memberId">사용자 ID:</label>
-        <input type="text" id="memberId" name="memberId"><br><br>
         
         <input type="submit" value="정답 제출">
     </form>

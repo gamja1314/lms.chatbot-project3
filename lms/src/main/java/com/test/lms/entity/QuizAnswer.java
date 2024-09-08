@@ -19,6 +19,8 @@ public class QuizAnswer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String answer;
+
     @ManyToOne
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
@@ -27,12 +29,7 @@ public class QuizAnswer {
     @JoinColumn(name="member_id")
     private Member member;
 
-    private String answer;
-
     @Column(nullable = false)
     private boolean isPublic;
 
-    public String showQuizAnswer() {
-        return "문제 : " + quiz.getTitle() + " 정답 : " + answer;
-    }
 }
