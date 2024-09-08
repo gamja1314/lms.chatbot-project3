@@ -31,23 +31,23 @@ export function Header({ isLoggedIn, setIsLoggedIn, username }) {
   return (
     <header className="navbar navbar-light topbar">
       <div className="container">
-        <h1><Link to="/">Cotemon</Link></h1>
+        <h1><Link to="/" className="text-dark text-decoration-none">Cotemon</Link></h1>
         <div className="header-flex">
           <div>
-            <Link to="/coding-test">Coding Test</Link>
-            <Link to="/qna">Q&A</Link>
+            <Link to="/coding-test" className="text-dark text-decoration-none m-4">Coding Test</Link>
+            <Link to="/qna" className="text-dark text-decoration-none">Q&A</Link>
           </div>
           <div>
             {location.pathname !== '/login' && (
               isLoggedIn ? (
                 <div>
-                  <Link to="/logout" onClick={handleLogout}>로그아웃</Link>
+                  <Link to="/logout" className="text-dark text-decoration-none m-4" onClick={handleLogout}>로그아웃</Link>
                   <span>{username} 님</span>
                 </div>
               ) : (
                 <div>
-                  <Link to="/login">로그인</Link>
-                  <Link to="/signup">회원가입</Link>
+                  <Link to="/login" className="text-dark text-decoration-none m-4">로그인</Link>
+                  <Link to="/signup" className="text-dark text-decoration-none">회원가입</Link>
                 </div>
               )
             )}

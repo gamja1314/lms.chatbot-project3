@@ -26,7 +26,7 @@ const Login = () => {
         credentials: 'include', //세션 관리용 쿠키를 포함.
     });
 
-    const data = await response.json();
+    // const data = await response.json();
     
     if (response.ok) {
         alert('Login 성공!');

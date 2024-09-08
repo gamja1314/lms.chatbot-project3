@@ -84,6 +84,7 @@ public class SecurityConfig {
                     response.setStatus(HttpStatus.OK.value());
                     response.getWriter().write("{\"message\":\"Logout successful\"}");
                 })
+                .deleteCookies("JSESSIONID", "XSRF-TOKEN")
                 .permitAll()
             );
         return http.build();
