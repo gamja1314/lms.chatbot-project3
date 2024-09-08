@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private UserDetailsService userDetailsService;
+    
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -61,24 +65,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors((cors) -> cors.and())
-            .csrf((csrf) -> csrf.disable())
+            .cors(Customizer.withDefaults())
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                 .requestMatchers("/member/signup", "/member/login", "/index", "/css/**", "/js/**", "/", "/api/**").permitAll() 
                 .anyRequest().authenticated()
             )
-            .formLogin(formLogin -> formLogin
-                .loginProcessingUrl("/api/member/login")
-                .successHandler((request, response, authentication) -> {
-                    response.setStatus(HttpStatus.OK.value());
-                    response.getWriter().write("{\"message\":\"Login successful\"}");
-                })
-                .failureHandler((request, response, exception) -> {
+            .exceptionHandling(exceptionHandling -> exceptionHandling
+                .authenticationEntryPoint((request, response, authException) -> {
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                    response.getWriter().write("{\"error\":\"Login failed: " + exception.getMessage() + "\"}");
+                    response.getWriter().write("{\"error\":\"Unauthorized\"}");
                 })
-                .permitAll()
             )
+            .addFilterBefore(new JsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .logout(logout -> logout
                 .logoutUrl("/api/member/logout")
                 .logoutSuccessHandler((request, response, authentication) -> {
@@ -88,6 +87,14 @@ public class SecurityConfig {
                 .permitAll()
             );
         return http.build();
+    }
+
+    @Bean
+    public JsonUsernamePasswordAuthenticationFilter jsonAuthenticationFilter() throws Exception {
+        JsonUsernamePasswordAuthenticationFilter filter = new JsonUsernamePasswordAuthenticationFilter();
+        filter.setAuthenticationManager(authenticationManager(null, userDetailsService, null));
+        filter.setFilterProcessesUrl("/api/member/login");
+        return filter;
     }
 
     @Bean

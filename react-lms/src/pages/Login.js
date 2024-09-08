@@ -14,7 +14,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http:localhost:8282/member/login', {
+    const response = await fetch('http://localhost:8282/api/member/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -26,12 +26,14 @@ const Login = () => {
         credentials: 'include', //세션 관리용 쿠키를 포함.
     });
 
+    const data = await response.json();
+    
     if (response.ok) {
         alert('Login 성공!');
         navigate('/');
         console.log(username);
     } else{
-        setErrorMessage('Login 실패!');
+        setErrorMessage('아이디 또는 비밀번호가 일치하지 않습니다.');
     }
   };
 
