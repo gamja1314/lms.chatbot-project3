@@ -1,9 +1,13 @@
 package com.test.lms.controller.rest;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,5 +55,20 @@ public class RestMemberController {
             return ResponseEntity.internalServerError()
                                 .body(Map.of("error", "회원가입 처리 중 오류가 발생했습니다."));
         }
+    }
+    
+    @GetMapping("/check")
+    public Map<String, Object> checkLoginStatus() {
+        Map<String, Object> response = new HashMap<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            response.put("loggedIn", true);
+            response.put("username", authentication.getName()); // 사용자 이름을 반환
+        } else {
+            response.put("loggedIn", false);
+        }
+
+        return response;
     }
 }

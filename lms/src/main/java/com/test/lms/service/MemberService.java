@@ -11,11 +11,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.test.lms.entity.Exp;
 import com.test.lms.entity.Member;
 import com.test.lms.exception.DataNotFoundException;
 import com.test.lms.repository.ExpRepository;
 import com.test.lms.repository.MemberRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -54,33 +56,12 @@ public class MemberService implements UserDetailsService{
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다.: " + username));
 
-        return new User(member.getUsername(), member.getPassword(), new ArrayList<>());
-    }
-    
-    // 회원 경험치 계산
-    public int getTotalExpPoints(Member member) {
-        Integer totalExp = expRepository.findTotalExpByMember(member);
-        return totalExp != null ? totalExp : 0;
-    }
-
-    // 랭크 업데이트 
-    public void updateRank(Member member) {
-        int totalExp = getTotalExpPoints(member);
-
-        if (totalExp >= 20000) {
-            member.setUserRank("Master");
-        } else if (totalExp >= 10000) {
-            member.setUserRank("Diamond");
-        } else if (totalExp >= 5000) {
-            member.setUserRank("Gold");
-        } else if (totalExp >= 1000) {
-            member.setUserRank("Silver");
-        } else {
-            member.setUserRank("Bronze");
-        }
-        
-        memberRepository.save(member);
-    }
+//      return new User(member.getUsername(), member.getPassword(), new ArrayList<>()); // 유저 정보를 반환
+        return org.springframework.security.core.userdetails.User
+              .withUsername(member.getUsername())
+              .password(member.getPassword())
+              .build();
+  }
 
 	public Member findByUsername(String username) {
 		Optional<Member> Member = this.memberRepository.findByUsername(username);
@@ -90,4 +71,54 @@ public class MemberService implements UserDetailsService{
 			throw new DataNotFoundException("회원정보를 찾을 수 없습니다.");
 		}
 	}
+	
+		// 랭크 업데이트
+	   @Transactional
+	    public void updateMemberRank(Long memberNum) {
+	        Member member = memberRepository.findById(memberNum)
+	            .orElseThrow(() -> new DataNotFoundException("회원을 찾을 수 없습니다."));
+	        
+	        Exp exp = expRepository.findByMember(member)
+	            .orElseThrow(() -> new DataNotFoundException("회원의 경험치를 찾을 수 없습니다."));
+	        
+	        int expPoints = exp.getExpPoints();
+	        String newRank;
+
+	        if (expPoints < 100) {
+	            newRank = "bronze";
+	        } else if (expPoints < 200) {
+	            newRank = "silver";
+	        } else if (expPoints < 300) {
+	            newRank = "gold";
+	        } else if (expPoints < 500) {
+	        	newRank = "diamond";
+	        } else {
+	        	newRank = "master";
+	        }
+	        
+	        member.setUserRank(newRank);
+	        memberRepository.save(member);
+	    }
+
+	   	// 경험치 추가
+	    @Transactional
+	    public void addExpPoints(Long memberNum, int points) {
+	        Member member = memberRepository.findById(memberNum)
+	            .orElseThrow(() -> new DataNotFoundException("회원을 찾을 수 없습니다."));
+	        
+	        Exp exp = expRepository.findByMember(member)
+	            .orElse(new Exp());
+
+	        exp.setMember(member);
+	        exp.setExpPoints(exp.getExpPoints() + points);
+	        expRepository.save(exp);
+
+	        updateMemberRank(memberNum);
+	    }
+	
+	    // 회원 경험치 조회
+	    public Exp findExpByMember(Member member) {
+	        return expRepository.findByMember(member)
+	                .orElseThrow(() -> new DataNotFoundException("회원의 경험치를 찾을 수 없습니다."));
+	    }
 }

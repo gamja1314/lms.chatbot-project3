@@ -1,40 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Table, Pagination } from 'react-bootstrap';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Form, Table } from 'react-bootstrap';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import CustomPagination from '../components/CustomPagination';
 
 const CodingTest = () => {
-  const [problems, setProblems] = useState([]);
-  const [filteredProblems, setFilteredProblems] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [difficulty, setDifficulty] = useState('');
-  const [language, setLanguage] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const problemsPerPage = 10;
+    const navigate = useNavigate();
+    const location = useLocation();
 
-  useEffect(() => {
-    // 실제 구현에서는 이 부분을 백엔드 API 호출로 대체합니다
-    const mockProblems = [
-      { id: 1, title: '멀종위기의 대장균 찾기', difficulty: 'Lv. 5', solvedBy: 1148, correctRate: '13%' },
-      { id: 2, title: '특정 세대의 대장균 찾기', difficulty: 'Lv. 4', solvedBy: 1826, correctRate: '53%' },
-    ];
-    setProblems(mockProblems);
-    setFilteredProblems(mockProblems);
-  }, []);
+    const getInitialPage = () => {
+      const searchParams = new URLSearchParams(location.search);
+      return parseInt(searchParams.get('page') || '1', 10);
+    };
 
-  useEffect(() => {
-    const results = problems.filter(problem =>
-      problem.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (difficulty === '' || problem.difficulty === difficulty) &&
-      (language === '' || problem.language === language)
-    );
-    setFilteredProblems(results);
-    setCurrentPage(1);
-  }, [searchTerm, difficulty, language, problems]);
-
-  const indexOfLastProblem = currentPage * problemsPerPage;
-  const indexOfFirstProblem = indexOfLastProblem - problemsPerPage;
-  const currentProblems = filteredProblems.slice(indexOfFirstProblem, indexOfLastProblem);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const [quizzes, setQuizzes] = useState([]);
+    const [totalPages, setTotalPages] = useState(0);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [difficulty, setDifficulty] = useState('');
+    const [currentPage, setCurrentPage] = useState(getInitialPage);
+  
+    const fetchQuizzes = useCallback(async () => {
+      try {
+        const response = await axios.get('http://localhost:8282/api/quiz/list', {
+          params: {
+            page: currentPage - 1,
+            search: searchTerm,
+            difficulty: difficulty
+          }
+        });
+        setQuizzes(response.data.content);
+        setTotalPages(response.data.totalPages);
+      } catch (error) {
+        console.error('Error fetching quizzes:', error);
+      }
+    }, [currentPage, searchTerm, difficulty]);
+    
+    useEffect(() => {
+      fetchQuizzes();
+    }, [fetchQuizzes]);
+  
+    useEffect(() => {
+      navigate(`?page=${currentPage}`, {replace: true});
+    }, [currentPage, navigate]);
+    
+    const handleQuizClick = (quizId) => {
+      navigate(`/coding-page/${quizId}`);
+    };
+  
+    const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
+    };
 
   return (
     <div className='container mt-4'>
@@ -44,7 +59,7 @@ const CodingTest = () => {
         <Form.Group className="mb-3">
           <Form.Control 
             type="text" 
-            placeholder="풀고 싶은 문제 제목, 기출문제 검색" 
+            placeholder="퀴즈 제목 검색" 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -63,33 +78,16 @@ const CodingTest = () => {
             <option value="Lv. 4">Lv. 4</option>
             <option value="Lv. 5">Lv. 5</option>
           </Form.Select>
-          
-          <Form.Select 
-            className="me-2"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-          >
-            <option value="">언어</option>
-            <option value="Python">Python</option>
-            <option value="Java">Java</option>
-            <option value="JavaScript">JavaScript</option>
-          </Form.Select>
-          
-          <Form.Select>
-            <option>기출문제 모음</option>
-          </Form.Select>
         </div>
       </Form>
 
       <div className="mb-3">
-        <span>{filteredProblems.length} 문제</span>
-        <span className="float-end">최신순 ▼</span>
+        <span>{quizzes.length} 문제</span>
       </div>
 
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>상태</th>
             <th>제목</th>
             <th>난이도</th>
             <th>완료한 사람</th>
@@ -97,25 +95,22 @@ const CodingTest = () => {
           </tr>
         </thead>
         <tbody>
-          {currentProblems.map((problem) => (
-            <tr key={problem.id}>
-              <td></td>
-              <td>{problem.title}</td>
-              <td>{problem.difficulty}</td>
-              <td>{problem.solvedBy}명</td>
-              <td>{problem.correctRate}</td>
+          {quizzes.map((quiz) => (
+            <tr key={quiz.quizId} onClick={() => handleQuizClick(quiz.quizId)} style={{cursor: 'pointer'}}>
+              <td>{quiz.title}</td>
+              <td>{quiz.quizRank}</td>
+              <td>{quiz.solvedBy}명</td>
+              <td>{quiz.correctRate}</td>
             </tr>
           ))}
         </tbody>
       </Table>
 
-      <Pagination>
-        {[...Array(Math.ceil(filteredProblems.length / problemsPerPage)).keys()].map(number => (
-          <Pagination.Item key={number + 1} active={number + 1 === currentPage} onClick={() => paginate(number + 1)}>
-            {number + 1}
-          </Pagination.Item>
-        ))}
-      </Pagination>
+      <CustomPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

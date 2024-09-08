@@ -16,14 +16,4 @@ public class ExpService {
     private final MemberService memberService;
     
     
-    // 경험치를 추가하는 로직
-    public void addExperience(Member member, int points) {
-        Exp exp = new Exp();
-        exp.setMember(member);
-        exp.setExpPoints(points);
-        
-        expRepository.save(exp);
-        
-        memberService.updateRank(member);
-    }
 }
