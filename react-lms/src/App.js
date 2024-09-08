@@ -17,6 +17,7 @@ function App() {
         if (response.status === 200 && response.data.loggedIn) {
           setIsLoggedIn(true);
           setUsername(response.data.username);
+          console.log(response.data.username);
         } else {
           setIsLoggedIn(false);
         }

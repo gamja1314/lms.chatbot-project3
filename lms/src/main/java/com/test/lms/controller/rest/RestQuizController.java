@@ -22,7 +22,7 @@ public class RestQuizController {
     private final QuizService quizService;
 
     // 퀴즈 목록 API (페이징 처리)
-    @GetMapping("/list")
+    // @GetMapping("/list")
     public ResponseEntity<Page<Quiz>> getQuizList(@RequestParam(value = "page", defaultValue = "0") int page) {
         // 페이징 처리된 퀴즈 목록을 JSON 형태로 반환
         Page<Quiz> paging = quizService.getList(page);

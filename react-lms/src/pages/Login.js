@@ -14,26 +14,32 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http://localhost:8282/api/member/login', {
+    const formData = new URLSearchParams();
+    formData.append('username', username);
+    formData.append('password', password);
+
+    try {
+      const response = await fetch('http://localhost:8282/api/member/login', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({
-            username,
-            password,
-        }),
-        credentials: 'include', //세션 관리용 쿠키를 포함.
-    });
-
-    // const data = await response.json();
-    
-    if (response.ok) {
+        body: formData,
+        credentials: 'include', // 세션 관리용 쿠키를 포함
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
         alert('Login 성공!');
+        console.log('로그인한 사용자:', data.username);
         navigate('/');
-        console.log(username);
-    } else{
-        setErrorMessage('아이디 또는 비밀번호가 일치하지 않습니다.');
+      } else {
+        const errorData = await response.json();
+        setErrorMessage(errorData.error || '아이디 또는 비밀번호가 일치하지 않습니다.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setErrorMessage('로그인 중 오류가 발생했습니다. 나중에 다시 시도해주세요.');
     }
   };
 
@@ -46,13 +52,27 @@ const Login = () => {
               <h2 className="mb-0">로그인</h2>
             </div>
             <div className="card-body">
-              <form onSubmit={handleLogin} method='POST'>
+              <form onSubmit={handleLogin}>
                 <div className="mb-3">
-                  <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control" placeholder="아이디 입력해 주세요" />
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="form-control"
+                    placeholder="아이디를 입력해 주세요"
+                    required
+                  />
                 </div>
                 <div className="mb-3">
                   <div className="input-group">
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control" placeholder="비밀번호를 입력해 주세요" />
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="form-control"
+                      placeholder="비밀번호를 입력해 주세요"
+                      required
+                    />
                   </div>
                 </div>
                 <div className="d-grid">
