@@ -79,7 +79,7 @@ const SignUp = () => {
                     type="text" 
                     name="username"
                     className="form-control" 
-                    placeholder="이메일을 입력해 주세요"
+                    placeholder="사용할 아이디를 입력해 주세요"
                     value={formData.username}
                     onChange={handleChange}
                     required
@@ -112,7 +112,7 @@ const SignUp = () => {
                     type="email" 
                     name="email"
                     className="form-control" 
-                    placeholder="사용할 닉네임을 입력해주세요"
+                    placeholder="이메일을 입력해주세요"
                     value={formData.email}
                     onChange={handleChange}
                     required
