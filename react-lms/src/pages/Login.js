@@ -14,12 +14,16 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
+
+    const response = await fetch('/member/login', {
+
     const formData = new URLSearchParams();
     formData.append('username', username);
     formData.append('password', password);
 
     try {
       const response = await fetch('http://localhost:8282/api/member/login', {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -33,6 +37,11 @@ const Login = () => {
         alert('Login 성공!');
         console.log('로그인한 사용자:', data.username);
         navigate('/');
+
+        console.log("로그인 한 유저"+username);
+    } else{
+        setErrorMessage('Login 실패!');
+
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.error || '아이디 또는 비밀번호가 일치하지 않습니다.');
@@ -40,6 +49,7 @@ const Login = () => {
     } catch (error) {
       console.error('Login error:', error);
       setErrorMessage('로그인 중 오류가 발생했습니다. 나중에 다시 시도해주세요.');
+
     }
   };
 

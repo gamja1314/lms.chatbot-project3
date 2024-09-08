@@ -38,10 +38,10 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 
-
+	//스프링 ai에서 클로드ai 의존성 추가
 	implementation 'org.springframework.ai:spring-ai-anthropic-spring-boot-starter:1.0.0-M2'
 
-    //스프링 ai에서 클로드ai 의존성 추가
+    
 
 	//Junit 테스트용 코드추가
 	testImplementation 'org.junit.jupiter:junit-jupiter'
