@@ -51,16 +51,17 @@ public class MemberService implements UserDetailsService{
         return member;
     }
     
-    
-    
-    
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다.: " + username));
 
-        return new User(member.getUsername(), member.getPassword(), new ArrayList<>());
-    }
+//      return new User(member.getUsername(), member.getPassword(), new ArrayList<>()); // 유저 정보를 반환
+        return org.springframework.security.core.userdetails.User
+              .withUsername(member.getUsername())
+              .password(member.getPassword())
+              .build();
+  }
 
 	public Member findByUsername(String username) {
 		Optional<Member> Member = this.memberRepository.findByUsername(username);
