@@ -31,11 +31,14 @@ public class Member {
     @Column(nullable = false, length = 30)
     private String email;   // 이메일
 
-    @Column(length = 20)
+    @Column(nullable = false, length = 20)
     private String userRank = "bronze";    // 랭크
 
     @Column(length = 20)
     private String role;    // 권한
+    
+    @Column(nullable = false, length = 128)
+    private String token;
 
     private LocalDateTime createTime;   // 가입날짜
 
