@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Table, Pagination } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const CodingTest = () => {
   const [problems, setProblems] = useState([]);
@@ -9,6 +10,7 @@ const CodingTest = () => {
   const [language, setLanguage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const problemsPerPage = 10;
+  const navigate = useNavigate();
 
   useEffect(() => {
     // 실제 구현에서는 이 부분을 백엔드 API 호출로 대체합니다
@@ -35,6 +37,10 @@ const CodingTest = () => {
   const currentProblems = filteredProblems.slice(indexOfFirstProblem, indexOfLastProblem);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const handleProblemClick = (problemId) => {
+    navigate(`/coding-page/${problemId}`);
+  };
 
   return (
     <div className='container mt-4'>
@@ -98,7 +104,7 @@ const CodingTest = () => {
         </thead>
         <tbody>
           {currentProblems.map((problem) => (
-            <tr key={problem.id}>
+            <tr key={problem.id} onClick={() => handleProblemClick(problem.id)} style={{cursor: 'pointer'}}>
               <td></td>
               <td>{problem.title}</td>
               <td>{problem.difficulty}</td>
