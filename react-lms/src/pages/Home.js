@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../css/Home.css'; // 별도의 CSS 파일을 만들어 스타일을 관리합니다.
+import axios from 'axios';
 
 const RankingSection = ({ rankings }) => (
   <div className="card ranking-card">
@@ -60,8 +61,8 @@ const PopularProblemsSection = ({ problems }) => (
     <ul>
       {problems.map((problem, index) => (
         <li key={index}>
-          <Link to={`/problem/${problem.id}`}>{problem.title}</Link>
-          <span className="problem-difficulty">난이도: {problem.difficulty}</span>
+          <Link to={`/coding-page/${problem.id}`}>{problem.title}</Link>
+          <span className="problem-difficulty">난이도: {problem.rank}</span>
         </li>
       ))}
     </ul>
@@ -75,7 +76,17 @@ const Home = () => {
   const [problems, setProblems] = useState([]);
 
   useEffect(() => {
-    // API 호출을 통한 데이터 fetch 로직
+    const fetchPopularProblems = async () => {
+      try {
+        const response = await axios.get('/api/quizAnswer/top5');
+        setProblems(response.data);
+      } catch (error) {
+        console.error('데이터를 불러오는데 실패하였습니다. :', error);
+      }
+    };
+
+    fetchPopularProblems();
+    
   }, []);
 
   return (
