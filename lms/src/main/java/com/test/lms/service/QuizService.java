@@ -84,7 +84,7 @@ public class QuizService {
 
 
         //퀴즈 정답
-        public boolean submitQuizAnswer(Long quizId, String answer, boolean isPublic, String userName) {
+        public boolean submitQuizAnswer(Long quizId, String answer, String output, boolean isPublic, String userName) {
                 log.debug("Received answer submission - quizId: {}, answer: {}, isPublic: {}, userName: {}", quizId, answer, isPublic, userName);
 
                 // quiz ID로 퀴즈 정보 가져오기
@@ -94,19 +94,22 @@ public class QuizService {
                 Member member = memberRepository.findByUsername(userName).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
         
                 // 제출된 답과 퀴즈의 정답을 비교
-                String trimmedAnswer = answer.trim();
+                String trimmedOutput = output.trim();
                 String trimmedCorrect = quiz.getCorrect().trim();
-                boolean isCorrect = trimmedCorrect.equalsIgnoreCase(trimmedAnswer);
+                boolean isCorrect = trimmedCorrect.equalsIgnoreCase(trimmedOutput);
+                
         
                 // 정답일 경우에만 DB에 저장
                 if (isCorrect) {
                         
                     // QuizAnswer 생성과 저장
                         QuizAnswer quizAnswer = new QuizAnswer();
-                        quizAnswer.setAnswer(trimmedAnswer);
+                        quizAnswer.setAnswer(answer);
+                        quizAnswer.setOutput(trimmedOutput);
                         quizAnswer.setPublic(isPublic);
                         quizAnswer.setMember(member);
                         quizAnswer.setQuiz(quiz);
+                        quizAnswer.setSolvedQuizTime(LocalDateTime.now());
         
                     // DB에 저장
                         quizAnswerRepository.save(quizAnswer);

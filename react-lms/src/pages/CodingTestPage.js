@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import axios from 'axios';
 import { useAuth } from '../AuthContext';
@@ -9,6 +9,7 @@ import 'codemirror/theme/material.css';
 import 'codemirror/mode/javascript/javascript';
 
 const CodingTestPage = () => {
+  const navigate = useNavigate();
   const [code, setCode] = useState("// Write your code here\nconsole.log('Hello, World!');");
   const [output, setOutput] = useState("");
   const [problem, setProblem] = useState(null);
@@ -22,13 +23,17 @@ const CodingTestPage = () => {
       const response = await axios.post('http://localhost:8282/api/quiz/submit', null, {
         params: {
           quizId,
-          answer: encodeURIComponent(output),
+          answer: encodeURIComponent(code),
+          output: encodeURIComponent(output),
           isPublic,
           username
         }
       });
       
       alert(response.data ? "정답입니다!" : "틀렸습니다. 다시 시도해보세요.");
+      if (response.data) {
+        navigate('/coding-test');
+      }
     } catch (error) {
       console.error('퀴즈 제출 중 오류 발생:', error);
       alert('퀴즈 제출에 실패했습니다. 다시 시도해주세요.');

@@ -44,14 +44,16 @@ public class RestQuizController {
     @PostMapping("/submit")
     public ResponseEntity<Boolean> submitQuizAnswer(
         @RequestParam("quizId") Long quizId,  // 퀴즈 ID
-        @RequestParam("answer") String answer,  // 사용자가 제출한 답변
+        @RequestParam("answer") String answer,  // 사용자가 작성한 코드
+        @RequestParam("output") String output, // 사용자가 제출한 답변
         @RequestParam("isPublic") boolean isPublic,  // 정답 공개 여부
         @RequestParam("username") String username  // 사용자 ID
     ) {
         // 퀴즈 정답 제출 및 결과 메시지 반환
         String decodeAnswer = URLDecoder.decode(answer, StandardCharsets.UTF_8);
+        String decodeOutput = URLDecoder.decode(output, StandardCharsets.UTF_8);
         
-        boolean isCorrect = quizService.submitQuizAnswer(quizId, decodeAnswer, isPublic, username);
+        boolean isCorrect = quizService.submitQuizAnswer(quizId, decodeAnswer, decodeOutput, isPublic, username);
 
         // 결과 메시지를 JSON 형식으로 반환
         return ResponseEntity.ok(isCorrect);
