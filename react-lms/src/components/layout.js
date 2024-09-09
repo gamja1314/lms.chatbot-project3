@@ -29,8 +29,9 @@ export function Header() {
               isLoggedIn ? (
                 <div>
                   <Link to="/logout" className="text-dark text-decoration-none m-4" onClick={handleLogout}>로그아웃</Link>
-                  <span>{nickname ? `${nickname} 님` : '사용자'}</span>
+                  <Link to="/my-page" className="text-dark text-decoration-none m-4">{nickname} 님</Link>
                 </div>
+                
               ) : (
                 <div>
                   <Link to="/login" className="text-dark text-decoration-none m-4">로그인</Link>
