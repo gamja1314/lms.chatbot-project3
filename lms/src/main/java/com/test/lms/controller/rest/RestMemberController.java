@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.test.lms.createform.MemberCreateForm;
+import com.test.lms.entity.Exp;
 import com.test.lms.entity.Member;
 import com.test.lms.service.MemberService;
 
@@ -72,5 +73,23 @@ public class RestMemberController {
         }
 
         return response;
+    }
+    
+    @GetMapping("/mypage")
+    public ResponseEntity<?> getMemberDetails() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        
+        Member member = memberService.findByUsername(username);
+        Exp exp = memberService.findExpByMember(member);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("username", member.getUsername());
+        response.put("nickname", member.getNickname());
+        response.put("email", member.getEmail());
+        response.put("rank", member.getUserRank());
+        response.put("expPoints", exp.getExpPoints());
+
+        return ResponseEntity.ok(response);
     }
 }
