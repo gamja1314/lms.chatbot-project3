@@ -25,6 +25,6 @@ public class Exp {
     private Member member;
 
     @Column(nullable = false, length = 1000)
-    private int expPoints = 0;
+    private int expPoints;
 
 }
