@@ -1,5 +1,8 @@
 package com.test.lms.controller.rest;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,15 +43,18 @@ public class RestQuizController {
     // 퀴즈 정답 제출 및 검증 API
     @PostMapping("/submit")
     public ResponseEntity<Boolean> submitQuizAnswer(
-        @RequestParam Long quizId,  // 퀴즈 ID
-        @RequestParam String answer,  // 사용자가 제출한 답변
-        @RequestParam boolean isPublic,  // 정답 공개 여부
-        @RequestParam String userName  // 사용자 ID
+        @RequestParam("quizId") Long quizId,  // 퀴즈 ID
+        @RequestParam("answer") String answer,  // 사용자가 제출한 답변
+        @RequestParam("isPublic") boolean isPublic,  // 정답 공개 여부
+        @RequestParam("username") String username  // 사용자 ID
     ) {
         // 퀴즈 정답 제출 및 결과 메시지 반환
-        boolean isCorrect = quizService.submitQuizAnswer(quizId, answer, isPublic, userName);
+        String decodeAnswer = URLDecoder.decode(answer, StandardCharsets.UTF_8);
+        
+        boolean isCorrect = quizService.submitQuizAnswer(quizId, decodeAnswer, isPublic, username);
 
         // 결과 메시지를 JSON 형식으로 반환
         return ResponseEntity.ok(isCorrect);
     }   //return 값을 true or false 로 반환할 수 있도록 수정    
+    
 }

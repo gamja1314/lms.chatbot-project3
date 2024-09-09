@@ -2,31 +2,33 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import axios from 'axios';
+import { useAuth } from '../AuthContext';
 
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/mode/javascript/javascript';
 
-const CodingTestPage = ({ username }) => {
+const CodingTestPage = () => {
   const [code, setCode] = useState("// Write your code here\nconsole.log('Hello, World!');");
   const [output, setOutput] = useState("");
   const [problem, setProblem] = useState(null);
   const [isPublic, setIsPublic] = useState(false);
   const iframeRef = useRef(null);
   const { quizId } = useParams();
+  const { username } = useAuth();
 
   const submitQuiz = async () => {
     try {
-      const response = await axios.post('/api/quiz/submit', null, {
+      const response = await axios.post('http://localhost:8282/api/quiz/submit', null, {
         params: {
           quizId,
-          answer: code,
+          answer: encodeURIComponent(output),
           isPublic,
           username
         }
       });
       
-      alert(response.data); // 서버로부터 받은 결과 메시지를 알림으로 표시
+      alert(response.data ? "정답입니다!" : "틀렸습니다. 다시 시도해보세요.");
     } catch (error) {
       console.error('퀴즈 제출 중 오류 발생:', error);
       alert('퀴즈 제출에 실패했습니다. 다시 시도해주세요.');

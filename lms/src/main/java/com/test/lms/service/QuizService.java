@@ -17,9 +17,11 @@ import com.test.lms.repository.QuizRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class QuizService {
 
         private final QuizRepository quizRepository;
@@ -82,34 +84,37 @@ public class QuizService {
 
 
         //퀴즈 정답
-        public boolean submitQuizAnswer(Long quizId, String answer, boolean isPublic, String userName){
+        public boolean submitQuizAnswer(Long quizId, String answer, boolean isPublic, String userName) {
+                log.debug("Received answer submission - quizId: {}, answer: {}, isPublic: {}, userName: {}", quizId, answer, isPublic, userName);
 
-                //quiz ID로 퀴즈 정보 가져오기
+                // quiz ID로 퀴즈 정보 가져오기
                 Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new EntityNotFoundException("퀴즈를 찾을 수 없습니다."));
 
-                //사용자 ID로 멤버 정보 가져오기
+                // 사용자 ID로 멤버 정보 가져오기
                 Member member = memberRepository.findByUsername(userName).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
-
-                //제출된 답과 퀴즈의 정답을 비교
-                boolean isCorrect = quiz.getCorrect().equalsIgnoreCase(answer);
-                
-
+        
+                // 제출된 답과 퀴즈의 정답을 비교
+                String trimmedAnswer = answer.trim();
+                String trimmedCorrect = quiz.getCorrect().trim();
+                boolean isCorrect = trimmedCorrect.equalsIgnoreCase(trimmedAnswer);
+        
                 // 정답일 경우에만 DB에 저장
-                if(isCorrect){
+                if (isCorrect) {
                         
-                //QuizAnswer 생성과 저장
-                QuizAnswer quizAnswer = new QuizAnswer();
-
-                quizAnswer.setAnswer(answer);
-                quizAnswer.setPublic(isPublic);
-                quizAnswer.setMember(member);
-                quizAnswer.setQuiz(quiz);
-
-                // DB에 저장
-                quizAnswerRepository.save(quizAnswer);
+                    // QuizAnswer 생성과 저장
+                        QuizAnswer quizAnswer = new QuizAnswer();
+                        quizAnswer.setAnswer(trimmedAnswer);
+                        quizAnswer.setPublic(isPublic);
+                        quizAnswer.setMember(member);
+                        quizAnswer.setQuiz(quiz);
+        
+                    // DB에 저장
+                        quizAnswerRepository.save(quizAnswer);
+                } else {
+                        log.debug("Answer is incorrect, not saving to database");
                 }
                 
-                //정딥 비교 결과 화면
+                // 정답 비교 결과 반환
                 return isCorrect;
         }
         
