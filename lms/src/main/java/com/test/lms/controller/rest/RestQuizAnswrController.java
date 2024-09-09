@@ -31,4 +31,9 @@ public class RestQuizAnswrController {
         return ResponseEntity.ok(quizAnswers);
     }
     
+    //풀었던문제 1개 가져오기 
+
+    //사용자가 맞춘 퀴즈들을 마이페이지에 표시하는 기능
+    // @GetMapping("/api/quiz/answers")
+    // public 
 }
