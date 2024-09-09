@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.test.lms.entity.Quiz;
 import com.test.lms.entity.QuizAnswer;
 import com.test.lms.repository.QuizAnswerRepository;
 import com.test.lms.service.QuizAnswerService;
@@ -25,7 +26,7 @@ public class RestQuizAnswrController {
     private final QuizAnswerRepository quizAnswerRepository;
     
     //특정 퀴즈에 대한 QuizAnswer 목록을 JSON 으로 반환
-    @GetMapping("/api/quiz/{quizId}/answers")
+    @GetMapping("/{quizId}/answers")
     public ResponseEntity<List<QuizAnswer>> getQuizAnswer(@PathVariable("quizId") Long quizId){
 
         //QuizAnswer 목록 조회
@@ -37,8 +38,8 @@ public class RestQuizAnswrController {
     
     //풀었던문제 1개 가져오기 
 
-    //사용자가 맞춘 퀴즈들을 마이페이지에 표시하는 기능
-    @GetMapping("/api/quiz/answers")
+    //사용자가 맞춘 퀴즈들을 마이페이지에 표시하는 기능 
+    @GetMapping("/answers")
     public ResponseEntity<List<QuizAnswer>> getQuizAnswerByUserName(){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -48,5 +49,11 @@ public class RestQuizAnswrController {
         List<QuizAnswer> quizAnswers = quizAnswerService.getQuizAnswerByUserName(userName);
 
         return ResponseEntity.ok(quizAnswers);
+    }
+
+    @GetMapping("/top5")
+    public List<Quiz>  getTop5QuizzesOfDay(){
+
+        return quizAnswerService.getTop5QuizzesOfDay();
     }
 }
