@@ -34,6 +34,7 @@ public class QuizAnswer {
     @JoinColumn(name="member_id")
     private Member member;
 
+    //사용자가 푼 문제의 정답을 공개 또는 비공개 여부 확인
     @Column(nullable = false, name = "is_public")
     private boolean isPublic;
 

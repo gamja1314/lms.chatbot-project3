@@ -23,13 +23,15 @@ const MyPage = () => {
   }, []);
 
   return (
-    <div>
-      <h1>My Page</h1>
-      <p><strong>Username:</strong> {memberInfo.username}</p>
-      <p><strong>Nickname:</strong> {memberInfo.nickname}</p>
-      <p><strong>Email:</strong> {memberInfo.email}</p>
-      <p><strong>Rank:</strong> {memberInfo.rank}</p>
-      <p><strong>Experience Points:</strong> {memberInfo.expPoints}</p>
+    <div className='container-fluid'>
+      <div className='container'>
+        <h1>My Page</h1>
+        <p><strong>Username:</strong> {memberInfo.username}</p>
+        <p><strong>Nickname:</strong> {memberInfo.nickname}</p>
+        <p><strong>Email:</strong> {memberInfo.email}</p>
+        <p><strong>Rank:</strong> {memberInfo.rank}</p>
+        <p><strong>Experience Points:</strong> {memberInfo.expPoints}</p>
+      </div>
     </div>
   );
 };

@@ -2,6 +2,7 @@ package com.test.lms.controller.rest;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.test.lms.entity.Quiz;
+import com.test.lms.service.QuizAnswerService;
 import com.test.lms.service.QuizService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class RestQuizController {
 
     private final QuizService quizService;
+    private final QuizAnswerService quizAnswerService;
 
     // 퀴즈 목록 API (페이징 처리)
     // @GetMapping("/list")
@@ -58,5 +61,12 @@ public class RestQuizController {
         // 결과 메시지를 JSON 형식으로 반환
         return ResponseEntity.ok(isCorrect);
     }   //return 값을 true or false 로 반환할 수 있도록 수정    
-    
+
+    @GetMapping("/api/top5quizzes")
+    public ResponseEntity<List<Quiz>> getTop5QuizzesOfDay(){
+
+        List<Quiz> top5Quizzes = quizAnswerService.getTop5QuizzesOfDay();
+
+        return ResponseEntity.ok(top5Quizzes);
+    }
 }

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import axios from 'axios';
 import { useAuth } from '../AuthContext';
+import { MessageCircle, Send } from 'lucide-react';
 
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
@@ -14,6 +15,9 @@ const CodingTestPage = () => {
   const [output, setOutput] = useState("");
   const [problem, setProblem] = useState(null);
   const [isPublic, setIsPublic] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState('');
   const iframeRef = useRef(null);
   const { quizId } = useParams();
   const { username } = useAuth();
@@ -94,12 +98,33 @@ const CodingTestPage = () => {
     }
   };
 
+  const sendMessage = async () => {
+    if (inputMessage.trim() !== '') {
+      const newUserMessage = { text: inputMessage, sender: 'user' };
+      setMessages(prevMessages => [...prevMessages, newUserMessage]);
+      setInputMessage('');
+
+      try {
+        const response = await axios.get('http://localhost:8282/ai/generate', {
+          params: { message: inputMessage }
+        });
+        console.log('Server response:', response.data);
+        const botMessage = { text: response.data.generation, sender: 'bot' };
+        setMessages(prevMessages => [...prevMessages, botMessage]);
+      } catch (error) {
+        console.error('Error details:', error.response ? error.response.data : error.message);
+        const errorMessage = { text: 'Sorry, I encountered an error.', sender: 'bot' };
+        setMessages(prevMessages => [...prevMessages, errorMessage]);
+      }
+    }
+  };
+
   return (
     <div className="container-fluid vh-100 d-flex flex-column" style={{ backgroundColor: '#263238', color: '#B0BEC5' }}>
       <div className='container'>
         <div className="row flex-grow-1">
           {/* Problem Display */}
-          <div className="col-md-6 p-4" style={{ borderRight: '1px solid #37474F' }}>
+          <div className="col-md-6 p-4" style={{ borderRight: '1px solid #37474F', position: 'relative' }}>
             <h2 className="mb-4">Problem</h2>
             {problem ? (
               <>
@@ -108,6 +133,80 @@ const CodingTestPage = () => {
               </>
             ) : (
               <p>Loading problem...</p>
+            )}
+            <div 
+              onClick={() => setIsChatOpen(!isChatOpen)}
+              style={{
+                position: 'absolute',
+                bottom: '20px',
+                right: '20px',
+                cursor: 'pointer',
+                backgroundColor: '#4CAF50',
+                borderRadius: '50%',
+                width: '50px',
+                height: '50px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <MessageCircle size={24} color="white" />
+            </div>
+            {isChatOpen && (
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '80px',
+                  right: '20px',
+                  width: '300px',
+                  height: '400px',
+                  backgroundColor: '#37474F',
+                  borderRadius: '10px',
+                  padding: '10px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <div style={{ flexGrow: 1, overflowY: 'auto', marginBottom: '10px' }}>
+                  {messages.map((msg, index) => (
+                    <div key={index} style={{ marginBottom: '10px', textAlign: msg.sender === 'user' ? 'right' : 'left' }}>
+                      <span style={{ 
+                        backgroundColor: msg.sender === 'user' ? '#4CAF50' : '#2196F3', 
+                        padding: '5px 10px', 
+                        borderRadius: '20px',
+                        display: 'inline-block',
+                        maxWidth: '80%',
+                        wordWrap: 'break-word'
+                      }}>
+                        {msg.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex' }}>
+                  <input
+                    type="text"
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                    style={{ flexGrow: 1, marginRight: '10px', padding: '5px', borderRadius: '5px', border: 'none' }}
+                    placeholder="Type a message..."
+                  />
+                  <button 
+                    onClick={sendMessage} 
+                    style={{ 
+                      padding: '5px 10px', 
+                      backgroundColor: '#4CAF50', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '5px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Send size={20} />
+                  </button>
+                </div>
+              </div>
             )}
           </div>
 
