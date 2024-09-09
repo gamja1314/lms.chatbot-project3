@@ -2,9 +2,17 @@ package com.test.lms.controller.rest;
 import java.util.Map;
 
 import org.springframework.ai.anthropic.AnthropicChatModel;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.test.lms.entity.ChatHistory;
+import com.test.lms.entity.Member;
+import com.test.lms.entity.Quiz;
+import com.test.lms.service.ChatHistoryService;
+import com.test.lms.service.MemberService;
+import com.test.lms.service.QuizService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +24,14 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatBotController {
 	
 	private final AnthropicChatModel chatModel;
+	private final QuizService quizService;
+	private final ChatHistoryService chatHistoryService;
+	private final MemberService memberService;
+
 	
 	@GetMapping("/ai/generate")
-	public Map generate(@RequestParam(value = "message", defaultValue = "Tell me a joke") String message) {
+	public Map generate(@RequestParam(value = "message", defaultValue = "Tell me a joke") String message,
+			@RequestParam(value = "quizId") Long quizId, Authentication authentication) {
 		//역할 및 기능 지정
 		String systemPrompt = "너는 코딩문제를 푸는 사람을 도와주는 친구야." 
 			+ "절대 정답을 말하지 않고 질문이 들어오는 걸 토대로 문제가 해결될 수 있도록 도와줘." 
@@ -29,36 +42,46 @@ public class ChatBotController {
 			+ "인사말은 제외하고 말해줘."
 			+ "너의 이름은 '유미'야"
 			+ "냥냥체로 말해"
-			+ "중간중간 '유미가~'같이 3인칭체를 사용해봐, ";
+			+ "중간중간 '유미가~'같이 3인칭체를 사용해봐."
+			+ "대답 시작을 '유미가 ~ '로 시작하지 말고 바로 본론으로 들어가";
 		
 		//문제
-		String quiz = "문제: 가장 긴 팰린드롬 부분 문자열 찾기\r\n"
-			+ "설명:\r\n"
-			+ "주어진 문자열에서 가장 긴 팰린드롬(palindrome) 부분 문자열을 찾는 함수를 구현하세요. 팰린드롬이란 앞에서부터 읽으나 뒤에서부터 읽으나 같은 문자열을 말합니다.\r\n"
-			+ "요구사항:\r\n"
-			+ "\r\n"
-			+ "함수 이름: longest_palindrome_substring\r\n"
-			+ "입력: 문자열 s (1 ≤ s의 길이 ≤ 1000)\r\n"
-			+ "출력: 가장 긴 팰린드롬 부분 문자열\r\n"
-			+ "시간 복잡도: O(n^2) 이하 (n은 문자열의 길이)\r\n"
-			+ "\r\n"
-			+ "예시:\r\n"
-			+ "\r\n"
-			+ "입력: \"babad\"\r\n"
-			+ "출력: \"bab\" 또는 \"aba\"\r\n"
-			+ "입력: \"cbbd\"\r\n"
-			+ "출력: \"bb\"\r\n"
-			+ "입력: \"a\"\r\n"
-			+ "출력: \"a\"\r\n"
-			+ "입력: \"ac\"\r\n"
-			+ "출력: \"a\" 또는 \"c\"" ; 
-		log.info("QUiz"+quiz);
-		log.info("물어본질문!!"+message);
+		//quizId로 Quiz 객체 조회
+        Quiz quiz = quizService.getQuizById(quizId);
+        
+        if (quiz == null) {
+            return Map.of("error", "Quiz not found");
+        }
 		
-
-		message = systemPrompt+quiz+message;
+		log.info("Quiz 내용 : "+quiz.getContent());
+		log.info("물어본질문 : "+ message);
 		
-		return Map.of("generation", chatModel.call(message));
+		//로그인중인 회원
+		Member member = null;
+	    if (authentication != null) {
+	        member = memberService.findByUsername(authentication.getName());
+	    }
+	    
+	    if (member == null) {
+	        return Map.of("error", "User not authenticated");
+	    }
+	    log.info("로그인중인 회원 : "+authentication.getName());
+		
+		//API로 보낼 회원의 질문(시스템프롬프트 + 퀴즈내용 + 회원의 질문)
+		String question = systemPrompt+ quiz.getContent() +message;
+		log.info("API로 보낼 질문 : "+question);
+		 
+		//채팅내역저장
+		log.info("챗봇 답변 : "+chatModel.call(question));
+		try {
+		    chatHistoryService.ChatHistoryCreate(member, quiz, message, chatModel.call(question));
+		    log.info("채팅내역저장완료");
+		} catch (Exception e) {
+		    log.error("채팅내역 저장 중 오류 발생: ", e);
+		}
+		
+		
+		return Map.of("generation", chatModel.call(question));
 	}//간단하고 즉각적인 응답에 적합(동기)
 
 }

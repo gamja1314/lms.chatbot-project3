@@ -25,7 +25,7 @@ public class Quiz {
     private String title;
 
     //퀴즈 내용
-    @Column(nullable=false)
+    @Column(nullable=false, columnDefinition = "TEXT")
     private String content;
 
     //퀴즈의 정답
