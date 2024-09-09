@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
+import api from "../components/Api";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleSignup = () => {
@@ -17,6 +21,7 @@ const Login = () => {
     const formData = new URLSearchParams();
     formData.append('username', username);
     formData.append('password', password);
+    formData.append('remember-me', rememberMe);
 
     try {
       const response = await fetch('http://localhost:8282/api/member/login', {
@@ -25,14 +30,19 @@ const Login = () => {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: formData,
-        credentials: 'include', // 세션 관리용 쿠키를 포함
+        credentials: 'include',
       });
       
       if (response.ok) {
-        const data = await response.json();
-        alert('Login 성공!');
-        console.log('로그인한 사용자:', data.username);
-        navigate('/');
+        // 로그인 성공 후 즉시 사용자 정보를 가져옵니다.
+        const userInfoResponse = await api.get('/api/member/check');
+        if (userInfoResponse.status === 200 && userInfoResponse.data.loggedIn) {
+          login(userInfoResponse.data);
+          alert('Login 성공!');
+          navigate('/');
+        } else {
+          throw new Error('사용자 정보를 가져오는데 실패했습니다.');
+        }
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.error || '아이디 또는 비밀번호가 일치하지 않습니다.');
@@ -74,6 +84,16 @@ const Login = () => {
                       required
                     />
                   </div>
+                </div>
+                <div className="mb-3 form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="rememberMe"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
+                  <label className="form-check-label" htmlFor="rememberMe">자동 로그인</label>
                 </div>
                 <div className="d-grid">
                   <button type="submit" className="btn btn-secondary">로그인하기</button>

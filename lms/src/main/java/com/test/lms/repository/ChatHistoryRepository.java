@@ -12,6 +12,10 @@ import com.test.lms.entity.Quiz;
 
 public interface ChatHistoryRepository extends JpaRepository<ChatHistory, Long> {
 
+
 	
     Optional<ChatHistory> findByMemberAndQuiz(Member member, Quiz quiz);
 }
+
+	
+

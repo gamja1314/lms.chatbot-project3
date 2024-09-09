@@ -1,19 +1,53 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import Editor from "@monaco-editor/react";
+import { useParams, useNavigate } from 'react-router-dom';
+import { Controlled as CodeMirror } from 'react-codemirror2';
 import axios from 'axios';
+import { useAuth } from '../AuthContext';
+import { MessageCircle, Send } from 'lucide-react';
+
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/material.css';
+import 'codemirror/mode/javascript/javascript';
 
 const CodingTestPage = () => {
+  const navigate = useNavigate();
   const [code, setCode] = useState("// Write your code here\nconsole.log('Hello, World!');");
   const [output, setOutput] = useState("");
   const [problem, setProblem] = useState(null);
+  const [isPublic, setIsPublic] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState('');
   const iframeRef = useRef(null);
   const { quizId } = useParams();
+  const { username } = useAuth();
 
+  const submitQuiz = async () => {
+    try {
+      const response = await axios.post('http://localhost:8282/api/quiz/submit', null, {
+        params: {
+          quizId,
+          answer: encodeURIComponent(code),
+          output: encodeURIComponent(output),
+          isPublic,
+          username
+        }
+      });
+      
+      alert(response.data ? "정답입니다!" : "틀렸습니다. 다시 시도해보세요.");
+      if (response.data) {
+        navigate('/coding-test');
+      }
+    } catch (error) {
+      console.error('퀴즈 제출 중 오류 발생:', error);
+      alert('퀴즈 제출에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+  
   useEffect(() => {
     const fetchProblem = async () => {
       try {
-        const response = await axios.get(`http://localhost:8282/api/quiz/${quizId}`)
+        const response = await axios.get(`http://localhost:8282/api/quiz/detail/${quizId}`)
         setProblem(response.data);
       } catch (error) {
         console.error('Error fetching problem:', error);
@@ -56,10 +90,6 @@ const CodingTestPage = () => {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  const handleEditorChange = (value) => {
-    setCode(value);
-  };
-
   const runCode = () => {
     setOutput("");
     const iframe = iframeRef.current;
@@ -68,51 +98,164 @@ const CodingTestPage = () => {
     }
   };
 
-  return (
-    <div className="container-fluid">
-      <div className="row vh-100">
-        {/* Problem Display */}
-        <div className="col-md-6 p-4 border-end">
-          <h2 className="mb-4">Problem</h2>
-          {problem ? (
-            <>
-              <h3>{problem.title}</h3>
-              <p>{problem.description}</p>
-              <h4>Example Input:</h4>
-              <pre className="bg-light p-2 rounded">{problem.exampleInput}</pre>
-              <h4>Example Output:</h4>
-              <pre className="bg-light p-2 rounded">{problem.exampleOutput}</pre>
-            </>
-          ) : (
-            <p>Loading problem...</p>
-          )}
-        </div>
+  const sendMessage = async () => {
+    if (inputMessage.trim() !== '') {
+      const newUserMessage = { text: inputMessage, sender: 'user' };
+      setMessages(prevMessages => [...prevMessages, newUserMessage]);
+      setInputMessage('');
 
-        {/* Code Editor and Output */}
-        <div className="col-md-6 p-4 d-flex flex-column">
-          <h2 className="mb-4">Code Editor</h2>
-          <div className="flex-grow-1 mb-3">
-            <Editor
-              height="100%"
-              defaultLanguage="javascript"
-              value={code}
-              onChange={handleEditorChange}
-            />
+      try {
+        const response = await axios.get('http://localhost:8282/ai/generate', {
+          params: { message: inputMessage }
+        });
+        console.log('Server response:', response.data);
+        const botMessage = { text: response.data.generation, sender: 'bot' };
+        setMessages(prevMessages => [...prevMessages, botMessage]);
+      } catch (error) {
+        console.error('Error details:', error.response ? error.response.data : error.message);
+        const errorMessage = { text: 'Sorry, I encountered an error.', sender: 'bot' };
+        setMessages(prevMessages => [...prevMessages, errorMessage]);
+      }
+    }
+  };
+
+  return (
+    <div className="container-fluid vh-100 d-flex flex-column" style={{ backgroundColor: '#263238', color: '#B0BEC5' }}>
+      <div className='container'>
+        <div className="row flex-grow-1">
+          {/* Problem Display */}
+          <div className="col-md-6 p-4" style={{ borderRight: '1px solid #37474F', position: 'relative' }}>
+            <h2 className="mb-4">Problem</h2>
+            {problem ? (
+              <>
+                <h3>{problem.title}</h3>
+                <p>{problem.content}</p>
+              </>
+            ) : (
+              <p>Loading problem...</p>
+            )}
+            <div 
+              onClick={() => setIsChatOpen(!isChatOpen)}
+              style={{
+                position: 'absolute',
+                bottom: '20px',
+                right: '20px',
+                cursor: 'pointer',
+                backgroundColor: '#4CAF50',
+                borderRadius: '50%',
+                width: '50px',
+                height: '50px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <MessageCircle size={24} color="white" />
+            </div>
+            {isChatOpen && (
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '80px',
+                  right: '20px',
+                  width: '300px',
+                  height: '400px',
+                  backgroundColor: '#37474F',
+                  borderRadius: '10px',
+                  padding: '10px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <div style={{ flexGrow: 1, overflowY: 'auto', marginBottom: '10px' }}>
+                  {messages.map((msg, index) => (
+                    <div key={index} style={{ marginBottom: '10px', textAlign: msg.sender === 'user' ? 'right' : 'left' }}>
+                      <span style={{ 
+                        backgroundColor: msg.sender === 'user' ? '#4CAF50' : '#2196F3', 
+                        padding: '5px 10px', 
+                        borderRadius: '20px',
+                        display: 'inline-block',
+                        maxWidth: '80%',
+                        wordWrap: 'break-word'
+                      }}>
+                        {msg.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex' }}>
+                  <input
+                    type="text"
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                    style={{ flexGrow: 1, marginRight: '10px', padding: '5px', borderRadius: '5px', border: 'none' }}
+                    placeholder="Type a message..."
+                  />
+                  <button 
+                    onClick={sendMessage} 
+                    style={{ 
+                      padding: '5px 10px', 
+                      backgroundColor: '#4CAF50', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '5px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Send size={20} />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-          <button onClick={runCode} className="btn btn-primary mb-3">
-            Run Code
-          </button>
-          <div>
-            <h3>Output:</h3>
-            <pre className="bg-light p-2 rounded">{output}</pre>
+
+          {/* Code Editor and Output */}
+          <div className="col-md-6 p-4 d-flex flex-column">
+            <h2 className="mb-4">Code Editor</h2>
+            <div>
+              <CodeMirror
+                value={code}
+                options={{
+                  mode: 'javascript',
+                  theme: 'material',
+                  lineNumbers: true
+                }}
+                onBeforeChange={(editor, data, value) => setCode(value)}
+              />
+            </div>
+            <div className="form-check mb-3">
+              <input
+                type="checkbox"
+                checked={isPublic}
+                onChange={(e) => setIsPublic(e.target.checked)}
+                className="form-check-input"
+                id="publicCheck"
+              />
+              <label className="form-check-label" htmlFor="publicCheck">
+                정답 공개
+              </label>
+            </div>
+            <div>
+              <button onClick={runCode} className="btn btn-primary mx-3 mb-3">
+                Run Code
+              </button>
+              <button onClick={submitQuiz} className='btn btn-secondary mb-3'>
+                제출
+              </button>
+            </div>
+            <div>
+              <h3>Output:</h3>
+              <pre className="p-2 rounded" style={{ backgroundColor: '#1E272C', color: '#B0BEC5' }}>{output}</pre>
+            </div>
           </div>
         </div>
+        <iframe 
+          ref={iframeRef} 
+          style={{display: 'none'}} 
+          title="Code Execution Environment"
+        ></iframe>
       </div>
-      <iframe 
-        ref={iframeRef} 
-        style={{display: 'none'}} 
-        title="Code Execution Environment"
-      ></iframe>
     </div>
   );
 };

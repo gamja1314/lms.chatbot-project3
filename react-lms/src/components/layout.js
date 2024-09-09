@@ -1,53 +1,66 @@
 import React from "react";
 import { Menu } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import '../css/header.css'
+import { useAuth } from '../AuthContext';
+import '../css/header.css';
 
-export function Header({ isLoggedIn, setIsLoggedIn, username }) {
+export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isLoggedIn, nickname, logout } = useAuth();
 
   const handleLogout = async (e) => {
     e.preventDefault();
-
-    try {
-      const response = await fetch('/api/member/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
-
-      if (response.ok) {
-        setIsLoggedIn(false);
-        navigate('/login');
-        console.log(`로그아웃 성공, 사용자 이름: ${username}`);
-      } else {
-        console.error('로그아웃 실패');
-      }
-    } catch (error) {
-      console.error('로그아웃 에러', error);
-    }
+    await logout();
+    navigate('/login');
   };
-  
+
+  const isCodingPage = location.pathname.startsWith('/coding-page/');
+
+  const headerStyle = isCodingPage
+    ? { backgroundColor: '#263238', color: '#B0BEC5' }
+    : {};
+
+  const linkStyle = isCodingPage
+    ? { color: '#B0BEC5' }
+    : { color: 'inherit' };
+
   return (
-    <header className="navbar navbar-light topbar">
+    <header className="navbar navbar-light topbar" style={headerStyle}>
       <div className="container">
-        <h1><Link to="/" className="text-dark text-decoration-none">Cotemon</Link></h1>
+        <h1>
+          <Link to="/" style={{ ...linkStyle, textDecoration: 'none' }}>
+            Cotemon
+          </Link>
+        </h1>
         <div className="header-flex">
           <div>
-            <Link to="/coding-test" className="text-dark text-decoration-none m-4">Coding Test</Link>
-            <Link to="/qna" className="text-dark text-decoration-none">Q&A</Link>
+            <Link to="/coding-test" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1rem' }}>
+              Coding Test
+            </Link>
+            <Link to="/qna" style={{ ...linkStyle, textDecoration: 'none' }}>
+              Q&A
+            </Link>
           </div>
           <div>
             {location.pathname !== '/login' && (
               isLoggedIn ? (
                 <div>
-                  <Link to="/logout" className="text-dark text-decoration-none m-4" onClick={handleLogout}>로그아웃</Link>
-                  <span>{username} 님</span>
+                  <Link to="/logout" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1rem' }} onClick={handleLogout}>
+                    로그아웃
+                  </Link>
+                  <Link to="/my-page" style={{ ...linkStyle, textDecoration: 'none' }}>
+                    {nickname} 님
+                  </Link>
                 </div>
               ) : (
                 <div>
-                  <Link to="/login" className="text-dark text-decoration-none m-4">로그인</Link>
-                  <Link to="/signup" className="text-dark text-decoration-none">회원가입</Link>
+                  <Link to="/login" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1rem' }}>
+                    로그인
+                  </Link>
+                  <Link to="/signup" style={{ ...linkStyle, textDecoration: 'none' }}>
+                    회원가입
+                  </Link>
                 </div>
               )
             )}
@@ -59,12 +72,19 @@ export function Header({ isLoggedIn, setIsLoggedIn, username }) {
 }
 
 export function Footer() {
+  const location = useLocation();
+  const isCodingPage = location.pathname.startsWith('/coding-page/');
+
+  const footerStyle = isCodingPage
+    ? { backgroundColor: '#263238', color: '#B0BEC5' }
+    : {};
+
   return (
-    <footer className="sticky-footer navbar-gray">
-    <div className="container mx-auto flex justify-between items-center">
-      <span>Copyright @ programmers</span>
-    </div>
-  </footer>
+    <footer className="sticky-footer navbar-gray" style={footerStyle}>
+      <div className="container mx-auto flex justify-between items-center text-center">
+        <span>Copyright @ programmers</span>
+      </div>
+    </footer>
   );
 }
 

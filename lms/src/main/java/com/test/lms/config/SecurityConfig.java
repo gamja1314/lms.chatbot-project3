@@ -2,6 +2,8 @@ package com.test.lms.config;
 
 import java.io.IOException;
 
+import javax.sql.DataSource;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private UserDetailsService userDetailsService;
-    
+    private final DataSource dataSource;
     
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -47,13 +51,21 @@ public class SecurityConfig {
                 .build();
     }
 
+    
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        tokenRepository.setDataSource(dataSource);
+        return tokenRepository;
+    }
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())  // CSRF 보호를 비활성화합니다. 프로덕션 환경에서는 활성화하는 것이 좋습니다.
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/member/signup", "/member/login", "/index", "/css/**", "/js/**", "/", "/api/**").permitAll() 
+                .requestMatchers("/member/signup", "/member/login", "/index", "/css/**", "/js/**", "/", "/api/**", "ai/**").permitAll() 
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -78,9 +90,10 @@ public class SecurityConfig {
                 .expiredUrl("/login?expired")
             )
             .rememberMe(rememberMe -> rememberMe
-                .key("uniqueAndSecretKey")
-                .tokenValiditySeconds(86400)
-                .userDetailsService(userDetailsService)
+                    .key("uniqueAndSecretKey")
+                    .tokenValiditySeconds(86400)
+                    .userDetailsService(userDetailsService)
+                    .tokenRepository(persistentTokenRepository())
             );
         return http.build();
     }

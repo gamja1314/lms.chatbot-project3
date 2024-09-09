@@ -17,14 +17,17 @@ import com.test.lms.repository.QuizRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class QuizService {
 
         private final QuizRepository quizRepository;
         private final MemberRepository memberRepository;
         private final QuizAnswerRepository quizAnswerRepository;
+        private final MemberService memberService;
 
         //모든 퀴즈 리스트 가져오기
         public List<Quiz> getAllQuizzes(){
@@ -82,28 +85,65 @@ public class QuizService {
 
 
         //퀴즈 정답
-        public String submitQuizAnswer(Long quizId, String answer, boolean isPublic, Long Id){
+        public boolean submitQuizAnswer(Long quizId, String answer, String output, boolean isPublic, String userName) {
+                log.debug("Received answer submission - quizId: {}, answer: {}, isPublic: {}, userName: {}", quizId, answer, isPublic, userName);
 
-                //quiz ID로 퀴즈 정보 가져오기
+                // quiz ID로 퀴즈 정보 가져오기
                 Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new EntityNotFoundException("퀴즈를 찾을 수 없습니다."));
 
-                //사용자 ID로 멤버 정보 가져오기
-                Member member = memberRepository.findById(Id).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+                // 사용자 ID로 멤버 정보 가져오기
+                Member member = memberRepository.findByUsername(userName).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+        
+                // 제출된 답과 퀴즈의 정답을 비교
+                String trimmedOutput = output.trim();
+                String trimmedCorrect = quiz.getCorrect().trim();
+                boolean isCorrect = trimmedCorrect.equalsIgnoreCase(trimmedOutput);
                 
-                QuizAnswer quizAnswer = new QuizAnswer();
-                quizAnswer.setAnswer(answer);
-                quizAnswer.setPublic(isPublic);
-                quizAnswer.setMember(member);
-                quizAnswer.setQuiz(quiz);
-
-                //제출된 답과 퀴즈의 정답을 비교
-                boolean isCorrect = quiz.getCorrect().equalsIgnoreCase(answer);
-
-                // DB에 저장
-                quizAnswerRepository.save(quizAnswer);
+        
+                // 정답일 경우에만 DB에 저장
+                if (isCorrect) {
+                        
+                    // QuizAnswer 생성과 저장
+                        QuizAnswer quizAnswer = new QuizAnswer();
+                        quizAnswer.setAnswer(answer);
+                        quizAnswer.setOutput(trimmedOutput);
+                        quizAnswer.setPublic(isPublic);
+                        quizAnswer.setMember(member);
+                        quizAnswer.setQuiz(quiz);
+                        quizAnswer.setSolvedQuizTime(LocalDateTime.now());
+        
+                    // DB에 저장
+                        quizAnswerRepository.save(quizAnswer);
+                        
+                        
+                        int expPoints = 0;
+                    // quizRank에 따라 경험치 결정
+                        switch (quiz.getQuizRank()) {
+                            case "D":
+                                expPoints = 5;
+                                break;
+                            case "C":
+                                expPoints = 10;
+                                break;
+                            case "B":
+                                expPoints = 20;
+                                break;
+                            case "A":
+                                expPoints = 30;
+                                break;
+                            default:
+                                log.warn("존재하지 않는 랭크 입니다.: {}", quiz.getQuizRank());
+                                break;
+                        }
+                        
+                        memberService.addExpPoints(member.getMemberNum(), expPoints);
+                        log.debug("Added {} experience points to user {}", expPoints, member.getUsername());
+                    } else {
+                        log.debug("Answer is incorrect, not saving to database");
+                    }
                 
-                //정딥 비교 결과 화면
-                return isCorrect ? "정답입니다!" : "오답입니다. 다시 시도하세요.";
+                // 정답 비교 결과 반환
+                return isCorrect;
         }
         
 
