@@ -48,6 +48,13 @@ public class MemberService implements UserDetailsService{
         member.setCreateTime(LocalDateTime.now());
 
         this.memberRepository.save(member);
+        
+        // 회원 가입 시 Exp 엔티티 생성
+        Exp exp = new Exp();
+        exp.setMember(member);
+        exp.setExpPoints(0);  // 기본 경험치 0
+        this.expRepository.save(exp);  
+        
         return member;
     }
     
