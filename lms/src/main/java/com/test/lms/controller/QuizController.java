@@ -44,6 +44,7 @@ public class QuizController {
           
     }
 
+    //퀴즈 정답 제출 및 검증
     // //퀴즈 정답 제출 및 검증
     // @PostMapping("/submit")
     // public ResponseEntity<Boolean> submitQuiz(@RequestParam Long quizId, @RequestParam String answer, @RequestParam boolean isPublic, @RequestParam String userName){ 
