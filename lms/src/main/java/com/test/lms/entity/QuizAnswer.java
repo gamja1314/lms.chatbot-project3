@@ -21,7 +21,10 @@ public class QuizAnswer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 작성한 코드
     private String answer;
+    // 제출한 답안
+    private String output;
 
     @ManyToOne
     @JoinColumn(name = "quiz_id")
