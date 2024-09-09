@@ -48,11 +48,11 @@ public class QuizController {
 
     //퀴즈 정답 제출 및 검증
     @PostMapping("/submit")
-    public ResponseEntity<String> submitQuiz(@RequestParam Long quizId, @RequestParam String answer, @RequestParam boolean isPublic, @RequestParam Long Id){ 
+    public ResponseEntity<Boolean> submitQuiz(@RequestParam Long quizId, @RequestParam String answer, @RequestParam boolean isPublic, @RequestParam String userName){ 
         
-        String resultMessage = quizService.submitQuizAnswer(quizId, answer, isPublic, Id);
+        Boolean isCorrect = quizService.submitQuizAnswer(quizId, answer, isPublic, userName);
 
-        return ResponseEntity.ok(resultMessage);
+        return ResponseEntity.ok(isCorrect);
         //제출 시 정답 공개 여부 설정
         // quizService.submitAnswer(quizId, correct, isPublic, Id);
         // return ResponseEntity.ok("정답 제출 완료");
