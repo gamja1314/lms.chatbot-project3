@@ -22,12 +22,14 @@ public class QuizAnswerService {
 
     	Quiz quiz = quizRepository.findById(quizId).orElse(null);
     	
-        List<QuizAnswer> quizAnswers = quizAnswerRepository.findByQuiz(quiz);
+        //quiz가 null이면 빈 리스트 반환
+        if(quiz == null){
+            return List.of();
+        }
 
-        return quizAnswers;
+        // 퀴즈 답변 목록 조회
+        return quizAnswerRepository.findByQuiz(quiz);
+
     }    
 
-    public void submitQuizAnswer(Long quizId, String correct, boolean isPublic, Long Id){
-
-    }
 }
