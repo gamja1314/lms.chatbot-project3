@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../components/Api';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -21,23 +22,18 @@ const Login = () => {
     formData.append('remember-me', rememberMe);
 
     try {
-      const response = await fetch('http://localhost:8282/api/member/login', {
-        method: 'POST',
+      const response = await api.post('/api/member/login', formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: formData,
-        credentials: 'include', // 세션 관리용 쿠키를 포함
       });
       
-      if (response.ok) {
-        const data = await response.json();
+      if (response.status === 200) {
         alert('Login 성공!');
-        console.log('로그인한 사용자:', data.username);
+        console.log('로그인한 사용자:', response.data.username);
         navigate('/');
       } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.error || '아이디 또는 비밀번호가 일치하지 않습니다.');
+        setErrorMessage('아이디 또는 비밀번호가 일치하지 않습니다.');
       }
     } catch (error) {
       console.error('Login error:', error);
