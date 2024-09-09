@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.test.lms.createform.MemberCreateForm;
+import com.test.lms.entity.Member;
 import com.test.lms.service.MemberService;
 
 import jakarta.validation.Valid;
@@ -61,10 +62,11 @@ public class RestMemberController {
     public Map<String, Object> checkLoginStatus() {
         Map<String, Object> response = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+        Member member = memberService.findByUsername(authentication.getName());
         if (authentication != null && authentication.isAuthenticated()) {
             response.put("loggedIn", true);
             response.put("username", authentication.getName()); // 사용자 이름을 반환
+            response.put("nickname", member.getNickname());
         } else {
             response.put("loggedIn", false);
         }

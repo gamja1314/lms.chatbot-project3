@@ -1,5 +1,7 @@
 package com.test.lms.config;
 
+import java.io.IOException;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -8,13 +10,17 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -45,41 +51,53 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .cors(Customizer.withDefaults())
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.disable())  // CSRF 보호를 비활성화합니다. 프로덕션 환경에서는 활성화하는 것이 좋습니다.
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                 .requestMatchers("/member/signup", "/member/login", "/index", "/css/**", "/js/**", "/", "/api/**").permitAll() 
                 .anyRequest().authenticated()
             )
-            .exceptionHandling(exceptionHandling -> exceptionHandling
-                .authenticationEntryPoint((request, response, authException) -> {
-                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                    response.getWriter().write("{\"error\":\"Unauthorized\"}");
-                })
+            .formLogin(form -> form
+                .loginPage("/member/login")
+                .loginProcessingUrl("/api/member/login")
+                .successHandler(this::loginSuccessHandler)
+                .failureHandler(this::loginFailureHandler)
+                .permitAll()
             )
-            .addFilterBefore(new JsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .logout(logout -> logout
                 .logoutUrl("/api/member/logout")
                 .logoutSuccessHandler((request, response, authentication) -> {
                     response.setStatus(HttpStatus.OK.value());
                     response.getWriter().write("{\"message\":\"Logout successful\"}");
                 })
-                .deleteCookies("JSESSIONID", "XSRF-TOKEN")
+                .deleteCookies("JSESSIONID")
                 .permitAll()
             )
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .maximumSessions(1)
+                .expiredUrl("/login?expired")
+            )
             .rememberMe(rememberMe -> rememberMe
-                    .key("uniqueAndSecretKey")  // RememberMe를 위한 키
-                    .tokenValiditySeconds(86400) // 1일 동안 RememberMe 유지
-                    .userDetailsService(userDetailsService)
-                ); 
+                .key("uniqueAndSecretKey")
+                .tokenValiditySeconds(86400)
+                .userDetailsService(userDetailsService)
+            );
         return http.build();
     }
 
-    @Bean
-    public JsonUsernamePasswordAuthenticationFilter jsonAuthenticationFilter() throws Exception {
-        JsonUsernamePasswordAuthenticationFilter filter = new JsonUsernamePasswordAuthenticationFilter();
-        filter.setAuthenticationManager(authenticationManager(null, userDetailsService, null));
-        filter.setFilterProcessesUrl("/api/member/login");
-        return filter;
+    private void loginSuccessHandler(HttpServletRequest request, HttpServletResponse response, 
+                                    Authentication authentication) throws IOException {
+        response.setStatus(HttpStatus.OK.value());
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write("{\"message\":\"Login successful\", \"username\":\"" 
+                                + authentication.getName() + "\"}");
+    }
+
+    private void loginFailureHandler(HttpServletRequest request, HttpServletResponse response, 
+                                    AuthenticationException exception) throws IOException {
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write("{\"error\":\"Login failed: " + exception.getMessage() + "\"}");
     }
 
     @Bean
