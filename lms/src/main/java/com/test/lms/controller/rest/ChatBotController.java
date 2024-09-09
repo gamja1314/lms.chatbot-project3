@@ -3,11 +3,11 @@ import java.util.Map;
 
 import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.test.lms.entity.ChatHistory;
 import com.test.lms.entity.Member;
 import com.test.lms.entity.Quiz;
 import com.test.lms.service.ChatHistoryService;
@@ -31,7 +31,7 @@ public class ChatBotController {
 	
 	@GetMapping("/ai/generate")
 	public Map generate(@RequestParam(value = "message", defaultValue = "Tell me a joke") String message,
-			@RequestParam(value = "quizId") Long quizId, Authentication authentication) {
+			@RequestParam(value = "quizId") Long quizId) {
 		//역할 및 기능 지정
 		String systemPrompt = "너는 코딩문제를 푸는 사람을 도와주는 친구야." 
 			+ "절대 정답을 말하지 않고 질문이 들어오는 걸 토대로 문제가 해결될 수 있도록 도와줘." 
@@ -57,20 +57,22 @@ public class ChatBotController {
 		log.info("물어본질문 : "+ message);
 		
 		//로그인중인 회원
-		Member member = null;
-	    if (authentication != null) {
-	        member = memberService.findByUsername(authentication.getName());
-	    }
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member member = memberService.findByUsername(authentication.getName());
+		// Member member = null;
+	    // if (authentication != null) {
+		// 	log.info("로그인중인 회원 : "+authentication.getName());
+	    //     member = memberService.findByUsername(authentication.getName());
+	    // }
 	    
 	    if (member == null) {
 	        return Map.of("error", "User not authenticated");
 	    }
-	    log.info("로그인중인 회원 : "+authentication.getName());
 		
 		//API로 보낼 회원의 질문(시스템프롬프트 + 퀴즈내용 + 회원의 질문)
 		String question = systemPrompt+ quiz.getContent() +message;
 		log.info("API로 보낼 질문 : "+question);
-		 
+		
 		//채팅내역저장
 		log.info("챗봇 답변 : "+chatModel.call(question));
 		try {

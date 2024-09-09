@@ -105,8 +105,11 @@ const CodingTestPage = () => {
       setInputMessage('');
 
       try {
-        const response = await axios.get('http://localhost:8282/ai/generate', {
-          params: { message: inputMessage }
+        const response = await axios.get('/ai/generate', {
+          params: {
+            quizId,
+            message: inputMessage
+          }
         });
         console.log('Server response:', response.data);
         const botMessage = { text: response.data.generation, sender: 'bot' };
@@ -170,7 +173,7 @@ const CodingTestPage = () => {
                 <div style={{ flexGrow: 1, overflowY: 'auto', marginBottom: '10px' }}>
                   {messages.map((msg, index) => (
                     <div key={index} style={{ marginBottom: '10px', textAlign: msg.sender === 'user' ? 'right' : 'left' }}>
-                      <span style={{ 
+                      <span className='text-white' style={{ 
                         backgroundColor: msg.sender === 'user' ? '#4CAF50' : '#2196F3', 
                         padding: '5px 10px', 
                         borderRadius: '20px',
