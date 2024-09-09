@@ -82,28 +82,35 @@ public class QuizService {
 
 
         //퀴즈 정답
-        public String submitQuizAnswer(Long quizId, String answer, boolean isPublic, Long Id){
+        public boolean submitQuizAnswer(Long quizId, String answer, boolean isPublic, String userName){
 
                 //quiz ID로 퀴즈 정보 가져오기
                 Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new EntityNotFoundException("퀴즈를 찾을 수 없습니다."));
 
                 //사용자 ID로 멤버 정보 가져오기
-                Member member = memberRepository.findById(Id).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+                Member member = memberRepository.findByUsername(userName).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+                //제출된 답과 퀴즈의 정답을 비교
+                boolean isCorrect = quiz.getCorrect().equalsIgnoreCase(answer);
                 
+
+                // 정답일 경우에만 DB에 저장
+                if(isCorrect){
+                        
+                //QuizAnswer 생성과 저장
                 QuizAnswer quizAnswer = new QuizAnswer();
+
                 quizAnswer.setAnswer(answer);
                 quizAnswer.setPublic(isPublic);
                 quizAnswer.setMember(member);
                 quizAnswer.setQuiz(quiz);
 
-                //제출된 답과 퀴즈의 정답을 비교
-                boolean isCorrect = quiz.getCorrect().equalsIgnoreCase(answer);
-
                 // DB에 저장
                 quizAnswerRepository.save(quizAnswer);
+                }
                 
                 //정딥 비교 결과 화면
-                return isCorrect ? "정답입니다!" : "오답입니다. 다시 시도하세요.";
+                return isCorrect;
         }
         
 
