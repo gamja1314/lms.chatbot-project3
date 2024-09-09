@@ -62,7 +62,7 @@ const PopularProblemsSection = ({ problems }) => (
       <ul>
         {problems.map((problem, index) => (
           <li key={index}>
-            <Link to={`/coding-page/${problem.id}`}>{problem.title}</Link>
+            <Link to={`/coding-page/${problem.quizId}`}>{problem.title}</Link>
             <span className="problem-difficulty">난이도: {problem.quizRank}</span>
           </li>
         ))}

@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-
-import com.test.lms.controller.rest.ChatBotController;
 import com.test.lms.entity.ChatHistory;
 import com.test.lms.entity.Member;
 import com.test.lms.entity.Quiz;
@@ -20,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-
-
 public class ChatHistoryService {
 
 	private final MemberRepository memberRepository;
