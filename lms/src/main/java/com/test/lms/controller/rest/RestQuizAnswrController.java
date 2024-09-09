@@ -29,7 +29,7 @@ public class RestQuizAnswrController {
     public ResponseEntity<List<QuizAnswer>> getQuizAnswer(@PathVariable("quizId") Long quizId){
 
         //QuizAnswer 목록 조회
-        List<QuizAnswer> quizAnswers = quizAnswerService.getQuizAnswer((quizId));
+        List<QuizAnswer> quizAnswers = quizAnswerService.getQuizAnswer(quizId);
 
         //JSON 으로 QuizAnswer 목록 반환
         return ResponseEntity.ok(quizAnswers);
