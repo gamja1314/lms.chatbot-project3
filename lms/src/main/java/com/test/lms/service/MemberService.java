@@ -125,7 +125,15 @@ public class MemberService implements UserDetailsService{
 	
 	    // 회원 경험치 조회
 	    public Exp findExpByMember(Member member) {
-	        return expRepository.findByMember(member)
-	                .orElseThrow(() -> new DataNotFoundException("회원의 경험치를 찾을 수 없습니다."));
+	        Optional<Exp> exp = expRepository.findByMember(member);
+	        if (exp.isPresent())
+	        	return exp.get();
+	        else {
+	        	Exp newExp = new Exp();
+	        	newExp.setExpPoints(0);
+	        	newExp.setMember(member);
+	        	return expRepository.save(newExp);
+	        }
+	        	
 	    }
 }
