@@ -14,9 +14,9 @@ function App() {
     const checkLoginStatus = async () => {
       try {
         const response = await api.get('/api/member/check');
-        if (response.status === 200 && response.data.loggedIn) {
+        if (response.status === 200 && response.data.loggedIn && response.data.username != 'anonymousUser') {
           setIsLoggedIn(true);
-          setUsername(response.data.username);
+          setUsername(response.data.nickname);
           console.log(response.data.username);
         } else {
           setIsLoggedIn(false);
