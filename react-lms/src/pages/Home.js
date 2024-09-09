@@ -58,14 +58,18 @@ const NoticeSection = ({ notices }) => (
 const PopularProblemsSection = ({ problems }) => (
   <div className="card problem-card">
     <h2>인기 문제</h2>
-    <ul>
-      {problems.map((problem, index) => (
-        <li key={index}>
-          <Link to={`/coding-page/${problem.id}`}>{problem.title}</Link>
-          <span className="problem-difficulty">난이도: {problem.rank}</span>
-        </li>
-      ))}
-    </ul>
+    {Array.isArray(problems) && problems.length > 0 ? (
+      <ul>
+        {problems.map((problem, index) => (
+          <li key={index}>
+            <Link to={`/coding-page/${problem.id}`}>{problem.title}</Link>
+            <span className="problem-difficulty">난이도: {problem.rank}</span>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>인기 문제가 없습니다.</p>
+    )}
   </div>
 );
 
