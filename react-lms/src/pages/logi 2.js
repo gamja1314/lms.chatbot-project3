@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
-import api from "../components/Api";
+import api from '../components/Api';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -24,28 +22,18 @@ const Login = () => {
     formData.append('remember-me', rememberMe);
 
     try {
-      const response = await fetch('http://localhost:8282/api/member/login', {
-        method: 'POST',
+      const response = await api.post('/api/member/login', formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: formData,
-        credentials: 'include',
       });
       
-      if (response.ok) {
-        // 로그인 성공 후 즉시 사용자 정보를 가져옵니다.
-        const userInfoResponse = await api.get('/api/member/check');
-        if (userInfoResponse.status === 200 && userInfoResponse.data.loggedIn) {
-          login(userInfoResponse.data);
-          alert('Login 성공!');
-          navigate('/');
-        } else {
-          throw new Error('사용자 정보를 가져오는데 실패했습니다.');
-        }
+      if (response.status === 200) {
+        alert('Login 성공!');
+        console.log('로그인한 사용자:', response.data.username);
+        navigate('/');
       } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.error || '아이디 또는 비밀번호가 일치하지 않습니다.');
+        setErrorMessage('아이디 또는 비밀번호가 일치하지 않습니다.');
       }
     } catch (error) {
       console.error('Login error:', error);

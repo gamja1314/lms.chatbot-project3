@@ -1,31 +1,18 @@
 import React from "react";
 import { Menu } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 import '../css/header.css'
 
-export function Header({ isLoggedIn, setIsLoggedIn, username }) {
+export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isLoggedIn, nickname, logout } = useAuth();
 
   const handleLogout = async (e) => {
     e.preventDefault();
-
-    try {
-      const response = await fetch('/api/member/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
-
-      if (response.ok) {
-        setIsLoggedIn(false);
-        navigate('/login');
-        console.log(`로그아웃 성공, 사용자 이름: ${username}`);
-      } else {
-        console.error('로그아웃 실패');
-      }
-    } catch (error) {
-      console.error('로그아웃 에러', error);
-    }
+    await logout();
+    navigate('/login');
   };
   
   return (
@@ -42,7 +29,7 @@ export function Header({ isLoggedIn, setIsLoggedIn, username }) {
               isLoggedIn ? (
                 <div>
                   <Link to="/logout" className="text-dark text-decoration-none m-4" onClick={handleLogout}>로그아웃</Link>
-                  <span>{username} 님</span>
+                  <span>{nickname ? `${nickname} 님` : '사용자'}</span>
                 </div>
               ) : (
                 <div>
