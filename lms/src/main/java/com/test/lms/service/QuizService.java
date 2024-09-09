@@ -27,6 +27,7 @@ public class QuizService {
         private final QuizRepository quizRepository;
         private final MemberRepository memberRepository;
         private final QuizAnswerRepository quizAnswerRepository;
+        private final MemberService memberService;
 
         //모든 퀴즈 리스트 가져오기
         public List<Quiz> getAllQuizzes(){
@@ -113,9 +114,33 @@ public class QuizService {
         
                     // DB에 저장
                         quizAnswerRepository.save(quizAnswer);
-                } else {
+                        
+                        
+                        int expPoints = 0;
+                    // quizRank에 따라 경험치 결정
+                        switch (quiz.getQuizRank()) {
+                            case "D":
+                                expPoints = 5;
+                                break;
+                            case "C":
+                                expPoints = 10;
+                                break;
+                            case "B":
+                                expPoints = 20;
+                                break;
+                            case "A":
+                                expPoints = 30;
+                                break;
+                            default:
+                                log.warn("존재하지 않는 랭크 입니다.: {}", quiz.getQuizRank());
+                                break;
+                        }
+                        
+                        memberService.addExpPoints(member.getMemberNum(), expPoints);
+                        log.debug("Added {} experience points to user {}", expPoints, member.getUsername());
+                    } else {
                         log.debug("Answer is incorrect, not saving to database");
-                }
+                    }
                 
                 // 정답 비교 결과 반환
                 return isCorrect;
