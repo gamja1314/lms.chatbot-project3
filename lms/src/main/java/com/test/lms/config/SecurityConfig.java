@@ -65,7 +65,7 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())  // CSRF 보호를 비활성화합니다. 프로덕션 환경에서는 활성화하는 것이 좋습니다.
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/member/signup", "/member/login", "/index", "/css/**", "/js/**", "/", "/api/**").permitAll() 
+                .requestMatchers("/member/signup", "/member/login", "/index", "/css/**", "/js/**", "/", "/api/**", "ai/**").permitAll() 
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
