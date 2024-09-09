@@ -107,6 +107,7 @@ public class QuizService {
                         quizAnswer.setPublic(isPublic);
                         quizAnswer.setMember(member);
                         quizAnswer.setQuiz(quiz);
+                        quizAnswer.setSolvedQuizTime(LocalDateTime.now());
         
                     // DB에 저장
                         quizAnswerRepository.save(quizAnswer);
