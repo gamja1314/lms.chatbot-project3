@@ -1,11 +1,20 @@
 package com.test.lms.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.test.lms.entity.Member;
 import com.test.lms.entity.Quiz;
 import com.test.lms.entity.QuizAnswer;
+import com.test.lms.repository.MemberRepository;
 import com.test.lms.repository.QuizAnswerRepository;
 import com.test.lms.repository.QuizRepository;
 
@@ -17,6 +26,7 @@ public class QuizAnswerService {
 
 	private final QuizRepository quizRepository;
     private final QuizAnswerRepository quizAnswerRepository;
+    private final MemberRepository memberRepository;
 
     public List<QuizAnswer> getQuizAnswer(Long quizId){
 
@@ -31,5 +41,33 @@ public class QuizAnswerService {
         return quizAnswerRepository.findByQuiz(quiz);
 
     }    
+
+    //username 기반으로 사용자가 정답을 제출한 QuizAnswer목록 조회
+    public List<QuizAnswer> getQuizAnswerByUserName(String username){
+
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다.: " + username));
+
+        List<QuizAnswer> quizAnswers = quizAnswerRepository.findByMember(member);
+
+        return quizAnswers;
+    }
+
+    //최근 풀이한 5개 문제 ( * 중복되는지 체크해볼것)
+    public List<Quiz> getTop5QuizzesOfDay() {
+    LocalDate today = LocalDate.now();
+    LocalDateTime startOfDay = today.atStartOfDay(); // 오늘 시작 시간 (00:00)
+    LocalDateTime endOfDay = today.atTime(LocalTime.MAX); // 오늘 끝 시간 (23:59:59)
+
+    Pageable pageable = PageRequest.of(0, 5); // 첫 페이지에서 5개의 결과 가져오기
+    List<QuizAnswer> quizAnswers = quizAnswerRepository.findTop5BySolvedQuizTime(startOfDay, endOfDay, pageable);
+    List<Quiz> quizzes = new LinkedList<>();
+
+    for (QuizAnswer quizAnswer : quizAnswers) {
+        quizzes.add(quizAnswer.getQuiz());
+    }
+
+    return quizzes;
+}
 
 }
