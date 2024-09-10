@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.test.lms.entity.Member;
 import com.test.lms.entity.Quiz;
 import com.test.lms.entity.QuizAnswer;
+import com.test.lms.entity.dto.QuizDto;
 import com.test.lms.repository.MemberRepository;
 import com.test.lms.repository.QuizAnswerRepository;
 import com.test.lms.repository.QuizRepository;
@@ -28,7 +29,9 @@ public class QuizService {
         private final MemberRepository memberRepository;
         private final QuizAnswerRepository quizAnswerRepository;
         private final MemberService memberService;
-
+        
+        
+        
         //모든 퀴즈 리스트 가져오기
         public List<Quiz> getAllQuizzes(){
                 return quizRepository.findAll();
@@ -99,7 +102,10 @@ public class QuizService {
                 String trimmedCorrect = quiz.getCorrect().trim();
                 boolean isCorrect = trimmedCorrect.equalsIgnoreCase(trimmedOutput);
                 
-        
+                // 퀴즈 제출 카운트 증가
+                quiz.setCount(quiz.getCount() + 1);
+                quizRepository.save(quiz);  // 변경 사항 저장
+                
                 // 정답일 경우에만 DB에 저장
                 if (isCorrect) {
                         
@@ -146,7 +152,7 @@ public class QuizService {
                 return isCorrect;
         }
         
-
+        
         //개발 진행에 따라 필요하면 복구 또는 삭제
 
         // public Quiz getQuizAnswer(Long quizId, Long Id){

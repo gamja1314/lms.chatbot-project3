@@ -21,5 +21,6 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Long> {
     @Query("SELECT q FROM QuizAnswer q WHERE q.solvedQuizTime BETWEEN :start AND :end ORDER BY q.solvedQuizTime DESC")
     List<QuizAnswer> findTop5BySolvedQuizTime(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, Pageable pageable);
 
-    
+    // 특정 퀴즈에 대해 정답으로 제출된 횟수 조회
+    long countByQuizAndOutput(Quiz quiz, String output);
 }

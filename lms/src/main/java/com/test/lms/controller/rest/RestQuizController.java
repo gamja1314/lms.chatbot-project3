@@ -69,4 +69,5 @@ public class RestQuizController {
 
         return ResponseEntity.ok(top5Quizzes);
     }
+    
 }
