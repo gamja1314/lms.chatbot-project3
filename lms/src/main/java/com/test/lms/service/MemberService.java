@@ -168,11 +168,11 @@ public class MemberService implements UserDetailsService{
 	        member.setPassword(passwordEncoder.encode(newPassword));
 	        memberRepository.save(member);
 	    }
+	    
+	    public List<ExpDto> getTop5MembersByExp() {
+	    	Pageable topFive = PageRequest.of(0, 5);
+	    	return memberRepository.findTop5MembersByExp(topFive);
+	    }
 }	
 
 
-		public List<ExpDto> getTop5MembersByExp() {
-			Pageable topFive = PageRequest.of(0, 5);
-			return memberRepository.findTop5MembersByExp(topFive);
-		}
-}
