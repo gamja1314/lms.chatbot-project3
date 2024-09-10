@@ -16,4 +16,10 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     @Query("SELECT q FROM Quiz q ORDER BY q.count DESC")
     List<Quiz> findTop5QuizzesByCountDesc(Pageable pageable);
+
+    //제목 또는 내용으로 검색
+    List<Quiz> findByTitleContainingOrContentContaining(String title, String content);
+    
+    //제목, 내용 모두 포함해서 검색
+    List<Quiz> findByTitleContainingAndContentContaining(String title, String content);
 }

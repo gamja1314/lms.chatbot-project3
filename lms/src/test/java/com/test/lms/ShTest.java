@@ -1,5 +1,6 @@
 package com.test.lms;
 
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
@@ -17,5 +18,10 @@ public class ShTest {
     //     qa.setAnswerSave("최상배 강사님");
 
     //     System.out.println(qa.showQuizAnswer());
+    // }
+
+    // @Test
+    // public void noticeTest(){
+
     // }
 }
