@@ -30,7 +30,7 @@ public class ChatHistoryService {
 
 	//대화내역 생성
 	public void ChatHistoryCreate(Member member, Quiz quiz, String memberContent, String botContent) {
-		log.debug("ChatHistoryCreate 메서드 시작");
+		log.info("ChatHistoryCreate 메서드 시작");
 		ChatHistory chatHistory = new ChatHistory();
 		chatHistory.setMember(member);
 		chatHistory.setQuiz(quiz);
@@ -40,7 +40,7 @@ public class ChatHistoryService {
 
 
 		this.chatHistoryRepository.save(chatHistory);
-		log.debug("ChatHistoryCreate 메서드 끝");
+		log.info("ChatHistoryCreate 메서드 끝");
 
 	}
 

@@ -26,7 +26,7 @@ const customMarkdownStyle = `
   }
   .markdown-body p,
   .markdown-body li {
-    color: #B0BEC5;
+    color: #fff;
   }
   .markdown-body code {
     background-color: #37474F;
@@ -198,12 +198,13 @@ const CodingTestPage = () => {
                   padding: '10px',
                   display: 'flex',
                   flexDirection: 'column',
+                  
                 }}
               >
                 <div style={{ flexGrow: 1, overflowY: 'auto', marginBottom: '10px' }}>
                   {messages.map((msg, index) => (
                     <div key={index} style={{ marginBottom: '10px', textAlign: msg.sender === 'user' ? 'right' : 'left' }}>
-                      <span className='text-white' style={{ 
+                      <div className='text-white' style={{ 
                         backgroundColor: msg.sender === 'user' ? '#4CAF50' : '#2196F3', 
                         padding: '5px 10px', 
                         borderRadius: '20px',
@@ -211,8 +212,8 @@ const CodingTestPage = () => {
                         maxWidth: '80%',
                         wordWrap: 'break-word'
                       }}>
-                        {msg.text}
-                      </span>
+                        <ReactMarkdown className="markdown-body">{msg.text}</ReactMarkdown>
+                      </div>
                     </div>
                   ))}
                 </div>
