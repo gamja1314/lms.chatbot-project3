@@ -167,7 +167,56 @@ const CodingTestPage = () => {
             ) : (
               <p>Loading problem...</p>
             )}
-            <div 
+            
+          </div>
+
+          {/* Code Editor and Output */}
+          <div className="col-md-6 p-4 d-flex flex-column">
+            <h2 className="mb-4">Code Editor</h2>
+            <div>
+              <CodeMirror
+                value={code}
+                options={{
+                  mode: 'javascript',
+                  theme: 'material',
+                  lineNumbers: true
+                }}
+                onBeforeChange={(editor, data, value) => setCode(value)}
+              />
+            </div>
+            <div className="form-check mb-3">
+              <input
+                type="checkbox"
+                checked={isPublic}
+                onChange={(e) => setIsPublic(e.target.checked)}
+                className="form-check-input"
+                id="publicCheck"
+              />
+              <label className="form-check-label" htmlFor="publicCheck">
+                정답 공개
+              </label>
+            </div>
+            <div>
+              <button onClick={runCode} className="btn btn-primary mx-3 mb-3">
+                Run Code
+              </button>
+              <button onClick={submitQuiz} className='btn btn-secondary mb-3'>
+                제출
+              </button>
+            </div>
+            <div>
+              <h3>Output:</h3>
+              <pre className="p-2 rounded" style={{ backgroundColor: '#1E272C', color: '#B0BEC5' }}>{output}</pre>
+            </div>
+          </div>
+        </div>
+        <iframe 
+          ref={iframeRef} 
+          style={{display: 'none'}} 
+          title="Code Execution Environment"
+        ></iframe>
+      </div>
+      <div 
               onClick={() => setIsChatOpen(!isChatOpen)}
               style={{
                 position: 'absolute',
@@ -242,54 +291,6 @@ const CodingTestPage = () => {
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Code Editor and Output */}
-          <div className="col-md-6 p-4 d-flex flex-column">
-            <h2 className="mb-4">Code Editor</h2>
-            <div>
-              <CodeMirror
-                value={code}
-                options={{
-                  mode: 'javascript',
-                  theme: 'material',
-                  lineNumbers: true
-                }}
-                onBeforeChange={(editor, data, value) => setCode(value)}
-              />
-            </div>
-            <div className="form-check mb-3">
-              <input
-                type="checkbox"
-                checked={isPublic}
-                onChange={(e) => setIsPublic(e.target.checked)}
-                className="form-check-input"
-                id="publicCheck"
-              />
-              <label className="form-check-label" htmlFor="publicCheck">
-                정답 공개
-              </label>
-            </div>
-            <div>
-              <button onClick={runCode} className="btn btn-primary mx-3 mb-3">
-                Run Code
-              </button>
-              <button onClick={submitQuiz} className='btn btn-secondary mb-3'>
-                제출
-              </button>
-            </div>
-            <div>
-              <h3>Output:</h3>
-              <pre className="p-2 rounded" style={{ backgroundColor: '#1E272C', color: '#B0BEC5' }}>{output}</pre>
-            </div>
-          </div>
-        </div>
-        <iframe 
-          ref={iframeRef} 
-          style={{display: 'none'}} 
-          title="Code Execution Environment"
-        ></iframe>
-      </div>
     </div>
   );
 };
