@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -70,4 +71,55 @@ public class RestQuizController {
         return ResponseEntity.ok(top5Quizzes);
     }
     
+    @PostMapping("/edit/{quizId}")
+    public ResponseEntity<String> editHistoryQuiz(
+                @PathVariable("quizId") Long quizId, 
+                @RequestParam("title") String title, 
+                @RequestParam("content") String content, 
+                @RequestParam("correct") String correct,
+                @RequestParam("quizRank") String quizRank){
+        
+    String decodedTitle = URLDecoder.decode(title, StandardCharsets.UTF_8);
+    String decodedContent = URLDecoder.decode(content, StandardCharsets.UTF_8);
+    String decodedCorrect = URLDecoder.decode(correct, StandardCharsets.UTF_8);
+
+        if(quizId != null && quizId>0){
+
+            //수정
+            Quiz quiz = new Quiz();
+            quiz.setQuizId(quizId);
+            quiz.setTitle(decodedTitle);
+            quiz.setContent(decodedContent);
+            quiz.setCorrect(decodedCorrect);
+            quiz.setQuizRank(quizRank);
+
+            Quiz updatedQuiz = quizService.updateQuiz(quiz);
+
+            return ResponseEntity.ok("퀴즈 수정 완료! : ID" + updatedQuiz.getQuizId());
+            } else {
+            //생성
+            quizService.create(decodedTitle, decodedContent, decodedCorrect, quizRank);
+            return ResponseEntity.ok("퀴즈가 생성되었습니다.");
+            }
+
+    }
+
+    @PutMapping("/edit")
+    public ResponseEntity<String> editQuiz(
+                @RequestParam("title") String title, 
+                @RequestParam("content") String content, 
+                @RequestParam("correct") String correct,
+                @RequestParam("quizRank") String quizRank){
+        
+        String decodedTitle = URLDecoder.decode(title, StandardCharsets.UTF_8);
+        String decodedContent = URLDecoder.decode(content, StandardCharsets.UTF_8);
+        String decodedCorrect = URLDecoder.decode(correct, StandardCharsets.UTF_8);
+
+
+        //수정
+        quizService.create(decodedTitle, decodedContent, decodedCorrect, quizRank);
+        return ResponseEntity.ok("퀴즈가 생성되었습니다.");
+        }
+
 }
+
