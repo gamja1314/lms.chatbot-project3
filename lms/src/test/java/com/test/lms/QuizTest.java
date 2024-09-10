@@ -24,6 +24,8 @@ public class QuizTest {
             String correct = (i % 5 == 0) ? "Spring Boot" : "Spring Framework";
             String output = "";
             quizService.create(title, content, correct, quizRank, output);
+
+            // quizService.create(title, content, correct, quizRank);
         }
     }
 
