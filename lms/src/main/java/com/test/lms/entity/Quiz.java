@@ -40,6 +40,10 @@ public class Quiz {
     private String quizRank;
 
     private LocalDateTime createDate;
+    
+    // 제출 카운트
+    @Column(nullable=false)
+    private int count = 0;
 
     //출력예시
     public String quizAnswer(){

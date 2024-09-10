@@ -38,6 +38,10 @@ public class QuizAnswer {
     @Column(nullable = false, name = "is_public")
     private boolean isPublic;
 
+    //퀴즈 정답과 오답 모두 DB에 저장
+    @Column(nullable = false, name = "is_correct")
+    private boolean isCorrect;
+
     //문제를 푼 날짜를 기록 : 메인 페이지 일일퀴즈 랭킹 표기에 사용
     @Column(nullable = false)
     private LocalDateTime solvedQuizTime;
