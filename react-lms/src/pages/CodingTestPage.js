@@ -83,7 +83,6 @@ const CodingTestPage = () => {
     } catch (error) {
       console.error('Error fetching chat history:', error);
       // 오류 발생 시 사용자에게 알림
-      alert('채팅 내역을 불러오는데 실패했습니다.');
     }
   };
   

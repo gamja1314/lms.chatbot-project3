@@ -33,8 +33,7 @@ const ChallengesSection = ({ challenges }) => (
     <ul>
       {challenges.map((challenge, index) => (
         <li key={index}>
-          <span className="challenge-title">{challenge.title}</span>
-          <p>{challenge.description}</p>
+          <Link to={`/challenges/${challenge.id}`} className="challenge-title text-decoration-none text-dark">{challenge.title}</Link>
         </li>
       ))}
     </ul>
@@ -86,6 +85,8 @@ const Home = () => {
         setProblems(response.data);
         const expResponse = await axios.get('/api/member/exp-top');
         setRankings(expResponse.data);
+        const challengeResponse = await axios.get('/api/challenges/top5');
+        setChallenges(challengeResponse.data);
       } catch (error) {
         console.error('데이터를 불러오는데 실패하였습니다. :', error);
       }
