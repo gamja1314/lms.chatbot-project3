@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.test.lms.createform.MemberCreateForm;
@@ -92,5 +93,27 @@ public class RestMemberController {
         response.put("expPoints", exp.getExpPoints());
 
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/check-username")
+    public ResponseEntity<?> checkUsernameDuplicate(@RequestParam("username") String username) {
+        boolean isDuplicate = memberService.existsByUsername(username);
+        
+        if (isDuplicate) {
+            return ResponseEntity.badRequest().body(Map.of("error", "이미 사용 중인 아이디입니다."));
+        } else {
+            return ResponseEntity.ok().body(Map.of("message", "사용 가능한 아이디입니다."));
+        }
+    }
+    
+    @GetMapping("/check-nickname")
+    public ResponseEntity<?> checkNicknameDuplicate(@RequestParam("nickname") String nickname) {
+        boolean isDuplicate = memberService.existsByNickname(nickname);
+        
+        if (isDuplicate) {
+            return ResponseEntity.badRequest().body(Map.of("error", "이미 사용 중인 닉네임입니다."));
+        } else {
+            return ResponseEntity.ok().body(Map.of("message", "사용 가능한 닉네임입니다."));
+        }
     }
 }

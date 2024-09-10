@@ -90,7 +90,7 @@ const CodingTest = () => {
           <tr>
             <th>제목</th>
             <th>난이도</th>
-            <th>제출한 사람</th>
+            <th>시도 횟수</th>
             <th>정답률</th>
           </tr>
         </thead>
@@ -99,7 +99,7 @@ const CodingTest = () => {
             <tr key={quiz.quizId} onClick={() => handleQuizClick(quiz.quizId)} style={{cursor: 'pointer'}}>
               <td>{quiz.title}</td>
               <td>{quiz.quizRank}</td>
-              <td>{quiz.solvedBy}명</td>
+              <td>{quiz.solvedBy}회</td>
               <td>{quiz.correctRate}</td>
             </tr>
           ))}

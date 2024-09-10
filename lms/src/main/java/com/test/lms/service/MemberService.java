@@ -142,4 +142,13 @@ public class MemberService implements UserDetailsService{
 	        }
 	        	
 	    }
+	    
+	    // 회원 중복 체크
+	    public boolean existsByUsername(String username) {
+	        return memberRepository.findByUsername(username).isPresent();
+	    }
+	    // 닉네임 중복 체크
+	    public boolean existsByNickname(String nickname) {
+	        return memberRepository.findByNickname(nickname).isPresent();
+	    }
 }
