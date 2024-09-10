@@ -16,7 +16,7 @@ public class ChatBotTest {
 	@Autowired
     private MockMvc mockMvc;
 
-    @Test
+   @Test
     @WithMockUser(username = "test", roles = "USER")
     public void testGenerateEndpoint() throws Exception {
         Long quizId = 2L; // 데이터베이스에 존재하는 퀴즈 ID
@@ -27,6 +27,19 @@ public class ChatBotTest {
                 .param("quizId", quizId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.generation").exists());
+    }
+    
+    @Test
+    @WithMockUser(username = "test", roles = "USER")
+    public void testGetCahtHistory() throws Exception {
+        Long quizId = 2L; // 데이터베이스에 존재하는 퀴즈 ID
+        
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/chat-history/{quizId}", quizId))
+        		.andExpect(status().isOk())
+                .andExpect(jsonPath("$.chatHistoryNum").exists())
+                .andExpect(jsonPath("$.botContent").exists())
+                .andExpect(jsonPath("$.memberContent").exists());
     }
 }
 

@@ -1,5 +1,6 @@
 package com.test.lms.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +15,7 @@ public interface ChatHistoryRepository extends JpaRepository<ChatHistory, Long> 
 
 
 	
-    Optional<ChatHistory> findByMemberAndQuiz(Member member, Quiz quiz);
+    List<ChatHistory> findByMemberAndQuiz(Member member, Quiz quiz);
 }
 
 	

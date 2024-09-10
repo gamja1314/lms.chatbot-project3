@@ -28,7 +28,7 @@ public class ChatBotController {
 	private final ChatHistoryService chatHistoryService;
 	private final MemberService memberService;
 
-	
+	//챗봇기능
 	@GetMapping("/ai/generate")
 	public Map generate(@RequestParam(value = "message", defaultValue = "Tell me a joke") String message,
 			@RequestParam(value = "quizId") Long quizId) {
