@@ -1,10 +1,16 @@
 package com.test.lms.controller;
 
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -44,17 +50,38 @@ public class QuizController {
           
     }
 
-    // @PostMapping("/quizEdit/{quizId}")
-    // public ResponseEntity<String> editHistoryQuiz(
-    //             @PathVariable("quizId") Long quizId, 
-    //             @RequestParam("title") String title, 
-    //             @RequestParam("content") String content, 
-    //             @RequestParam("correct") String correct,
-    //             @RequestParam("quizRank") String quizRank){
+    @PostMapping("/quizEdit/{quizId}")
+    public ResponseEntity<String> editHistoryQuiz(
+                @PathVariable("quizId") Long quizId, 
+                @RequestParam("title") String title, 
+                @RequestParam("content") String content, 
+                @RequestParam("correct") String correct,
+                @RequestParam("quizRank") String quizRank){
         
-            
+    String decodedTitle = URLDecoder.decode(title, StandardCharsets.UTF_8);
+    String decodedContent = URLDecoder.decode(content, StandardCharsets.UTF_8);
+    String decodedCorrect = URLDecoder.decode(correct, StandardCharsets.UTF_8);
 
-    // }
+        if(quizId != null && quizId>0){
+
+            //수정
+            Quiz quiz = new Quiz();
+            quiz.setQuizId(quizId);
+            quiz.setTitle(decodedTitle);
+            quiz.setContent(decodedContent);
+            quiz.setCorrect(decodedCorrect);
+            quiz.setQuizRank(quizRank);
+
+            Quiz updatedQuiz = quizService.updateQuiz(quiz);
+
+            return ResponseEntity.ok("퀴즈 수정 완료! : ID" + updatedQuiz.getQuizId());
+            } else {
+            //생성
+            quizService.create(decodedTitle, decodedContent, decodedCorrect, quizRank);
+            return ResponseEntity.ok("퀴즈가 생성되었습니다.");
+            }
+
+    }
 
     //postamapping 사용해서 1. 퀴즈만들기 기능 2. URL quizEdit으로 하고 수정은 quizId  @PathVariable어쩌구 써서 있으면 수정 없으면 등록되게
     
