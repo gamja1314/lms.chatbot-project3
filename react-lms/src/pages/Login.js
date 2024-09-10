@@ -44,8 +44,7 @@ const Login = () => {
           throw new Error('사용자 정보를 가져오는데 실패했습니다.');
         }
       } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.error || '아이디 또는 비밀번호가 일치하지 않습니다.');
+        setErrorMessage('아이디, 비밀번호를 확인해주세요.');
       }
     } catch (error) {
       console.error('Login error:', error);
