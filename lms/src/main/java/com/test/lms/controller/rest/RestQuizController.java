@@ -87,5 +87,11 @@ public class RestQuizController {
         return ResponseEntity.ok("퀴즈가 생성되었습니다.");
     }
 
+    @GetMapping("/counts")
+    public List<Quiz> top5Quizzes() {
+        return quizService.getTop5QuizzesByCount();
+    }
+    
+
 }
 

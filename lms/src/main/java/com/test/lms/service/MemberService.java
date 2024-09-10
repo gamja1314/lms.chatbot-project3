@@ -1,8 +1,11 @@
 package com.test.lms.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.test.lms.entity.Exp;
 import com.test.lms.entity.Member;
+import com.test.lms.entity.dto.ExpDto;
 import com.test.lms.exception.DataNotFoundException;
 import com.test.lms.repository.ExpRepository;
 import com.test.lms.repository.MemberRepository;
@@ -151,4 +155,9 @@ public class MemberService implements UserDetailsService{
 	    public boolean existsByNickname(String nickname) {
 	        return memberRepository.findByNickname(nickname).isPresent();
 	    }
+
+		public List<ExpDto> getTop5MembersByExp() {
+			Pageable topFive = PageRequest.of(0, 5);
+			return memberRepository.findTop5MembersByExp(topFive);
+		}
 }
