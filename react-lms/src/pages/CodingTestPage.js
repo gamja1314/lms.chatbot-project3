@@ -4,36 +4,35 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 import axios from 'axios';
 import { useAuth } from '../AuthContext';
 import { MessageCircle, Send } from 'lucide-react';
-import { Viewer } from '@toast-ui/react-editor';
+import ReactMarkdown from 'react-markdown';
 
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/mode/javascript/javascript';
-import '@toast-ui/editor/dist/toastui-editor-viewer';
 
 // 새로운 스타일 추가
-const customViewerStyle = `
-  .toastui-editor-contents {
+const customMarkdownStyle = `
+  .markdown-body {
     font-size: 16px;
     color: #E0E0E0;
   }
-  .toastui-editor-contents h1,
-  .toastui-editor-contents h2,
-  .toastui-editor-contents h3,
-  .toastui-editor-contents h4,
-  .toastui-editor-contents h5,
-  .toastui-editor-contents h6 {
+  .markdown-body h1,
+  .markdown-body h2,
+  .markdown-body h3,
+  .markdown-body h4,
+  .markdown-body h5,
+  .markdown-body h6 {
     color: #FFFFFF;
   }
-  .toastui-editor-contents p,
-  .toastui-editor-contents li {
+  .markdown-body p,
+  .markdown-body li {
     color: #B0BEC5;
   }
-  .toastui-editor-contents code {
+  .markdown-body code {
     background-color: #37474F;
     color: #FF8A65;
   }
-  .toastui-editor-contents pre {
+  .markdown-body pre {
     background-color: #263238;
   }
 `;
@@ -160,10 +159,9 @@ const CodingTestPage = () => {
             <h2 className="mb-4">Problem</h2>
             {problem ? (
               <>
-                <h3>{problem.title}</h3>
-                <style>{customViewerStyle}</style>
+                <style>{customMarkdownStyle}</style>
                 <div style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                  <Viewer initialValue={problem.content} />
+                  <ReactMarkdown className="markdown-body">{problem.content}</ReactMarkdown>
                 </div>
               </>
             ) : (
