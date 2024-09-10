@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import axios from 'axios';
-import { Editor } from '@toast-ui/react-editor';
-import '@toast-ui/editor/dist/toastui-editor.css';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const QuizForm = () => {
     const { quizId } = useParams();
     const navigate = useNavigate();
-    const editorRef = useRef();
     const [quiz, setQuiz] = useState({
         title: '',
         content: '',
@@ -20,8 +19,6 @@ const QuizForm = () => {
         try {
             const response = await axios.get(`/api/quiz/detail/${quizId}`);
             setQuiz(response.data);
-            // 에디터에 기존 내용 설정
-            editorRef.current?.getInstance().setHTML(response.data.content);
         } catch (error) {
             console.error('Error fetching quiz:', error);
         }
@@ -41,15 +38,20 @@ const QuizForm = () => {
         }));
     };
 
+    const handleContentChange = (content) => {
+        setQuiz(prevQuiz => ({
+            ...prevQuiz,
+            content: content
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const content = editorRef.current?.getInstance().getHTML();
         try {
-            const quizData = { ...quiz, content };
             if (quizId) {
-                await axios.put(`/api/quiz/edit/${quizId}`, quizData);
+                await axios.put(`/api/quiz/edit/${quizId}`, quiz);
             } else {
-                await axios.post('/api/quiz/edit', quizData);
+                await axios.post('/api/quiz/edit', quiz);
             }
             navigate('/admin/quiz');
         } catch (error) {
@@ -73,13 +75,11 @@ const QuizForm = () => {
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>내용</Form.Label>
-                    <Editor
-                        ref={editorRef}
-                        initialValue={quiz.content}
-                        previewStyle="vertical"
-                        height="300px"
-                        initialEditType="wysiwyg"
-                        useCommandShortcut={true}
+                    <ReactQuill
+                        theme="snow"
+                        value={quiz.content}
+                        onChange={handleContentChange}
+                        style={{ height: '300px', marginBottom: '50px' }}
                     />
                 </Form.Group>
                 <Form.Group className="mb-3">
