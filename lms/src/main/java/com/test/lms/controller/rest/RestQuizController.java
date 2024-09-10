@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -87,11 +88,43 @@ public class RestQuizController {
         return ResponseEntity.ok("퀴즈가 생성되었습니다.");
     }
 
+    //퀴즈 삭제 기능
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteQuiz(@PathVariable("quizId") Long quizId){
+        
+        //quizId로 퀴즈 찾기
+        Quiz quiz = quizService.getQuizById(quizId); 
+        if (quiz != null) {
+            quizService.delete(quiz);
+            return ResponseEntity.ok("삭제 완료 되었습니다. ID: " + quizId);
+        } else {
+            return ResponseEntity.status(404).body("퀴즈를 찾을 수 없습니다. ID: " + quizId);
+        }
+    }
+
     @GetMapping("/counts")
     public List<Quiz> top5Quizzes() {
         return quizService.getTop5QuizzesByCount();
     }
     
+    //퀴즈 검색
+    @GetMapping("/search")
+    public ResponseEntity<List<Quiz>> searchQuizzes(@RequestParam("keyword") String keyword, @RequestParam(value = "searchType", defaultValue = "OR") String searchType){
 
+        List<Quiz> quizzes;
+        
+        //제목, 내용 각각 검색
+        if ("OR".equalsIgnoreCase(searchType)) {
+            quizzes = quizService.searchByTitleOrContent(keyword);
+        }
+        //제목 + 내용 검색
+        else if ("AND".equalsIgnoreCase(searchType)) {
+            quizzes = quizService.searchByTitleAndContent(keyword);
+        } else {
+            return ResponseEntity.badRequest().body(null);  // 잘못된 searchType 처리
+        }
+
+        return ResponseEntity.ok(quizzes);
+    }
 }
 

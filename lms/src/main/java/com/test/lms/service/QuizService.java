@@ -162,6 +162,16 @@ public class QuizService {
             return quizRepository.findTop5QuizzesByCountDesc(topFive);
         }
 
+        //퀴즈 검색하기
+
+        //제목 또는 내용으로 검색
+        public List<Quiz> searchByTitleOrContent(String keyword) {
+                return quizRepository.findByTitleContainingOrContentContaining(keyword, keyword);
+        }
+        // 제목과 내용 모두에 키워드가 포함된 퀴즈 검색
+        public List<Quiz> searchByTitleAndContent(String keyword) {
+                return quizRepository.findByTitleContainingAndContentContaining(keyword, keyword);
+        }
         
         //개발 진행에 따라 필요하면 복구 또는 삭제
 
