@@ -20,7 +20,7 @@ const QuizForm = () => {
             const response = await axios.get(`/api/quiz/detail/${quizId}`);
             setQuiz(response.data);
         } catch (error) {
-            console.error('Error fetching quiz:', error);
+            console.error('퀴즈 불러오기 중 오류 발생:', error);
         }
     }, [quizId]);
 
@@ -48,14 +48,25 @@ const QuizForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const encodedQuiz = {
+                title: encodeURIComponent(quiz.title),
+                content: encodeURIComponent(quiz.content),
+                correct: encodeURIComponent(quiz.correct),
+                quizRank: quiz.quizRank
+            };
+
+            const queryString = new URLSearchParams(encodedQuiz).toString();
+
             if (quizId) {
-                await axios.put(`/api/quiz/edit/${quizId}`, quiz);
+                // 퀴즈 수정 로직
+                await axios.post(`/api/quiz/edit/${quizId}?${queryString}`);
             } else {
-                await axios.post('/api/quiz/edit', quiz);
+                // 퀴즈 등록 로직
+                await axios.put(`/api/quiz/edit?${queryString}`);
             }
-            navigate('/admin/quiz');
+            navigate('/admin/quiz'); // 퀴즈 등록/수정 후 이동할 페이지
         } catch (error) {
-            console.error('Error saving quiz:', error);
+            console.error('퀴즈 저장 중 오류 발생:', error);
         }
     };
 
