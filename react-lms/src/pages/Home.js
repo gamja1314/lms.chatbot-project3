@@ -57,7 +57,7 @@ const NoticeSection = ({ notices }) => (
 
 const PopularProblemsSection = ({ problems }) => (
   <div className="card problem-card">
-    <h2>인기 문제</h2>
+    <h2>인기 문제 - TOP 5</h2>
     {Array.isArray(problems) && problems.length > 0 ? (
       <ul>
         {problems.map((problem, index) => (

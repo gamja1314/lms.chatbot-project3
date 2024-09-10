@@ -44,6 +44,19 @@ public class QuizController {
           
     }
 
+    // @PostMapping("/quizEdit/{quizId}")
+    // public ResponseEntity<String> editHistoryQuiz(
+    //             @PathVariable("quizId") Long quizId, 
+    //             @RequestParam("title") String title, 
+    //             @RequestParam("content") String content, 
+    //             @RequestParam("correct") String correct,
+    //             @RequestParam("quizRank") String quizRank){
+        
+            
+
+    // }
+
+    //postamapping 사용해서 1. 퀴즈만들기 기능 2. URL quizEdit으로 하고 수정은 quizId  @PathVariable어쩌구 써서 있으면 수정 없으면 등록되게
     
     //퀴즈 정답 제출 및 검증
     // //퀴즈 정답 제출 및 검증
