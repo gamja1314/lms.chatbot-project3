@@ -38,8 +38,8 @@ export function Header() {
             <Link to="/coding-test" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1rem' }}>
               Coding Test
             </Link>
-            <Link to="/qna" style={{ ...linkStyle, textDecoration: 'none' }}>
-              Q&A
+            <Link to="/solved" style={{ ...linkStyle, textDecoration: 'none' }}>
+              SolvedQuiz
             </Link>
           </div>
           <div>

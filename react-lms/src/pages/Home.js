@@ -17,9 +17,9 @@ const RankingSection = ({ rankings }) => (
       <tbody>
         {rankings.map((rank, index) => (
           <tr key={index}>
-            <td>{rank.position}</td>
-            <td>{rank.username}</td>
-            <td>{rank.score}</td>
+            <td>{index+1}</td>
+            <td>{rank.nickname}</td>
+            <td>{rank.expPoints}</td>
           </tr>
         ))}
       </tbody>
@@ -82,8 +82,10 @@ const Home = () => {
   useEffect(() => {
     const fetchPopularProblems = async () => {
       try {
-        const response = await axios.get('/api/quizAnswer/top5');
+        const response = await axios.get('/api/quiz/counts');
         setProblems(response.data);
+        const expResponse = await axios.get('/api/member/exp-top');
+        setRankings(expResponse.data);
       } catch (error) {
         console.error('데이터를 불러오는데 실패하였습니다. :', error);
       }

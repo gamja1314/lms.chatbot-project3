@@ -10,7 +10,6 @@ import com.test.lms.entity.dto.QuizDto;
 import com.test.lms.repository.QuizAnswerRepository;
 import com.test.lms.repository.QuizRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,7 +27,7 @@ public class QuizDtoService {
 	        // Quiz 엔티티를 QuizDto로 변환하며 정답률을 포함
 	        return quizPage.map(quiz -> {
 	            long totalSubmissions = quiz.getCount();
-	            long correctSubmissions = quizAnswerRepository.countByQuizAndOutput(quiz, quiz.getCorrect().trim());
+	            long correctSubmissions = quizAnswerRepository.countByQuizAndOutput(quiz, quiz.getOutput().trim());
 	            double correctRate = totalSubmissions == 0 ? 0.0 : ((double) correctSubmissions / totalSubmissions) * 100;
 
 	            // correctRate를 String으로 변환하여 QuizDto 생성

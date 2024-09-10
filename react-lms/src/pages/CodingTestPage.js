@@ -71,6 +71,21 @@ const CodingTestPage = () => {
       alert('퀴즈 제출에 실패했습니다. 다시 시도해주세요.');
     }
   };
+
+  const fetchChatHistory = async () => {
+    try {
+      const response = await axios.get(`/api/chat-history/${quizId}`);
+      const chatHistory = response.data.map(chat => ([
+        { text: chat.memberContent, sender: 'user' },
+        { text: chat.botContent, sender: 'bot' }
+      ])).flat();
+      setMessages(chatHistory);
+    } catch (error) {
+      console.error('Error fetching chat history:', error);
+      // 오류 발생 시 사용자에게 알림
+      alert('채팅 내역을 불러오는데 실패했습니다.');
+    }
+  };
   
   useEffect(() => {
     const fetchProblem = async () => {
@@ -82,6 +97,7 @@ const CodingTestPage = () => {
       }
     };
 
+    fetchChatHistory();
     fetchProblem();
   }, [quizId]);
 

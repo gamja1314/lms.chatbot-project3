@@ -1,6 +1,7 @@
 package com.test.lms.controller.rest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.test.lms.createform.MemberCreateForm;
 import com.test.lms.entity.Exp;
 import com.test.lms.entity.Member;
+import com.test.lms.entity.dto.ExpDto;
 import com.test.lms.service.MemberService;
 
 import jakarta.validation.Valid;
@@ -116,4 +118,10 @@ public class RestMemberController {
             return ResponseEntity.ok().body(Map.of("message", "사용 가능한 닉네임입니다."));
         }
     }
+
+    @GetMapping("/exp-top")
+    public List<ExpDto> top5Exp() {
+        return memberService.getTop5MembersByExp();
+    }
+    
 }
