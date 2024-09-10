@@ -90,7 +90,7 @@ const CodingTest = () => {
           <tr>
             <th>제목</th>
             <th>난이도</th>
-            <th>완료한 사람</th>
+            <th>제출한 사람</th>
             <th>정답률</th>
           </tr>
         </thead>
