@@ -25,12 +25,16 @@ public class Quiz {
     private String title;
 
     //퀴즈 내용
-    @Column(nullable=false, columnDefinition = "TEXT")
+    @Column(nullable=false, columnDefinition = "LONGTEXT")
     private String content;
 
-    //퀴즈의 정답
-    @Column(nullable=false)
+    //퀴즈의 코드
+    @Column(nullable=false, columnDefinition = "LONGTEXT")
     private String correct;
+
+    // 코드 실행 아웃풋
+    @Column(nullable=false)
+    private String output;
 
     @Column(nullable=false)
     private String quizRank;

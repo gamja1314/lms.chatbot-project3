@@ -68,6 +68,7 @@ public class RestMemberController {
             response.put("loggedIn", true);
             response.put("username", authentication.getName()); // 사용자 이름을 반환
             response.put("nickname", member.getNickname());
+            response.put("role", member.getRole());
         } else {
             response.put("loggedIn", false);
         }

@@ -7,7 +7,7 @@ import '../css/header.css';
 export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, nickname, logout } = useAuth();
+  const { isLoggedIn, nickname, logout, isAdmin } = useAuth();
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -49,6 +49,11 @@ export function Header() {
                   <Link to="/logout" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1rem' }} onClick={handleLogout}>
                     로그아웃
                   </Link>
+                  {isAdmin() && (
+                    <Link to="/admin" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1rem' }}>
+                      관리자 페이지
+                    </Link>
+                  )}
                   <Link to="/my-page" style={{ ...linkStyle, textDecoration: 'none' }}>
                     {nickname} 님
                   </Link>

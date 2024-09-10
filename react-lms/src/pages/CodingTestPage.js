@@ -4,10 +4,39 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 import axios from 'axios';
 import { useAuth } from '../AuthContext';
 import { MessageCircle, Send } from 'lucide-react';
+import { Viewer } from '@toast-ui/react-editor';
 
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/mode/javascript/javascript';
+import '@toast-ui/editor/dist/toastui-editor-viewer';
+
+// 새로운 스타일 추가
+const customViewerStyle = `
+  .toastui-editor-contents {
+    font-size: 16px;
+    color: #E0E0E0;
+  }
+  .toastui-editor-contents h1,
+  .toastui-editor-contents h2,
+  .toastui-editor-contents h3,
+  .toastui-editor-contents h4,
+  .toastui-editor-contents h5,
+  .toastui-editor-contents h6 {
+    color: #FFFFFF;
+  }
+  .toastui-editor-contents p,
+  .toastui-editor-contents li {
+    color: #B0BEC5;
+  }
+  .toastui-editor-contents code {
+    background-color: #37474F;
+    color: #FF8A65;
+  }
+  .toastui-editor-contents pre {
+    background-color: #263238;
+  }
+`;
 
 const CodingTestPage = () => {
   const navigate = useNavigate();
@@ -24,7 +53,7 @@ const CodingTestPage = () => {
 
   const submitQuiz = async () => {
     try {
-      const response = await axios.post('http://localhost:8282/api/quiz/submit', null, {
+      const response = await axios.post('/api/quiz/submit', null, {
         params: {
           quizId,
           answer: encodeURIComponent(code),
@@ -47,7 +76,7 @@ const CodingTestPage = () => {
   useEffect(() => {
     const fetchProblem = async () => {
       try {
-        const response = await axios.get(`http://localhost:8282/api/quiz/detail/${quizId}`)
+        const response = await axios.get(`/api/quiz/detail/${quizId}`)
         setProblem(response.data);
       } catch (error) {
         console.error('Error fetching problem:', error);
@@ -132,7 +161,10 @@ const CodingTestPage = () => {
             {problem ? (
               <>
                 <h3>{problem.title}</h3>
-                <p>{problem.content}</p>
+                <style>{customViewerStyle}</style>
+                <div style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                  <Viewer initialValue={problem.content} />
+                </div>
               </>
             ) : (
               <p>Loading problem...</p>
