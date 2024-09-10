@@ -462,3 +462,27 @@ Caused by: java.util.concurrent.RejectedExecutionException: Task java.util.concu
 
 !ENTRY org.eclipse.core.resources 2 10035 2024-09-10 14:53:59.835
 !MESSAGE The workspace will exit with unsaved changes in this session.
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2024-09-10 16:16:26.134
+!MESSAGE Classpath changed for project: lms
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2024-09-10 16:16:27.619
+!MESSAGE Classpath changed for project: lms
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2024-09-10 16:17:36.775
+!MESSAGE Classpath changed for project: lms
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2024-09-10 16:17:37.025
+!MESSAGE Classpath changed for project: lms
+
+!ENTRY org.eclipse.lsp4e 2 0 2024-09-10 18:36:01.070
+!MESSAGE Javadoc unavailable. Failed to obtain it.
+!STACK 0
+java.lang.InterruptedException
+	at java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:386)
+	at java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:2096)
+	at org.eclipse.lsp4e.jdt.LSJavaHoverProvider.getHoverInfo2(LSJavaHoverProvider.java:65)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:163)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:130)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy.getHoverInfo2(JavaEditorTextHoverProxy.java:89)
+	at org.eclipse.jface.text.TextViewerHoverManager$1.run(TextViewerHoverManager.java:155)

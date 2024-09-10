@@ -12,6 +12,7 @@ import QuizForm from './pages/Admin/QuizForm';
 import SolvedQuiz from './pages/SolvedQuiz';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuth } from './AuthContext';
+import ChangePassword from './pages/ChangePassword';
 
 const AppRoutes = () => {
   const { username } = useAuth();
@@ -29,6 +30,7 @@ const AppRoutes = () => {
       <Route path='/admin/quiz' element={<ProtectedRoute><AdminQuiz /></ProtectedRoute>} />
       <Route path='/admin/quiz/edit' element={<QuizForm />}></Route>
       <Route path='/admin/quiz/edit/:quizId' element={<QuizForm />}></Route>
+      <Route path="/change-password" element={<ChangePassword />} />
     </Routes>
   ), [username]);  // username이 변경될 때만 재생성
 

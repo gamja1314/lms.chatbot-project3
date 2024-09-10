@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.test.lms.createform.MemberCreateForm;
 import com.test.lms.entity.Exp;
 import com.test.lms.entity.Member;
+
+import com.test.lms.entity.dto.PasswordChangeRequest;
 import com.test.lms.entity.dto.ExpDto;
+
 import com.test.lms.service.MemberService;
 
 import jakarta.validation.Valid;
@@ -119,9 +122,19 @@ public class RestMemberController {
         }
     }
 
+    
+    // 비밀번호 변경 
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody PasswordChangeRequest request) {
+        memberService.changePassword(request.getUsername(), request.getNewPassword(), request.getConfirmPassword());
+        return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+    }
+
+
     @GetMapping("/exp-top")
     public List<ExpDto> top5Exp() {
         return memberService.getTop5MembersByExp();
     }
     
+
 }
