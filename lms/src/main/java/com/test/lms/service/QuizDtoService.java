@@ -38,21 +38,21 @@ public class QuizDtoService {
 	        });
 	    }
 	    
-	    // 퀴즈 정답률 계산
-	    public double calculateCorrectRate(Long quizId) {
-	        Quiz quiz = quizRepository.findById(quizId)
-	                .orElseThrow(() -> new EntityNotFoundException("퀴즈를 찾을 수 없습니다."));
-
-	        // 전체 제출 횟수
-	        long totalSubmissions = quiz.getCount();
-
-	        // 정답 제출 횟수
-	        long correctSubmissions = quizAnswerRepository.countByQuizAndOutput(quiz, quiz.getCorrect().trim());
-
-	        // 정답률 계산 (퍼센트)
-	        if (totalSubmissions == 0) {
-	            return 0.0;  // 제출된 적이 없는 경우 0% 반환
-	        }
-	        return ((double) correctSubmissions / totalSubmissions) * 100;
-	    }
+//	    // 퀴즈 정답률 계산
+//	    public double calculateCorrectRate(Long quizId) {
+//	        Quiz quiz = quizRepository.findById(quizId)
+//	                .orElseThrow(() -> new EntityNotFoundException("퀴즈를 찾을 수 없습니다."));
+//
+//	        // 전체 제출 횟수
+//	        long totalSubmissions = quiz.getCount();
+//
+//	        // 정답 제출 횟수
+//	        long correctSubmissions = quizAnswerRepository.countByQuizAndOutput(quiz, quiz.getCorrect().trim());
+//
+//	        // 정답률 계산 (퍼센트)
+//	        if (totalSubmissions == 0) {
+//	            return 0.0;  // 제출된 적이 없는 경우 0% 반환
+//	        }
+//	        return ((double) correctSubmissions / totalSubmissions) * 100;
+//	    }
 }
