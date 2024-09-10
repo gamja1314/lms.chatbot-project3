@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
-import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import api from '../../components/Api';
 
 const QuizForm = () => {
     const { quizId } = useParams();
@@ -16,19 +16,19 @@ const QuizForm = () => {
     });
 
     const fetchQuiz = useCallback(async () => {
+        if (!quizId) return;
         try {
-            const response = await axios.get(`/api/quiz/detail/${quizId}`);
+            const response = await api.get(`/api/quiz/detail/${quizId}`);
             setQuiz(response.data);
         } catch (error) {
             console.error('퀴즈 불러오기 중 오류 발생:', error);
+            // 에러 처리 로직 (예: 사용자에게 알림)
         }
     }, [quizId]);
 
     useEffect(() => {
-        if (quizId) {
-            fetchQuiz();
-        }
-    }, [quizId, fetchQuiz]);
+        fetchQuiz();
+    }, [fetchQuiz]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -48,25 +48,27 @@ const QuizForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const encodedQuiz = {
-                title: encodeURIComponent(quiz.title),
-                content: encodeURIComponent(quiz.content),
-                correct: encodeURIComponent(quiz.correct),
-                quizRank: quiz.quizRank
-            };
-
-            const queryString = new URLSearchParams(encodedQuiz).toString();
-
+            let response;
             if (quizId) {
                 // 퀴즈 수정 로직
-                await axios.post(`/api/quiz/edit/${quizId}?${queryString}`);
+                response = await api.put(`/api/quiz/edit/${quizId}`, quiz, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
             } else {
                 // 퀴즈 등록 로직
-                await axios.put(`/api/quiz/edit?${queryString}`);
+                response = await api.post('/api/quiz/edit', quiz, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
             }
+            console.log('서버 응답:', response.data);
             navigate('/admin/quiz'); // 퀴즈 등록/수정 후 이동할 페이지
         } catch (error) {
             console.error('퀴즈 저장 중 오류 발생:', error);
+            // 에러 처리 로직 (예: 사용자에게 알림)
         }
     };
 
@@ -118,6 +120,16 @@ const QuizForm = () => {
                         onChange={handleChange}
                         required
                     />
+                </Form.Group>
+                <Form.Group className='mb-3'>
+                    <Form.Label>Output</Form.Label>
+                    <Form.Control
+                        type='text'
+                        name='output'
+                        value={quiz.output}
+                        onChange={handleChange}
+                        required
+                        />
                 </Form.Group>
                 <Button variant="primary" type="submit">
                     {quizId ? '수정' : '등록'}

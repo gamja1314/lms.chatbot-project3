@@ -3,6 +3,7 @@ import { Form, Table, Button } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import CustomPagination from '../../components/CustomPagination';
+import api from '../../components/Api';
 
 const AdminQuiz = () => {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ const AdminQuiz = () => {
   
     const fetchQuizzes = useCallback(async () => {
       try {
-        const response = await axios.get('/api/quiz/list', {
+        const response = await api.get('/api/quiz/list', {
           params: {
             page: currentPage - 1,
             search: searchTerm,
