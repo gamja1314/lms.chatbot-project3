@@ -3,6 +3,8 @@ package com.test.lms.service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -151,4 +153,15 @@ public class MemberService implements UserDetailsService{
 	    public boolean existsByNickname(String nickname) {
 	        return memberRepository.findByNickname(nickname).isPresent();
 	    }
-}
+	    
+	    // 비밀번호 변경
+	    @Transactional
+	    public void changePassword(String username, String newPassword, String confirmPassword) {
+
+	        Member member = memberRepository.findByUsername(username)
+	                .orElseThrow(() -> new DataNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+	        member.setPassword(passwordEncoder.encode(newPassword));
+	        memberRepository.save(member);
+	    }
+}	

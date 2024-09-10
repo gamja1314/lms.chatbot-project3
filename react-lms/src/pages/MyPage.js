@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const MyPage = () => {
@@ -9,6 +10,8 @@ const MyPage = () => {
     rank: '',
     expPoints: 0,
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // API 호출하여 사용자 정보 가져오기
@@ -22,15 +25,20 @@ const MyPage = () => {
       });
   }, []);
 
+  const handleChangePasswordClick = () => {
+    navigate('/change-password'); // 비밀번호 변경 페이지로 이동
+  };
+
   return (
     <div className='container-fluid'>
       <div className='container'>
         <h1>My Page</h1>
-        <p><strong>Username:</strong> {memberInfo.username}</p>
-        <p><strong>Nickname:</strong> {memberInfo.nickname}</p>
+        <p><strong>아이디:</strong> {memberInfo.username}</p>
+        <p><strong>닉네임:</strong> {memberInfo.nickname}</p>
         <p><strong>Email:</strong> {memberInfo.email}</p>
-        <p><strong>Rank:</strong> {memberInfo.rank}</p>
-        <p><strong>Experience Points:</strong> {memberInfo.expPoints}</p>
+        <p><strong>등급:</strong> {memberInfo.rank}</p>
+        <p><strong>경험치:</strong> {memberInfo.expPoints}</p>
+        <button onClick={handleChangePasswordClick} className="btn btn-primary">비밀번호 변경</button> {/* 비밀번호 변경 버튼 */}
       </div>
     </div>
   );
