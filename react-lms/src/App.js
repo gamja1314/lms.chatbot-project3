@@ -8,17 +8,25 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Header />
-        <div className="App min-vh-100">
-          <main>
-            <AppRoutes />
-          </main>
-        </div>
-        <Footer />
-      </Router>
-    </AuthProvider>
+    <Router>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </Router>
+  );
+}
+
+function AppContent() {
+  return (
+    <>
+      <Header />
+      <div className="App min-vh-100">
+        <main>
+          <AppRoutes />
+        </main>
+      </div>
+      <Footer />
+    </>
   );
 }
 

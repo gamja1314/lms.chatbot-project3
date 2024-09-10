@@ -1,7 +1,6 @@
 package com.test.lms.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.security.core.userdetails.User;
@@ -47,6 +46,12 @@ public class MemberService implements UserDetailsService{
         member.setEmail(email);
         member.setCreateTime(LocalDateTime.now());
 
+		if (username.equals("admin")) {
+			member.setRole("ADMIN");
+		} else {
+			member.setRole("USER");
+		}
+		
         this.memberRepository.save(member);
         
         // 회원 가입 시 Exp 엔티티 생성
@@ -64,11 +69,12 @@ public class MemberService implements UserDetailsService{
                 .orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다.: " + username));
 
 //      return new User(member.getUsername(), member.getPassword(), new ArrayList<>()); // 유저 정보를 반환
-        return org.springframework.security.core.userdetails.User
-              .withUsername(member.getUsername())
-              .password(member.getPassword())
-              .build();
-  }
+        return User
+			.withUsername(member.getUsername())
+			.password(member.getPassword())
+			.roles(member.getRole())
+			.build();
+	}
 
 	public Member findByUsername(String username) {
 		Optional<Member> Member = this.memberRepository.findByUsername(username);

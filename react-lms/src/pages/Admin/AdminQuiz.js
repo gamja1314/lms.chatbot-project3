@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Form, Table } from 'react-bootstrap';
+import { Form, Table, Button } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import CustomPagination from '../components/CustomPagination';
+import CustomPagination from '../../components/CustomPagination';
 
-const CodingTest = () => {
+const AdminQuiz = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -44,17 +44,27 @@ const CodingTest = () => {
     }, [currentPage, navigate]);
     
     const handleQuizClick = (quizId) => {
-      navigate(`/coding-page/${quizId}`);
+      // 여기서 퀴즈 수정 페이지로 이동하도록 변경할 수 있습니다.
+      navigate(`/admin/quiz/edit/${quizId}`);
     };
   
     const handlePageChange = (pageNumber) => {
       setCurrentPage(pageNumber);
     };
 
+    const handleAddQuiz = () => {
+      // 퀴즈 등록 페이지로 이동
+      navigate('/admin/quiz/edit');
+    };
+
   return (
     <div className='container mt-4'>
-      <h1 className="mb-4">Coding Test</h1>
+      <h1 className="mb-4">퀴즈 관리</h1>
       
+      <Button variant="primary" className="mb-3" onClick={handleAddQuiz}>
+        퀴즈 등록
+      </Button>
+
       <Form className="mb-4">
         <Form.Group className="mb-3">
           <Form.Control 
@@ -115,4 +125,4 @@ const CodingTest = () => {
   );
 };
 
-export default CodingTest;
+export default AdminQuiz;

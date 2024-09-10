@@ -1,66 +1,51 @@
-// AuthContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import api from "./components/Api";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
-  const [nickname, setNickname] = useState('');
+  const [authState, setAuthState] = useState(() => {
+    const storedState = localStorage.getItem('authState');
+    return storedState ? JSON.parse(storedState) : {
+      isLoggedIn: false,
+      username: '',
+      nickname: '',
+      role: ''
+    };
+  });
 
   useEffect(() => {
-    checkLoginStatus();
-  }, []);
-
-  const checkLoginStatus = async () => {
-    try {
-      const response = await api.get('/api/member/check');
-      if (response.status === 200 && response.data.loggedIn && response.data.username !== 'anonymousUser') {
-        setIsLoggedIn(true);
-        setUsername(response.data.username);
-        setNickname(response.data.nickname);
-      } else {
-        setIsLoggedIn(false);
-        setUsername('');
-        setNickname('');
-      }
-    } catch (error) {
-      console.error('로그인 상태 확인 오류 : ', error);
-      setIsLoggedIn(false);
-      setUsername('');
-      setNickname('');
-    }
-  };
+    localStorage.setItem('authState', JSON.stringify(authState));
+  }, [authState]);
 
   const login = (userData) => {
-    setIsLoggedIn(true);
-    setUsername(userData.username);
-    setNickname(userData.nickname);
-    console.log('로그인 성공:', userData); // 디버깅용
+    setAuthState({
+      isLoggedIn: true,
+      username: userData.username,
+      nickname: userData.nickname,
+      role: userData.role
+    });
   };
 
   const logout = async () => {
     try {
-      const response = await fetch('/api/member/logout', {
-        method: 'POST',
-        credentials: 'include'
+      await api.post('/api/member/logout');
+      setAuthState({
+        isLoggedIn: false,
+        username: '',
+        nickname: '',
+        role: ''
       });
-
-      if (response.ok) {
-        setIsLoggedIn(false);
-        setUsername('');
-        setNickname('');
-      } else {
-        console.error('로그아웃 실패');
-      }
+      localStorage.removeItem('authState');
     } catch (error) {
       console.error('로그아웃 에러', error);
     }
   };
 
+  const isAdmin = () => authState.role === 'ADMIN';
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn, username, nickname, login, logout }}>
+    <AuthContext.Provider value={{ ...authState, login, logout, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );
