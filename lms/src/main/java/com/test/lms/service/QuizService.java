@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.test.lms.entity.Member;
 import com.test.lms.entity.Quiz;
 import com.test.lms.entity.QuizAnswer;
-import com.test.lms.entity.dto.QuizDto;
 import com.test.lms.repository.MemberRepository;
 import com.test.lms.repository.QuizAnswerRepository;
 import com.test.lms.repository.QuizRepository;
@@ -43,7 +42,7 @@ public class QuizService {
         }     
 
         //퀴즈 생성
-        public Quiz create(String title, String content, String correct, String quizRank){
+        public Quiz create(String title, String content, String correct, String quizRank, String output){
 
                 Quiz quiz = new Quiz();
 
@@ -51,7 +50,9 @@ public class QuizService {
                 quiz.setContent(content);
                 quiz.setCorrect(correct);
                 quiz.setQuizRank(quizRank);
+                quiz.setOutput(output);
                 quiz.setCreateDate(LocalDateTime.now());
+                quiz.setCount(0);
 
                 return quizRepository.save(quiz);
         }
@@ -76,7 +77,8 @@ public class QuizService {
                 existingQuiz.setContent(quiz.getContent()); //내용 수정
                 existingQuiz.setCorrect(quiz.getCorrect()); //정답 수정
                 existingQuiz.setQuizRank(quiz.getQuizRank()); //랭크 수정
-
+                existingQuiz.setOutput(quiz.getOutput());
+                
                 return quizRepository.save(existingQuiz);
         }
 
