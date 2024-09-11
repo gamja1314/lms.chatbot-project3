@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
@@ -21,6 +19,7 @@ import com.test.lms.entity.dto.ExpDto;
 import com.test.lms.exception.DataNotFoundException;
 import com.test.lms.repository.ExpRepository;
 import com.test.lms.repository.MemberRepository;
+import com.test.lms.repository.PersistentLoginsRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +31,7 @@ public class MemberService implements UserDetailsService{
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final ExpRepository expRepository;
+    private final PersistentLoginsRepository persistentLoginsRepository;
 
     // 회원 가입
     public Member create(String username, String password, String nickname, String email) {
@@ -173,6 +173,30 @@ public class MemberService implements UserDetailsService{
 	    	Pageable topFive = PageRequest.of(0, 5);
 	    	return memberRepository.findTop5MembersByExp(topFive);
 	    }
+	    
+	    // 회원 탈퇴 
+	    @Transactional
+	    public void withdrawMember(String username, String password) {
+	    	
+	        Member member = memberRepository.findByUsername(username)
+	            .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+	        if (!passwordEncoder.matches(password, member.getPassword())) {
+	            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+	        }
+	        
+	        
+	        
+	        // Exp 삭제
+	        expRepository.deleteByMember(member);
+	        // RemberMe 삭제
+	        persistentLoginsRepository.deleteByUsername(username);
+	        
+	        memberRepository.delete(member);
+
+	     
+	    }
+	
 }	
 
 
