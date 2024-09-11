@@ -18,5 +18,5 @@ public interface ExpRepository extends JpaRepository<Exp, Long>{
     Integer findTotalExpByMember(@Param("member") Member member);
 
     Optional<Exp> findByMember(Member member);
-
+    void deleteByMember(Member member);
 }
