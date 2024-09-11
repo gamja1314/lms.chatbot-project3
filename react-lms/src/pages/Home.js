@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../css/Home.css'; // 별도의 CSS 파일을 만들어 스타일을 관리합니다.
 import axios from 'axios';
+import cmtImage from '../images/ctmW2.png';
 
 const RankingSection = ({ rankings }) => (
   <div className="card ranking-card">
@@ -29,7 +30,7 @@ const RankingSection = ({ rankings }) => (
 
 const ChallengesSection = ({ challenges }) => (
   <div className="card challenge-card">
-    <h2>도전 과제 및 대회</h2>
+    <h2>도전과제 및 대회</h2>
     <ul>
       {challenges.map((challenge, index) => (
         <li key={index}>
@@ -42,7 +43,7 @@ const ChallengesSection = ({ challenges }) => (
 
 const NoticeSection = ({ notices }) => (
   <div className="card notice-card">
-    <h2>공지사항 및 업데이트</h2>
+    <h2>공지사항</h2>
     <ul>
       {notices.map((notice, index) => (
         <li key={index}>
@@ -56,7 +57,7 @@ const NoticeSection = ({ notices }) => (
 
 const PopularProblemsSection = ({ problems }) => (
   <div className="card problem-card">
-    <h2>인기 문제 - TOP 5</h2>
+    <h2>인기문제(TOP5)</h2>
     {Array.isArray(problems) && problems.length > 0 ? (
       <ul>
         {problems.map((problem, index) => (
@@ -97,12 +98,14 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="home-container">
-      <div className='text-center mb-5'>
+    <div>
+      <div className="ctm-section">
+        <img src={cmtImage} alt="ctm" className="ctm-image"/>
+      </div>
+      <div className="sub-title text-center my-4">
         <h1>코딩테스트몬스터</h1>
         <p>당신의 코딩 실력을 극대화하세요!</p>
       </div>
-      
       <main>
         <div className="grid-container">
           <RankingSection rankings={rankings} />
@@ -111,15 +114,6 @@ const Home = () => {
           <PopularProblemsSection problems={problems} />
         </div>
       </main>
-
-      <section className="cta-section">
-        <h2>새로운 도전을 시작하세요!</h2>
-        <div className="cta-buttons">
-          <Link to="/login" className="btn btn-primary">로그인</Link>
-          <Link to="/signup" className="btn btn-secondary">회원가입</Link>
-          <Link to="/tutorial" className="btn btn-tertiary">튜토리얼 시작하기</Link>
-        </div>
-      </section>
     </div>
   );
 };
