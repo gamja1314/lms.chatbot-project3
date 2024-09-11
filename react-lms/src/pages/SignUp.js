@@ -167,12 +167,12 @@ const SignUp = () => {
         <div className="col-md-6">
           <div className="card">
             <div className="card-header text-center">
-              <h4 className="my-1 text-gray-700">회원가입</h4>
+              <h4 className="my-1 text-color">회원가입</h4>
             </div>
             <div className="card-body">
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label><p>아이디</p></label>
+                  <label><p className='text-color'>아이디</p></label>
                   <div className="input-group">
                   <input 
                     type="text" 
@@ -189,7 +189,7 @@ const SignUp = () => {
                   </div>
                 </div>
                 <div className="mb-3">
-                  <label><p>비밀번호</p></label>
+                  <label><p className='text-color'>비밀번호</p></label>
                   <input 
                     type="password" 
                     name="password"
@@ -212,7 +212,7 @@ const SignUp = () => {
                   {confirmPasswordError && <p style={{ color: 'blue' }}>{confirmPasswordError}</p>} {/*비밀번호 확인 메시지 */}
                 </div>
                 <div className="mb-3">
-                  <label><p>이메일</p></label>
+                  <label><p className='text-color'>이메일</p></label>
                   <input 
                     type="email" 
                     name="email"
@@ -224,7 +224,7 @@ const SignUp = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label><p>닉네임</p></label>
+                  <label><p className='text-color'>닉네임</p></label>
                   <div className="input-group">
                   <input 
                     type="text" 

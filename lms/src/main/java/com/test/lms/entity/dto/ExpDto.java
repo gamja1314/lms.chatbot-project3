@@ -8,11 +8,13 @@ import lombok.Setter;
 public class ExpDto {
     
     private String nickname;
+    private String userRank;
     private int expPoints;
 
-    public ExpDto(String nickname, int expPoints) {
+    public ExpDto(String nickname, int expPoints, String userRank) {
         this.nickname = nickname;
         this.expPoints = expPoints;
+        this.userRank = userRank;
     }
 
 }

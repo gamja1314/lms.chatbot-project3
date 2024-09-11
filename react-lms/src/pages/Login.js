@@ -92,18 +92,18 @@ const Login = () => {
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
                   />
-                  <label className="form-check-label" htmlFor="rememberMe">자동 로그인</label>
+                  <label className="form-check-label text-color" htmlFor="rememberMe">자동 로그인</label>
                 </div>
                 <div className="d-grid">
-                  <button type="submit" className="btn btn-secondary">로그인하기</button>
+                  <button type="submit" className="btn btn-primary">로그인하기</button>
                 </div>
               </form>
               {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-              <div className="mt-3 text-center">
-                <button onClick={handleSignup} className="btn btn-link">이메일 회원가입</button>
+              <div className="mt-3 d-grid">
+                <button onClick={handleSignup} className="btn btn-secondary text-decoration-none text-color">이메일 회원가입</button>
               </div>
               <div className="mt-2 text-end">
-                <button className="btn btn-link text-muted small p-0">비밀번호 재설정</button>
+                <button className="btn btn-link small p-0 text-color">비밀번호 재설정</button>
               </div>
             </div>
           </div>

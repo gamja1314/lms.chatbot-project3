@@ -53,7 +53,7 @@ const CodingTest = () => {
 
   return (
     <div className='container mt-4'>
-      <h1 className="mb-4">Coding Test</h1>
+      <h1 className="mb-4 text-color">Coding Test</h1>
       
       <Form className="mb-4">
         <Form.Group className="mb-3">

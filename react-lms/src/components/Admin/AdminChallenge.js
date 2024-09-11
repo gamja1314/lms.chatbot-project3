@@ -54,7 +54,7 @@ const ChallengeAdmin = () => {
 
     return (
         <div className='container mt-4'>
-            <h1 className="mb-4">챌린지 관리</h1>
+            <h1 className="mb-4 text-color">챌린지 관리</h1>
 
             <Button variant="primary" className="mb-3" onClick={handleAddChallenge}>
                 챌린지 등록

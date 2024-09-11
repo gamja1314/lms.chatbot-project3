@@ -40,12 +40,12 @@ const ChallengeDetail = () => {
         <div className='container mt-5'>
             <Card className="shadow-sm">
                 <Card.Body>
-                    <Card.Title as="h1" className="mb-4">{challenge.title}</Card.Title>
-                    <Card.Subtitle className="mb-3 text-muted">
+                    <Card.Title as="h1" className="mb-4 text-color">{challenge.title}</Card.Title>
+                    <Card.Subtitle className="mb-3 text-white">
                         경험치: <Badge bg="primary">{challenge.expPoints} XP</Badge>
                     </Card.Subtitle>
                     <Card.Text as="div">
-                        <ReactMarkdown className='markdown-body'>{challenge.content}</ReactMarkdown>
+                        <ReactMarkdown className='markdown-body text-color'>{challenge.content}</ReactMarkdown>
                     </Card.Text>
                     {challenge.close && (
                         <Alert variant="info" className="mt-3">

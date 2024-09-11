@@ -30,7 +30,7 @@ export function Header() {
       <div className="container">
         <h1>
           <Link to="/" style={{ ...linkStyle, textDecoration: 'none' }}>
-            Cotemon
+            CoTeMon
           </Link>
         </h1>
         <div className="header-flex">
@@ -87,7 +87,7 @@ export function Footer() {
   return (
     <footer className="sticky-footer navbar-gray" style={footerStyle}>
       <div className="container mx-auto flex justify-between items-center text-center">
-        <span>Copyright @ programmers</span>
+        <span className='text-color'>Copyright @ CodeTestMonster</span>
       </div>
     </footer>
   );

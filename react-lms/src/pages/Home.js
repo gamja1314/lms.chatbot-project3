@@ -6,19 +6,24 @@ import cmtImage from '../images/ctmW2.png';
 
 const RankingSection = ({ rankings }) => (
   <div className="card ranking-card">
-    <h2>랭킹</h2>
+    <div className='d-flex align-content-center justify-content-between title'>
+      <h2 className='mb-0'>랭킹</h2>
+      <Link to="/all-jobs" className="text-decoration-none small text-color mb-0">전체보기</Link>
+    </div>
     <table>
       <thead>
         <tr>
           <th>순위</th>
+          <th>랭크</th>
           <th>사용자</th>
           <th>점수</th>
         </tr>
       </thead>
       <tbody>
         {rankings.map((rank, index) => (
-          <tr key={index}>
+          <tr key={index} className='text-white'>
             <td>{index+1}</td>
+            <td>{rank.userRank}</td>
             <td>{rank.nickname}</td>
             <td>{rank.expPoints}</td>
           </tr>
@@ -30,11 +35,14 @@ const RankingSection = ({ rankings }) => (
 
 const ChallengesSection = ({ challenges }) => (
   <div className="card challenge-card">
-    <h2>도전과제 및 대회</h2>
+    <div className='d-flex align-content-center justify-content-between title'>
+      <h2 className='mb-0'>도전과제 및 대회</h2>
+      <Link to="/all-challenge" className="text-decoration-none small text-color mb-0">전체보기</Link>
+    </div>
     <ul>
       {challenges.map((challenge, index) => (
         <li key={index}>
-          <Link to={`/challenges/${challenge.id}`} className="challenge-title text-decoration-none text-dark">{challenge.title}</Link>
+          <Link to={`/challenges/${challenge.id}`} className="challenge-title text-decoration-none text-white">{challenge.title}</Link>
         </li>
       ))}
     </ul>
@@ -43,11 +51,14 @@ const ChallengesSection = ({ challenges }) => (
 
 const NoticeSection = ({ notices }) => (
   <div className="card notice-card">
-    <h2>공지사항</h2>
+    <div className='d-flex align-content-center justify-content-between title'>
+      <h2 className='mb-0'>공지사항</h2>
+      <Link to="/all-notice" className="text-decoration-none small text-color mb-0">전체보기</Link>
+    </div>
     <ul>
       {notices.map((notice, index) => (
         <li className='d-flex justify-content-between' key={index}>
-          <Link className='text-decoration-none text-black' to={`/notice/${notice.noticeId}`}>{notice.title}</Link><span>{formatDate(notice.createDate)}</span>
+          <Link className='text-decoration-none text-white' to={`/notice/${notice.noticeId}`}>{notice.title}</Link><span className='text-color'>{formatDate(notice.createDate)}</span>
         </li>
       ))}
     </ul>
@@ -56,18 +67,63 @@ const NoticeSection = ({ notices }) => (
 
 const PopularProblemsSection = ({ problems }) => (
   <div className="card problem-card">
-    <h2>인기문제(TOP5)</h2>
+    <div className='title'>
+      <h2>인기문제(TOP5)</h2>
+
+    </div>
     {Array.isArray(problems) && problems.length > 0 ? (
       <ul>
         {problems.map((problem, index) => (
-          <li key={index}>
-            <Link to={`/coding-page/${problem.quizId}`}>{problem.title}</Link>
+          <li key={index} className='d-flex justify-content-between'>
+            <Link to={`/coding-page/${problem.quizId}`} className='text-decoration-none text-white'>{problem.title}</Link>
             <span className="problem-difficulty">난이도: {problem.quizRank}</span>
           </li>
         ))}
       </ul>
     ) : (
       <p>인기 문제가 없습니다.</p>
+    )}
+  </div>
+);
+
+const PopularBlog = ({blogs}) => (
+  <div className="card problem-card">
+    <div className='d-flex align-content-center justify-content-between title'>
+      <h2 className='mb-0'>HOT! IT 소식</h2>
+      <Link to="/all-blogs" className="text-decoration-none small text-color mb-0">전체보기</Link>
+    </div>
+    {Array.isArray(blogs) && blogs.length > 0 ? (
+      <ul>
+        {blogs.map((blogs, index) => (
+          <li key={index} className='d-flex justify-content-between'>
+            <Link to={`/coding-page/${blogs.quizId}`} className='text-decoration-none text-white'>{blogs.title}</Link>
+            <span className="problem-difficulty">난이도: {blogs}</span>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p className='text-color'>소식이 없습니다.</p>
+    )}
+  </div>
+);
+
+const RecommendedEmployment = ({recommends}) => (
+  <div className="card problem-card">
+    <div className='d-flex align-content-center justify-content-between title'>
+      <h2 className='mb-0'>추천 채용</h2>
+      <Link to="/all-jobs" className="text-decoration-none small text-color mb-0">전체보기</Link>
+    </div>
+    {Array.isArray(recommends) && recommends.length > 0 ? (
+      <ul>
+        {recommends.map((recommends, index) => (
+          <li key={index} className='d-flex justify-content-between'>
+            <Link to={`/coding-page/${recommends.quizId}`} className='text-decoration-none text-white'>{recommends.title}</Link>
+            <span className="problem-difficulty">난이도: {recommends.quizRank}</span>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p className='text-color'>추천 채용이 없습니다.</p>
     )}
   </div>
 );
@@ -112,22 +168,26 @@ const Home = () => {
   }, []);
 
   return (
-    <div>
-      <div className="ctm-section">
-        <img src={cmtImage} alt="ctm" className="ctm-image"/>
-      </div>
-      <div className="sub-title text-center my-4">
-        <h1>코딩테스트몬스터</h1>
-        <p>당신의 코딩 실력을 극대화하세요!</p>
-      </div>
-      <main>
-        <div className="grid-container">
-          <RankingSection rankings={rankings} />
-          <ChallengesSection challenges={challenges} />
-          <NoticeSection notices={notices} />
-          <PopularProblemsSection problems={problems} />
+    <div className='container-fluid'>
+      <div className='container'>
+        <div className="ctm-section">
+          <img src={cmtImage} alt="ctm" className="ctm-image"/>
         </div>
-      </main>
+        <div className="sub-title text-center my-4">
+          <h1>코딩테스트몬스터</h1>
+          <p>당신의 코딩 실력을 극대화하세요!</p>
+        </div>
+        <main>
+          <div className="grid-container">
+            <RankingSection rankings={rankings} />
+            <ChallengesSection challenges={challenges} />
+            <NoticeSection notices={notices} />
+            <PopularProblemsSection problems={problems} />
+            <PopularBlog />
+            <RecommendedEmployment />
+          </div>
+        </main>
+      </div>
     </div>
   );
 };

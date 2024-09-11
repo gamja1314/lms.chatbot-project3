@@ -58,8 +58,6 @@ const NoticeForm = () => {
             } else {
                 // Create new notice
                 response = await api.post(`/api/notice/create`, notice);
-                alert(notice.title);
-                alert(notice.content);
             }
             console.log('서버 응답:', response.data);
             navigate('/admin/notice'); // Redirect to notices list after creation/update

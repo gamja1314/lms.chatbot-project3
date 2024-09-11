@@ -17,7 +17,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>{
     Optional<Member> findByMemberNum(Long memberNum);
     Optional<Member> findByNickname(String nickname);
 
-    @Query("SELECT new com.test.lms.entity.dto.ExpDto(m.nickname, e.expPoints) " +
+    @Query("SELECT new com.test.lms.entity.dto.ExpDto(m.nickname, e.expPoints, m.userRank) " +
             "FROM Member m JOIN Exp e ON m.memberNum = e.member.memberNum " +
             "ORDER BY e.expPoints DESC")
     List<ExpDto> findTop5MembersByExp(Pageable pageable);
