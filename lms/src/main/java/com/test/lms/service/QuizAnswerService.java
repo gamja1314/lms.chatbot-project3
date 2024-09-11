@@ -98,7 +98,6 @@ public class QuizAnswerService {
     }
     
     // 특정 회원 맞춘문제 불러오기
-    
     public Page<QuizDto> getMemberCorrectQuizList(Long memberNum, int page) {
         Pageable pageable = PageRequest.of(page, 5);
         Page<Object[]> quizAnswerPage = quizAnswerRepository.findCorrectQuizzesWithSolvedTimeByMember(memberNum, pageable);
@@ -106,6 +105,25 @@ public class QuizAnswerService {
         return quizAnswerPage.map(result -> {
             Quiz quiz = (Quiz) result[0];
             LocalDateTime solvedQuizTime = (LocalDateTime) result[1]; // 맞춘 시간
+
+            return new QuizDto(
+                quiz.getQuizId(),
+                quiz.getTitle(),
+                quiz.getQuizRank(),
+                quiz.getCount(),
+                null, solvedQuizTime 
+            );
+        });
+    }
+    
+    // 특정 회원 틀린문제 불러오기
+    public Page<QuizDto> getMemberIncorrectQuizList(Long memberNum, int page) {
+        Pageable pageable = PageRequest.of(page, 5);
+        Page<Object[]> quizAnswerPage = quizAnswerRepository.findIncorrectQuizzesWithSolvedTimeByMember(memberNum, pageable);
+
+        return quizAnswerPage.map(result -> {
+            Quiz quiz = (Quiz) result[0];
+            LocalDateTime solvedQuizTime = (LocalDateTime) result[1]; // 틀린 시간
 
             return new QuizDto(
                 quiz.getQuizId(),

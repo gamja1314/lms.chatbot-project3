@@ -196,4 +196,28 @@ public class RestMemberController {
         
         return ResponseEntity.ok(response);
     }
+    
+    // mypage 틀린 문제 가져오기
+    @GetMapping("/my-incorrect-quizs")
+    public ResponseEntity<Map<String, Object>> getIncorrectQuizzesForMember(
+            @RequestParam(value = "page", defaultValue = "0") int page) {
+
+        // 인증된 사용자 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body(Map.of("error", "로그인이 필요합니다."));
+        }
+
+        String username = authentication.getName();
+        Member member = memberService.findByUsername(username);
+
+        // 특정 회원이 틀린 문제만 페이징 처리하여 반환
+        Page<QuizDto> incorrectQuizzes = quizAnswerService.getMemberIncorrectQuizList(member.getMemberNum(), page);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", incorrectQuizzes.getContent());
+        response.put("totalPages", incorrectQuizzes.getTotalPages());
+
+        return ResponseEntity.ok(response);
+    }
 }
