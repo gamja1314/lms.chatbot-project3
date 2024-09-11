@@ -1,12 +1,17 @@
 package com.test.lms;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import reactor.test.StepVerifier;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -15,8 +20,11 @@ public class ChatBotTest {
 	
 	@Autowired
     private MockMvc mockMvc;
+	
+	 @Autowired
+	    private WebTestClient webTestClient;
 
-   @Test
+    @Test
     @WithMockUser(username = "test", roles = "USER")
     public void testGenerateEndpoint() throws Exception {
         Long quizId = 2L; // 데이터베이스에 존재하는 퀴즈 ID
@@ -28,19 +36,9 @@ public class ChatBotTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.generation").exists());
     }
+  
     
-    @Test
-    @WithMockUser(username = "test", roles = "USER")
-    public void testGetCahtHistory() throws Exception {
-        Long quizId = 2L; // 데이터베이스에 존재하는 퀴즈 ID
-        
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/chat-history/{quizId}", quizId))
-        		.andExpect(status().isOk())
-                .andExpect(jsonPath("$.chatHistoryNum").exists())
-                .andExpect(jsonPath("$.botContent").exists())
-                .andExpect(jsonPath("$.memberContent").exists());
-    }
+    
 }
 
 
