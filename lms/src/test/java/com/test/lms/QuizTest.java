@@ -22,8 +22,10 @@ public class QuizTest {
             String title = "기초 문제 " + i;
             String content = "자바 웹페이지 개발툴의 이름은? (" + i + ")";
             String correct = (i % 5 == 0) ? "Spring Boot" : "Spring Framework";
+            String output = "";
+            quizService.create(title, content, correct, quizRank, output);
 
-            //quizService.create(title, content, correct, quizRank);
+
         }
     }
 

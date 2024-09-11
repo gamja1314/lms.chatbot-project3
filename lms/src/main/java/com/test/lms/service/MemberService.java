@@ -1,8 +1,11 @@
 package com.test.lms.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,9 +15,12 @@ import org.springframework.stereotype.Service;
 
 import com.test.lms.entity.Exp;
 import com.test.lms.entity.Member;
+import com.test.lms.entity.dto.ExpDto;
 import com.test.lms.exception.DataNotFoundException;
 import com.test.lms.repository.ExpRepository;
 import com.test.lms.repository.MemberRepository;
+import com.test.lms.repository.PersistentLoginsRepository;
+import com.test.lms.repository.QuizAnswerRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +32,8 @@ public class MemberService implements UserDetailsService{
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final ExpRepository expRepository;
+    private final PersistentLoginsRepository persistentLoginsRepository;
+    private final QuizAnswerRepository quizAnswerRepository;
 
     // 회원 가입
     public Member create(String username, String password, String nickname, String email) {
@@ -151,4 +159,46 @@ public class MemberService implements UserDetailsService{
 	    public boolean existsByNickname(String nickname) {
 	        return memberRepository.findByNickname(nickname).isPresent();
 	    }
-}
+	    
+	    // 비밀번호 변경
+	    @Transactional
+	    public void changePassword(String username, String newPassword, String confirmPassword) {
+
+	        Member member = memberRepository.findByUsername(username)
+	                .orElseThrow(() -> new DataNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+	        member.setPassword(passwordEncoder.encode(newPassword));
+	        memberRepository.save(member);
+	    }
+	    
+	    public List<ExpDto> getTop5MembersByExp() {
+	    	Pageable topFive = PageRequest.of(0, 5);
+	    	return memberRepository.findTop5MembersByExp(topFive);
+	    }
+	    
+	    // 회원 탈퇴 
+	    @Transactional
+	    public void withdrawMember(String username, String password) {
+	    	
+	        Member member = memberRepository.findByUsername(username)
+	            .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+	        if (!passwordEncoder.matches(password, member.getPassword())) {
+	            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+	        }
+	        
+	        // QuizAnswer 삭제
+	        quizAnswerRepository.deleteByMember(member);
+	        // Exp 삭제
+	        expRepository.deleteByMember(member);
+	        // RemberMe 삭제
+	        persistentLoginsRepository.deleteByUsername(username);
+	        
+	        memberRepository.delete(member);
+
+	     
+	    }
+	
+}	
+
+

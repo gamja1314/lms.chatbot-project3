@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.test.lms.entity.Member;
 import com.test.lms.entity.Quiz;
 import com.test.lms.entity.QuizAnswer;
+import com.test.lms.entity.dto.QuizDto;
 import com.test.lms.repository.MemberRepository;
 import com.test.lms.repository.QuizAnswerRepository;
 import com.test.lms.repository.QuizRepository;
@@ -55,19 +57,35 @@ public class QuizAnswerService {
 
     //최근 풀이한 5개 문제 ( * 중복되는지 체크해볼것)
     public List<Quiz> getTop5QuizzesOfDay() {
-    LocalDate today = LocalDate.now();
-    LocalDateTime startOfDay = today.atStartOfDay(); // 오늘 시작 시간 (00:00)
-    LocalDateTime endOfDay = today.atTime(LocalTime.MAX); // 오늘 끝 시간 (23:59:59)
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay(); // 오늘 시작 시간 (00:00)
+        LocalDateTime endOfDay = today.atTime(LocalTime.MAX); // 오늘 끝 시간 (23:59:59)
 
-    Pageable pageable = PageRequest.of(0, 5); // 첫 페이지에서 5개의 결과 가져오기
-    List<QuizAnswer> quizAnswers = quizAnswerRepository.findTop5BySolvedQuizTime(startOfDay, endOfDay, pageable);
-    List<Quiz> quizzes = new LinkedList<>();
+        Pageable pageable = PageRequest.of(0, 5); // 첫 페이지에서 5개의 결과 가져오기
+        List<QuizAnswer> quizAnswers = quizAnswerRepository.findTop5DistinctBySolvedQuizTime(startOfDay, endOfDay, pageable);
+        List<Quiz> quizzes = new LinkedList<>();
 
-    for (QuizAnswer quizAnswer : quizAnswers) {
-        quizzes.add(quizAnswer.getQuiz());
+        for (QuizAnswer quizAnswer : quizAnswers) {
+            quizzes.add(quizAnswer.getQuiz());
+        }
+
+        return quizzes;
     }
 
-    return quizzes;
-}
+    // isCorrect가 트루인 것만 가져오는 List<QuizAnswer>
+    public Page<QuizDto> getCorrectQuizList(int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Quiz> quizPage = quizAnswerRepository.findDistinctQuizzesByCorrectAnswers(pageable);
+
+        return quizPage.map(quiz -> {
+            long totalSubmissions = quiz.getCount();
+            long correctSubmissions = quizAnswerRepository.countByQuizAndOutput(quiz, quiz.getOutput().trim());
+            double correctRate = totalSubmissions == 0 ? 0.0 : ((double) correctSubmissions / totalSubmissions) * 100;
+
+            String correctRateString = String.format("%.2f%%", correctRate);
+
+            return new QuizDto(quiz.getQuizId(), quiz.getTitle(), quiz.getQuizRank(), quiz.getCount(), correctRateString);
+        });
+    }
 
 }

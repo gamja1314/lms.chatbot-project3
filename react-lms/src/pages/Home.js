@@ -17,9 +17,9 @@ const RankingSection = ({ rankings }) => (
       <tbody>
         {rankings.map((rank, index) => (
           <tr key={index}>
-            <td>{rank.position}</td>
-            <td>{rank.username}</td>
-            <td>{rank.score}</td>
+            <td>{index+1}</td>
+            <td>{rank.nickname}</td>
+            <td>{rank.expPoints}</td>
           </tr>
         ))}
       </tbody>
@@ -33,8 +33,7 @@ const ChallengesSection = ({ challenges }) => (
     <ul>
       {challenges.map((challenge, index) => (
         <li key={index}>
-          <span className="challenge-title">{challenge.title}</span>
-          <p>{challenge.description}</p>
+          <Link to={`/challenges/${challenge.id}`} className="challenge-title text-decoration-none text-dark">{challenge.title}</Link>
         </li>
       ))}
     </ul>
@@ -46,9 +45,8 @@ const NoticeSection = ({ notices }) => (
     <h2>공지사항 및 업데이트</h2>
     <ul>
       {notices.map((notice, index) => (
-        <li key={index}>
-          <span className="notice-title">{notice.title}</span>
-          <span className="notice-date">{notice.date}</span>
+        <li className='d-flex justify-content-between' key={index}>
+          <Link className='text-decoration-none text-black' to={`/notice/${notice.noticeId}`}>{notice.title}</Link><span>{formatDate(notice.createDate)}</span>
         </li>
       ))}
     </ul>
@@ -73,17 +71,36 @@ const PopularProblemsSection = ({ problems }) => (
   </div>
 );
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
+};
+
 const Home = () => {
   const [rankings, setRankings] = useState([]);
   const [challenges, setChallenges] = useState([]);
   const [notices, setNotices] = useState([]);
   const [problems, setProblems] = useState([]);
 
+
+
   useEffect(() => {
     const fetchPopularProblems = async () => {
       try {
-        const response = await axios.get('/api/quizAnswer/top5');
+        const response = await axios.get('/api/quiz/counts');
         setProblems(response.data);
+        const expResponse = await axios.get('/api/member/exp-top');
+        setRankings(expResponse.data);
+        const challengeResponse = await axios.get('/api/challenges/top5');
+        setChallenges(challengeResponse.data);
+        const noticeResponse = await axios.get('/api/notice');
+        setNotices(noticeResponse.data);
       } catch (error) {
         console.error('데이터를 불러오는데 실패하였습니다. :', error);
       }

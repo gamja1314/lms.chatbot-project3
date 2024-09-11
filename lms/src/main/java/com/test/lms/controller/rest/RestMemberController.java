@@ -1,6 +1,7 @@
 package com.test.lms.controller.rest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.test.lms.createform.MemberCreateForm;
 import com.test.lms.entity.Exp;
 import com.test.lms.entity.Member;
+import com.test.lms.entity.dto.ExpDto;
+import com.test.lms.entity.dto.PasswordChangeRequest;
 import com.test.lms.service.MemberService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -116,4 +122,52 @@ public class RestMemberController {
             return ResponseEntity.ok().body(Map.of("message", "사용 가능한 닉네임입니다."));
         }
     }
+
+    
+    // 비밀번호 변경 
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody PasswordChangeRequest request) {
+        memberService.changePassword(request.getUsername(), request.getNewPassword(), request.getConfirmPassword());
+        return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+    }
+
+
+    @GetMapping("/exp-top")
+    public List<ExpDto> top5Exp() {
+        return memberService.getTop5MembersByExp();
+    }
+    
+    // 회원 탈퇴
+    @PostMapping("/withdraw")
+    public ResponseEntity<?> withdrawMember(@RequestBody Map<String, String> request,
+    										HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        String password = request.get("password");
+
+        try {
+            // 사용자의 비밀번호를 확인한 후 탈퇴 처리
+            memberService.withdrawMember(username, password);
+            
+            // 로그아웃 처리
+            SecurityContextHolder.clearContext();
+            httpServletRequest.getSession().invalidate();  // 세션 무효화
+            
+            // JSESSIONID 쿠키 삭제
+            Cookie cookie = new Cookie("JSESSIONID", null);
+            cookie.setPath("/");
+            cookie.setMaxAge(0); // 쿠키 만료
+            httpServletResponse.addCookie(cookie);
+            
+            // 응답으로 성공 메시지 반환
+            return ResponseEntity.ok().body(Map.of("message", "회원 탈퇴가 완료되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            log.error("회원 탈퇴 처리 중 오류 발생", e);
+            return ResponseEntity.internalServerError().body(Map.of("error", "회원 탈퇴 처리 중 오류가 발생했습니다."));
+        }
+    }
+
+
 }

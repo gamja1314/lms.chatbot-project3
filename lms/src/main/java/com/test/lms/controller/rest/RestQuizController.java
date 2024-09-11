@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.test.lms.entity.Quiz;
+import com.test.lms.entity.dto.QuizDto;
 import com.test.lms.service.QuizAnswerService;
+import com.test.lms.service.QuizDtoService;
 import com.test.lms.service.QuizService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,12 +31,12 @@ public class RestQuizController {
 
     private final QuizService quizService;
     private final QuizAnswerService quizAnswerService;
+    private final QuizDtoService quizDtoService;
 
     // 퀴즈 목록 API (페이징 처리)
-    // @GetMapping("/list")
-    public ResponseEntity<Page<Quiz>> getQuizList(@RequestParam(value = "page", defaultValue = "0") int page) {
-        // 페이징 처리된 퀴즈 목록을 JSON 형태로 반환
-        Page<Quiz> paging = quizService.getList(page);
+    @GetMapping("/list")
+    public ResponseEntity<Page<QuizDto>> quizBoard(@RequestParam(value = "page", defaultValue = "0") int page) {
+        Page<QuizDto> paging = quizDtoService.getList(page);
         return ResponseEntity.ok(paging);
     }
 
@@ -87,5 +90,43 @@ public class RestQuizController {
         return ResponseEntity.ok("퀴즈가 생성되었습니다.");
     }
 
+    //퀴즈 삭제 기능
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteQuiz(@PathVariable("quizId") Long quizId){
+        
+        //quizId로 퀴즈 찾기
+        Quiz quiz = quizService.getQuizById(quizId); 
+        if (quiz != null) {
+            quizService.delete(quiz);
+            return ResponseEntity.ok("삭제 완료 되었습니다. ID: " + quizId);
+        } else {
+            return ResponseEntity.status(404).body("퀴즈를 찾을 수 없습니다. ID: " + quizId);
+        }
+    }
+
+    @GetMapping("/counts")
+    public List<Quiz> top5Quizzes() {
+        return quizService.getTop5QuizzesByCount();
+    }
+    
+    //퀴즈 검색
+    @GetMapping("/search")
+    public ResponseEntity<List<Quiz>> searchQuizzes(@RequestParam("keyword") String keyword, @RequestParam(value = "searchType", defaultValue = "OR") String searchType){
+
+        List<Quiz> quizzes;
+        
+        //제목, 내용 각각 검색
+        if ("OR".equalsIgnoreCase(searchType)) {
+            quizzes = quizService.searchByTitleOrContent(keyword);
+        }
+        //제목 + 내용 검색
+        else if ("AND".equalsIgnoreCase(searchType)) {
+            quizzes = quizService.searchByTitleAndContent(keyword);
+        } else {
+            return ResponseEntity.badRequest().body(null);  // 잘못된 searchType 처리
+        }
+
+        return ResponseEntity.ok(quizzes);
+    }
 }
 

@@ -1,9 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import api from '../../components/Api';
+import MdEditor from 'react-markdown-editor-lite';
+import MarkdownIt from 'markdown-it';
+import 'react-markdown-editor-lite/lib/index.css';
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import { oneDark } from '@codemirror/theme-one-dark';
+import api from '../Api';
+
+const mdParser = new MarkdownIt();
 
 const QuizForm = () => {
     const { quizId } = useParams();
@@ -13,6 +19,7 @@ const QuizForm = () => {
         content: '',
         quizRank: '',
         correct: '',
+        output: '',
     });
 
     const fetchQuiz = useCallback(async () => {
@@ -38,10 +45,17 @@ const QuizForm = () => {
         }));
     };
 
-    const handleContentChange = (content) => {
+    const handleEditorChange = ({ text }) => {
         setQuiz(prevQuiz => ({
             ...prevQuiz,
-            content: content
+            content: text
+        }));
+    };
+
+    const handleCorrectChange = (value) => {
+        setQuiz(prevQuiz => ({
+            ...prevQuiz,
+            correct: value
         }));
     };
 
@@ -88,11 +102,11 @@ const QuizForm = () => {
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>내용</Form.Label>
-                    <ReactQuill
-                        theme="snow"
+                    <MdEditor
+                        style={{ height: '300px' }}
+                        renderHTML={(text) => mdParser.render(text)}
+                        onChange={handleEditorChange}
                         value={quiz.content}
-                        onChange={handleContentChange}
-                        style={{ height: '300px', marginBottom: '50px' }}
                     />
                 </Form.Group>
                 <Form.Group className="mb-3">
@@ -113,12 +127,12 @@ const QuizForm = () => {
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>정답</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="correct"
+                    <CodeMirror
                         value={quiz.correct}
-                        onChange={handleChange}
-                        required
+                        height="200px"
+                        extensions={[javascript({ jsx: true })]}
+                        theme={oneDark}
+                        onChange={handleCorrectChange}
                     />
                 </Form.Group>
                 <Form.Group className='mb-3'>
@@ -129,7 +143,7 @@ const QuizForm = () => {
                         value={quiz.output}
                         onChange={handleChange}
                         required
-                        />
+                    />
                 </Form.Group>
                 <Button variant="primary" type="submit">
                     {quizId ? '수정' : '등록'}

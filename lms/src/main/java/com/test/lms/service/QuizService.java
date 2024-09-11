@@ -101,7 +101,7 @@ public class QuizService {
         
                 // 제출된 답과 퀴즈의 정답을 비교
                 String trimmedOutput = output.trim();
-                String trimmedCorrect = quiz.getCorrect().trim();
+                String trimmedCorrect = quiz.getOutput().trim();
                 boolean isCorrect = trimmedCorrect.equalsIgnoreCase(trimmedOutput);
                 
                 // 퀴즈 제출 카운트 증가
@@ -109,51 +109,69 @@ public class QuizService {
                 quizRepository.save(quiz);  // 변경 사항 저장
                 
                 // 정답일 경우에만 DB에 저장
+                
+                // QuizAnswer 생성과 저장
+                QuizAnswer quizAnswer = new QuizAnswer();
+                quizAnswer.setAnswer(answer);
+                quizAnswer.setOutput(trimmedOutput);
+                quizAnswer.setPublic(isPublic);
+                quizAnswer.setMember(member);
+                quizAnswer.setQuiz(quiz);
+                quizAnswer.setSolvedQuizTime(LocalDateTime.now());
                 if (isCorrect) {
-                        
-                    // QuizAnswer 생성과 저장
-                        QuizAnswer quizAnswer = new QuizAnswer();
-                        quizAnswer.setAnswer(answer);
-                        quizAnswer.setOutput(trimmedOutput);
-                        quizAnswer.setPublic(isPublic);
-                        quizAnswer.setMember(member);
-                        quizAnswer.setQuiz(quiz);
-                        quizAnswer.setSolvedQuizTime(LocalDateTime.now());
+                    quizAnswer.setCorrect(isCorrect);
         
-                    // DB에 저장
-                        quizAnswerRepository.save(quizAnswer);
-                        
-                        
-                        int expPoints = 0;
+                    
+                    
+                    int expPoints = 0;
                     // quizRank에 따라 경험치 결정
-                        switch (quiz.getQuizRank()) {
-                            case "D":
-                                expPoints = 5;
-                                break;
-                            case "C":
-                                expPoints = 10;
-                                break;
-                            case "B":
-                                expPoints = 20;
-                                break;
-                            case "A":
-                                expPoints = 30;
-                                break;
-                            default:
-                                log.warn("존재하지 않는 랭크 입니다.: {}", quiz.getQuizRank());
-                                break;
-                        }
-                        
-                        memberService.addExpPoints(member.getMemberNum(), expPoints);
-                        log.debug("Added {} experience points to user {}", expPoints, member.getUsername());
-                    } else {
-                        log.debug("Answer is incorrect, not saving to database");
+                    switch (quiz.getQuizRank()) {
+                        case "D":
+                        expPoints = 5;
+                        break;
+                        case "C":
+                        expPoints = 10;
+                        break;
+                        case "B":
+                        expPoints = 20;
+                        break;
+                        case "A":
+                        expPoints = 30;
+                        break;
+                        default:
+                        log.warn("존재하지 않는 랭크 입니다.: {}", quiz.getQuizRank());
+                        break;
                     }
+                    
+                    memberService.addExpPoints(member.getMemberNum(), expPoints);
+                    log.debug("Added {} experience points to user {}", expPoints, member.getUsername());
+                } else {
+                    log.debug("Answer is incorrect, not saving to database");
+                    quizAnswer.setCorrect(false);
+                }
+                // DB에 저장
+                quizAnswerRepository.save(quizAnswer);
                 
                 // 정답 비교 결과 반환
                 return isCorrect;
         }
         
+        // 퀴즈 카운트가 많은 5개 퀴즈
+        public List<Quiz> getTop5QuizzesByCount() {
+            Pageable topFive = PageRequest.of(0, 5);
+            return quizRepository.findTop5QuizzesByCountDesc(topFive);
+        }
+
+        //퀴즈 검색하기
+
+        //제목 또는 내용으로 검색
+        public List<Quiz> searchByTitleOrContent(String keyword) {
+                return quizRepository.findByTitleContainingOrContentContaining(keyword, keyword);
+        }
+        // 제목과 내용 모두에 키워드가 포함된 퀴즈 검색
+        public List<Quiz> searchByTitleAndContent(String keyword) {
+                return quizRepository.findByTitleContainingAndContentContaining(keyword, keyword);
+        }
         
         //개발 진행에 따라 필요하면 복구 또는 삭제
 

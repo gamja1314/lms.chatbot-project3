@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Form, Table, Button } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import CustomPagination from '../../components/CustomPagination';
-import api from '../../components/Api';
+import CustomPagination from '../CustomPagination';
+import api from '../Api';
 
 const AdminQuiz = () => {
     const navigate = useNavigate();
