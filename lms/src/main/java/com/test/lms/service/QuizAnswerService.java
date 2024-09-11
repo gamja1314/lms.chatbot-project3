@@ -87,5 +87,14 @@ public class QuizAnswerService {
             return new QuizDto(quiz.getQuizId(), quiz.getTitle(), quiz.getQuizRank(), quiz.getCount(), correctRateString);
         });
     }
+    
+    public Page<QuizDto> getMemberCorrectQuizList(Long memberNum, int page) {
+        Pageable pageable = PageRequest.of(page, 5);
+        Page<Quiz> quizPage = quizAnswerRepository.findDistinctQuizIdsByMemberAndIsCorrectTrue(memberNum, pageable);
 
+        	return quizPage.map(quiz -> 
+        		new QuizDto(quiz.getQuizId(), quiz.getTitle(), quiz.getQuizRank(), quiz.getCount(), null)
+        );
+    }
+    
 }
