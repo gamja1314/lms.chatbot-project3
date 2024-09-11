@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useAuth } from '../AuthContext';
 import { MessageCircle, Send } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import api from '../components/Api';
 
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
@@ -39,7 +40,7 @@ const customMarkdownStyle = `
 
 const CodingTestPage = () => {
   const navigate = useNavigate();
-  const [code, setCode] = useState("// Write your code here\nconsole.log('Hello, World!');");
+  const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [problem, setProblem] = useState(null);
   const [isPublic, setIsPublic] = useState(false);
@@ -89,13 +90,22 @@ const CodingTestPage = () => {
   useEffect(() => {
     const fetchProblem = async () => {
       try {
-        const response = await axios.get(`/api/quiz/detail/${quizId}`)
+        const response = await axios.get(`/api/quiz/detail/${quizId}`);
         setProblem(response.data);
+        
+        const answerResponse = await api.get(`/api/quizAnswer/${quizId}`);
+        
+        // quizAnswer가 있으면 code를 설정, 없으면 기본 코드 설정
+        if (answerResponse.data && answerResponse.data.answer) {
+          setCode(decodeURIComponent(answerResponse.data.answer));
+        } else {
+          setCode("// Write your code here\nconsole.log('Hello, World!');");
+        }
       } catch (error) {
         console.error('Error fetching problem:', error);
       }
     };
-
+  
     fetchChatHistory();
     fetchProblem();
   }, [quizId]);

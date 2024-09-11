@@ -16,6 +16,7 @@ import com.test.lms.entity.Member;
 import com.test.lms.entity.Quiz;
 import com.test.lms.entity.QuizAnswer;
 import com.test.lms.entity.dto.QuizDto;
+import com.test.lms.exception.DataNotFoundException;
 import com.test.lms.repository.MemberRepository;
 import com.test.lms.repository.QuizAnswerRepository;
 import com.test.lms.repository.QuizRepository;
@@ -43,6 +44,14 @@ public class QuizAnswerService {
         return quizAnswerRepository.findByQuiz(quiz);
 
     }    
+
+    public QuizAnswer getOneByQuizMember(Long id, String username) {
+        Quiz quiz = quizRepository.findById(id).orElseThrow(() -> new DataNotFoundException("퀴즈가 존재하지 않습니다."));
+        Member member = memberRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다.: " + username));
+
+        return quizAnswerRepository.findByMemberAndQuiz(member, quiz);
+    }
 
     //username 기반으로 사용자가 정답을 제출한 QuizAnswer목록 조회
     public List<QuizAnswer> getQuizAnswerByUserName(String username){

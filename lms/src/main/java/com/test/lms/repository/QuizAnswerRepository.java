@@ -19,6 +19,9 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Long> {
     List<QuizAnswer> findByQuiz(Quiz quiz);
     List<QuizAnswer> findByMember(Member member);
 
+    @Query("SELECT qa FROM QuizAnswer qa WHERE qa.member = :member AND qa.quiz = :quiz ORDER BY qa.solvedQuizTime DESC LIMIT 1")
+    QuizAnswer findByMemberAndQuiz(@Param("member") Member member, @Param("quiz") Quiz quiz);
+
     @Query("SELECT DISTINCT qa.quiz FROM QuizAnswer qa WHERE qa.isCorrect = true")
     Page<Quiz> findDistinctQuizzesByCorrectAnswers(Pageable pageable);
     
