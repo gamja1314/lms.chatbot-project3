@@ -31,4 +31,7 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Long> {
     // 특정 퀴즈에 대해 정답으로 제출된 횟수 조회
     long countByQuizAndOutput(Quiz quiz, String output);
     void deleteByMember(Member member);
+    
+    @Query("SELECT DISTINCT qa.quiz FROM QuizAnswer qa WHERE qa.member.memberNum = :memberId AND qa.isCorrect = true")
+    Page<Quiz> findDistinctQuizIdsByMemberAndIsCorrectTrue(@Param("memberId") Long memberId, Pageable pageable);
 }

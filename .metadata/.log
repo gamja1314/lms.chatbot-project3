@@ -709,3 +709,45 @@ java.util.concurrent.TimeoutException
 
 !ENTRY org.springframework.tooling.boot.ls 1 0 2024-09-11 09:42:21.560
 !MESSAGE Classpath changed for project: lms
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2024-09-11 11:06:43.912
+!MESSAGE Classpath changed for project: lms
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2024-09-11 11:06:44.915
+!MESSAGE Classpath changed for project: lms
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2024-09-11 11:07:58.956
+!MESSAGE Classpath changed for project: lms
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2024-09-11 11:07:59.209
+!MESSAGE Classpath changed for project: lms
+
+!ENTRY org.eclipse.lsp4e 2 0 2024-09-11 11:48:18.514
+!MESSAGE Javadoc unavailable. Failed to obtain it.
+!STACK 0
+java.lang.InterruptedException
+	at java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:386)
+	at java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:2096)
+	at org.eclipse.lsp4e.jdt.LSJavaHoverProvider.getHoverInfo2(LSJavaHoverProvider.java:65)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:163)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:130)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy.getHoverInfo2(JavaEditorTextHoverProxy.java:89)
+	at org.eclipse.jface.text.TextViewerHoverManager$1.run(TextViewerHoverManager.java:155)
+
+!ENTRY org.eclipse.lsp4e 2 0 2024-09-11 13:49:16.220
+!MESSAGE Javadoc unavailable. Failed to obtain it.
+!STACK 0
+java.lang.InterruptedException
+	at java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:386)
+	at java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:2096)
+	at org.eclipse.lsp4e.jdt.LSJavaHoverProvider.getHoverInfo2(LSJavaHoverProvider.java:65)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:163)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:130)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy.getHoverInfo2(JavaEditorTextHoverProxy.java:89)
+	at org.eclipse.jface.text.TextViewerHoverManager$1.run(TextViewerHoverManager.java:155)
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2024-09-11 13:54:44.183
+!MESSAGE Classpath changed for project: lms
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2024-09-11 13:54:44.478
+!MESSAGE Classpath changed for project: lms

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +21,9 @@ import com.test.lms.entity.Exp;
 import com.test.lms.entity.Member;
 import com.test.lms.entity.dto.ExpDto;
 import com.test.lms.entity.dto.PasswordChangeRequest;
+import com.test.lms.entity.dto.QuizDto;
 import com.test.lms.service.MemberService;
+import com.test.lms.service.QuizAnswerService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +39,8 @@ import lombok.extern.slf4j.Slf4j;
 public class RestMemberController {
 
     private final MemberService memberService;
-
+    private final QuizAnswerService quizAnswerService;
+    
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody @Valid MemberCreateForm memberCreateForm, BindingResult bindingResult) {
         log.info("Signup request received for email: {}", memberCreateForm.getEmail());
@@ -168,6 +172,28 @@ public class RestMemberController {
             return ResponseEntity.internalServerError().body(Map.of("error", "회원 탈퇴 처리 중 오류가 발생했습니다."));
         }
     }
+    
+    // mypage 맞춘 문제 가져오기
+    @GetMapping("/my-correct-quizs")
+    public ResponseEntity<Map<String, Object>> getCorrectQuizzesForMember(
+            @RequestParam(value = "page", defaultValue = "0") int page) {
 
+        // 인증된 사용자 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body(Map.of("error", "로그인이 필요합니다."));
+        }
 
+        String username = authentication.getName();
+        Member member = memberService.findByUsername(username);
+
+        // 특정 회원이 맞춘 문제만 페이징 처리하여 반환
+        Page<QuizDto> correctQuizzes = quizAnswerService.getMemberCorrectQuizList(member.getMemberNum(), page);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", correctQuizzes.getContent());
+        response.put("totalPages", correctQuizzes.getTotalPages());
+        
+        return ResponseEntity.ok(response);
+    }
 }

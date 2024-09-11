@@ -1,10 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Table } from 'react-bootstrap';
 import { useAuth } from '../AuthContext';
+import { format} from 'date-fns';
+
 
 const MyPage = () => {
+
+  const handleQuizClick = (quizId) => {
+
+  };
+  // 날짜 형식을 보기 좋게 변환하는 함수
+  const formatSolvedQuizTime = (timeString) => {
+    try {
+      if (!timeString) {
+        return "날짜 정보 없음"; // solvedQuizTime이 없을 때 기본값 표시
+      }
+      const date = new Date(timeString);
+      if (isNaN(date.getTime())) {
+        return "유효하지 않은 날짜"; // 유효하지 않은 날짜 값일 때
+      }
+      return format(date, 'yyyy-MM-dd HH:mm:ss'); // 원하는 날짜 형식으로 변환
+    } catch (error) {
+      return "날짜 정보 없음"; // 에러 발생 시 기본값 표시
+    }
+  };
   const [memberInfo, setMemberInfo] = useState({
     username: '',
     nickname: '',
@@ -12,6 +33,9 @@ const MyPage = () => {
     rank: '',
     expPoints: '',
   });
+  const [quizAnswers, setQuizAnswers] = useState([]); // 퀴즈 데이터를 저장할 상태
+  const [currentPage, setCurrentPage] = useState(0);  // 현재 페이지 상태
+  const [totalPages, setTotalPages] = useState(0);    // 총 페이지 수
   const [showModal, setShowModal] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmText, setConfirmText] = useState('');
@@ -31,6 +55,40 @@ const MyPage = () => {
         console.error("Error fetching member data:", error);
       });
   }, []);
+
+    // 맞춘 문제 목록 가져오기
+    useEffect(() => {
+      fetchCorrectQuizzes(currentPage);
+    }, [currentPage]);
+  
+    // 맞춘 문제를 가져오는 API 호출
+    const fetchCorrectQuizzes = (page) => {
+      axios
+        .get(`/api/member/my-correct-quizs`, {
+          params: { page: page }
+        })
+        .then((response) => {
+          setQuizAnswers(response.data.content); // 현재 페이지의 퀴즈 데이터 설정
+          setTotalPages(response.data.totalPages); // 전체 페이지 수 설정
+        })
+        .catch((error) => {
+          console.error("Error fetching quiz answers:", error);
+          setError("퀴즈 데이터를 불러오는 중 오류가 발생했습니다.");
+        });
+    };
+  
+    // 페이지 변경 핸들러
+    const handleNextPage = () => {
+      if (currentPage < totalPages - 1) {
+        setCurrentPage(currentPage + 1);
+      }
+    };
+  
+    const handlePrevPage = () => {
+      if (currentPage > 0) {
+        setCurrentPage(currentPage - 1);
+      }
+    };
 
   const handleChangePasswordClick = () => {
     navigate('/change-password'); // 비밀번호 변경 페이지로 이동
@@ -63,17 +121,69 @@ const MyPage = () => {
     }
   };
 
+
+
   return (
-    <div className='container-fluid'>
-      <div className='container'>
+<div className='container-fluid'>
+  <div className='container'>
+    <div className="row">
+      {/* 왼쪽: 회원 정보 및 버튼 */}
+      <div className="col-md-6">
         <h1>My Page</h1>
         <p><strong>아이디:</strong> {memberInfo.username}</p>
         <p><strong>닉네임:</strong> {memberInfo.nickname}</p>
         <p><strong>Email:</strong> {memberInfo.email}</p>
         <p><strong>등급:</strong> {memberInfo.rank}</p>
         <p><strong>경험치:</strong> {memberInfo.expPoints}</p>
-        <button onClick={handleChangePasswordClick} className="btn btn-primary me-2">비밀번호 변경</button>
-        <button onClick={handleWithdrawalClick} className="btn btn-danger">회원 탈퇴</button>
+
+        {/* 비밀번호 변경 및 회원 탈퇴 버튼 */}
+        <div className="d-flex justify-content-start">
+          <button onClick={handleChangePasswordClick} className="btn btn-primary me-2">비밀번호 변경</button>
+          <button onClick={handleWithdrawalClick} className="btn btn-danger">회원 탈퇴</button>
+        </div>
+      </div>
+
+      {/*  맞춘 문제 목록 */}
+      <div className="container mt-4">
+        <h2>내가 맞춘 문제</h2>
+
+        {quizAnswers.length > 0 ? (
+          <>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>제목</th>
+                  <th>난이도</th>
+                  <th>날짜</th>
+                </tr>
+              </thead>
+              <tbody>
+                {quizAnswers.map((quiz, index) => (
+                  <tr key={index} onClick={() => handleQuizClick(quiz.quizId)} style={{ cursor: 'pointer' }}>
+                    <td>{quiz.title}</td>
+                    <td>{quiz.quizRank}</td>
+                    <td>{formatSolvedQuizTime(quiz.solvedQuizTime)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+
+            {/* 페이지네이션 버튼 */}
+            <div className="pagination">
+              <button onClick={handlePrevPage} disabled={currentPage === 0} className="btn btn-secondary me-2">
+                이전
+              </button>
+              <span>페이지 {currentPage + 1} / {totalPages}</span>
+              <button onClick={handleNextPage} disabled={currentPage === totalPages - 1} className="btn btn-secondary ms-2">
+                다음
+              </button>
+            </div>
+          </>
+        ) : (
+          <p>맞춘 문제가 없습니다.</p>
+        )}
+      </div>
+    </div>
 
         <Modal show={showModal} onHide={handleCloseModal}>
           <Modal.Header closeButton>

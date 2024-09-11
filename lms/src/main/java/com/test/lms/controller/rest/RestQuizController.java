@@ -113,20 +113,20 @@ public class RestQuizController {
     @GetMapping("/search")
     public ResponseEntity<List<Quiz>> searchQuizzes(@RequestParam("keyword") String keyword, @RequestParam(value = "searchType", defaultValue = "OR") String searchType){
 
-        List<Quiz> quizzes;
+        List<Quiz> quizs;
         
         //제목, 내용 각각 검색
         if ("OR".equalsIgnoreCase(searchType)) {
-            quizzes = quizService.searchByTitleOrContent(keyword);
+            quizs = quizService.searchByTitleOrContent(keyword);
         }
         //제목 + 내용 검색
         else if ("AND".equalsIgnoreCase(searchType)) {
-            quizzes = quizService.searchByTitleAndContent(keyword);
+            quizs = quizService.searchByTitleAndContent(keyword);
         } else {
             return ResponseEntity.badRequest().body(null);  // 잘못된 searchType 처리
         }
 
-        return ResponseEntity.ok(quizzes);
+        return ResponseEntity.ok(quizs);
     }
 }
 

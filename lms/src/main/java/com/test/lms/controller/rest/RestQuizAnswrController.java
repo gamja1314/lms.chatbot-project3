@@ -77,4 +77,6 @@ public class RestQuizAnswrController {
 
         return quizAnswerService.getTop5QuizzesOfDay();
     }
+    
+    
 }
