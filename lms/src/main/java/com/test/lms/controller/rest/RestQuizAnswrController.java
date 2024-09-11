@@ -2,6 +2,7 @@ package com.test.lms.controller.rest;
 
 import java.util.List;
 
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.test.lms.entity.Member;
 import com.test.lms.entity.Quiz;
 import com.test.lms.entity.QuizAnswer;
 import com.test.lms.entity.dto.QuizDto;
@@ -37,8 +39,17 @@ public class RestQuizAnswrController {
         //JSON 으로 QuizAnswer 목록 반환
         return ResponseEntity.ok(quizAnswers);
     }
+
+    // 특정 퀴즈에서 사용자의 아이디와 함께 최근 작성한 QuizAnswer 작성
+    @GetMapping("/{quizId}")
+    public ResponseEntity<QuizAnswer> getOneQuizAnswer(@PathVariable("quizId") Long quizId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        QuizAnswer quizAnswer = quizAnswerService.getOneByQuizMember(quizId, authentication.getName());
+
+        return ResponseEntity.ok(quizAnswer);
+    }
     
-    //풀었던문제 1개 가져오기 
 
     // 정답이 공개된 문제들
     @GetMapping("/solved")
