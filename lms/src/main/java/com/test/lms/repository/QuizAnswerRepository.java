@@ -27,4 +27,5 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Long> {
 
     // 특정 퀴즈에 대해 정답으로 제출된 횟수 조회
     long countByQuizAndOutput(Quiz quiz, String output);
+    void deleteByMember(Member member);
 }
