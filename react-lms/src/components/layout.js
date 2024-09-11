@@ -15,7 +15,7 @@ export function Header() {
     navigate('/login');
   };
 
-  const isCodingPage = location.pathname.startsWith('/coding-page/');
+  const isCodingPage = location.pathname.startsWith('/');
 
   const headerStyle = isCodingPage
     ? { backgroundColor: '#263238', color: '#B0BEC5' }
