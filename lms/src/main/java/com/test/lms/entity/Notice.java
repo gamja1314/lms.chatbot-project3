@@ -7,8 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,22 +19,14 @@ public class Notice {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long noticeId;
 
-    @Column(nullable=false)
     private String title;
 
-    @Column(nullable=false)
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
-
-    @ManyToOne //한 작성자가 여러 공지 작성
-    @JoinColumn(name="username")
-    private Member author;  //작성자
 
     @Column(nullable=false)
     private LocalDateTime createDate;
 
     private LocalDateTime updateDate; //수정일자
-
     
-
-
 }

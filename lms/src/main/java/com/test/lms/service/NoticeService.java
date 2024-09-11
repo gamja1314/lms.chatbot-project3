@@ -9,8 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.test.lms.entity.Notice;
-import com.test.lms.entity.Member;
-import com.test.lms.repository.MemberRepository;
+import com.test.lms.entity.dto.NoticeDto;
 import com.test.lms.repository.NoticeRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -21,8 +20,12 @@ import lombok.RequiredArgsConstructor;
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
-    private final MemberRepository memberRepository;
 
+    // 공지 하나 가져오기
+    public Notice getOne(Long id) {
+        return noticeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 공지를 찾을 수 없습니다. ID : " + id));
+    }
+    
     //모든 공지 가져오기
     public List<Notice> getAllNotice(){
         return noticeRepository.findAll();
@@ -34,38 +37,35 @@ public class NoticeService {
         return this.noticeRepository.findAll(pageable);
     }
 
+    // 최근 등록된 챌린지 5개 조회
+    public List<Notice> get5Notices() {
+        Pageable pageable = PageRequest.of(0, 5);
+        return noticeRepository.findRecent5(pageable);
+    }
+
     //공지 작성
-    public Notice create(String title, String content, String username){
-
-        //username 으로 Member 엔티티 조회
-        Member author = memberRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다: " + username));
-
+    public Notice create(NoticeDto noticeDto) {
         Notice notice = new Notice();
-
-        notice.setTitle(title);
-        notice.setContent(content);
-        notice.setAuthor(author);
+        notice.setTitle(noticeDto.getTitle());
+        notice.setContent(noticeDto.getContent());
         notice.setCreateDate(LocalDateTime.now());
 
         return noticeRepository.save(notice);
     }
 
     //공지 수정
-    public Notice updateNotice(Notice notice){
+    public Notice updateNotice(Long id, NoticeDto noticeDto){
 
-        if (notice==null || notice.getNoticeId() == 0L){
-            throw new IllegalArgumentException("공지가 존재하지 않습니다.");
-        }
-
-        Notice existingNotice = noticeRepository.findById(notice.getNoticeId()).orElseThrow(() -> new EntityNotFoundException("해당 공지를 찾을 수 없습니다. ID : " + notice.getNoticeId()));
-        existingNotice.setTitle(notice.getTitle());
-        existingNotice.setContent(notice.getContent());
+        Notice existingNotice = noticeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 공지를 찾을 수 없습니다. ID : " + id));
+        existingNotice.setTitle(noticeDto.getTitle());
+        existingNotice.setContent(noticeDto.getContent());
 
         return noticeRepository.save(existingNotice);
     }
 
     //공지 삭제
-    public void delete(Notice notice){
+    public void delete(Long id){
+        Notice notice = noticeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 공지를 찾을 수 없습니다. ID : " + id));
         this.noticeRepository.delete(notice);
     }
     

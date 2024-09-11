@@ -9,13 +9,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.test.lms.entity.Notice;
+import com.test.lms.entity.dto.NoticeDto;
+import com.test.lms.repository.MemberRepository;
 import com.test.lms.service.NoticeService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -24,49 +28,47 @@ import lombok.RequiredArgsConstructor;
 public class RestNoticeController {
 
     private final NoticeService noticeService;
+    private final MemberRepository memberRepository;
 
-    // //모든 공지사항 조회
-    // @GetMapping
-    // public ResponseEntity<List<Notice>> getAllNotices() {
-    //     List<Notice> notices = noticeService.getAllNotice();
-    //     return ResponseEntity.ok(notices);
-    // }
+    // 최근 5개 공지가져오기
+    @GetMapping
+    public ResponseEntity<List<Notice>> get5Notices() {
+        List<Notice> notices = noticeService.get5Notices();
+        return ResponseEntity.ok(notices);
+    }
 
+    @GetMapping("/{noticeId}")
+    public ResponseEntity<Notice> getNotice(@PathVariable("noticeId") Long id) {
+        Notice notice = noticeService.getOne(id);
+        return ResponseEntity.ok(notice);
+    }
+    
+    
     // 페이징 처리된 공지사항 리스트
-    // @GetMapping("/page/{page}")
-    public ResponseEntity<Page<Notice>> getPagedNotices(@PathVariable int page) {
+    @GetMapping("/list")
+    public ResponseEntity<Page<Notice>> getPagedNotices(@RequestParam(value = "page", defaultValue = "0") int page) {
         Page<Notice> pagedNotices = noticeService.getList(page);
         return ResponseEntity.ok(pagedNotices);
     }
 
-    //공지사항 작성(관리자만!)
     @PostMapping("/create")
-    public ResponseEntity<Notice> createNotice(@RequestParam String title, @RequestParam String content, @RequestParam String username){
-        
-        Notice newNotice = noticeService.create(title, content, username);
-
+    public ResponseEntity<Notice> createNotice(@RequestBody @Valid NoticeDto noticeDto) {
+        Notice newNotice = noticeService.create(noticeDto);
         return ResponseEntity.ok(newNotice);
     }
 
     //공지사항 수정(관리자만!)
     @PutMapping("/update/{noticeId}")
-    public ResponseEntity<Notice> updateNotice(@PathVariable("noticeId") Long noticeId, String title, String content){
+    public ResponseEntity<Notice> updateNotice(@PathVariable("noticeId") Long noticeId, @RequestBody NoticeDto noticeDto) {
 
-        Notice notice = new Notice();
-
-        notice.setNoticeId(noticeId);
-        notice.setTitle(title);
-        notice.setContent(content);
-        Notice updatedNotice = noticeService.updateNotice(notice);
+        Notice updatedNotice = noticeService.updateNotice(noticeId, noticeDto);
         return ResponseEntity.ok(updatedNotice);
     }
 
     // 공지사항 삭제 (관리자만 접근 가능)
     @DeleteMapping("/delete/{noticeId}")
     public ResponseEntity<String> deleteNotice(@PathVariable("noticeId") Long noticeId) {
-        Notice notice = new Notice();
-        notice.setNoticeId(noticeId);
-        noticeService.delete(notice);
+        noticeService.delete(noticeId);
         return ResponseEntity.ok("삭제 되었습니다.");
     }
 
@@ -75,5 +77,4 @@ public class RestNoticeController {
     // public ResponseEntity<List<Notice>> searchNotice(@RequestParam String keyword){
 
     // }
- 
 }
