@@ -9,7 +9,7 @@ const MyPage = () => {
     nickname: '',
     email: '',
     rank: '',
-    expPoints: '',
+    expPoints: 0,
   });
   const [showModal, setShowModal] = useState(false);
   const [password, setPassword] = useState('');
@@ -33,7 +33,7 @@ const MyPage = () => {
   const handleChangePasswordClick = () => {
     navigate('/change-password'); // 비밀번호 변경 페이지로 이동
   };
-  
+
   const handleWithdrawalClick = () => {
     setShowModal(true);
   };
