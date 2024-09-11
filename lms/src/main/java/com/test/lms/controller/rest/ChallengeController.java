@@ -42,11 +42,11 @@ public class ChallengeController {
     }
 
     @GetMapping
-public ResponseEntity<Page<Challenge>> getAllChallengeWithPaging(
-        @RequestParam(name = "page", defaultValue = "0") int page) {
-    Page<Challenge> challenges = challengeService.getAllPage(page);
-    return ResponseEntity.ok(challenges);
-}
+    public ResponseEntity<Page<Challenge>> getAllChallengeWithPaging(
+            @RequestParam(name = "page", defaultValue = "0") int page) {
+        Page<Challenge> challenges = challengeService.getAllPage(page);
+        return ResponseEntity.ok(challenges);
+    }
     
     @PutMapping("/{id}")
     public ResponseEntity<Challenge> updateChallenge(@PathVariable("id") Long id, @RequestBody ChallengeDto challengeDto) {

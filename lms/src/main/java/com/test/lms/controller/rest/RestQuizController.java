@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.test.lms.entity.Quiz;
+import com.test.lms.entity.dto.QuizDto;
 import com.test.lms.service.QuizAnswerService;
+import com.test.lms.service.QuizDtoService;
 import com.test.lms.service.QuizService;
 
 import lombok.RequiredArgsConstructor;
@@ -29,12 +31,12 @@ public class RestQuizController {
 
     private final QuizService quizService;
     private final QuizAnswerService quizAnswerService;
+    private final QuizDtoService quizDtoService;
 
     // 퀴즈 목록 API (페이징 처리)
-    // @GetMapping("/list")
-    public ResponseEntity<Page<Quiz>> getQuizList(@RequestParam(value = "page", defaultValue = "0") int page) {
-        // 페이징 처리된 퀴즈 목록을 JSON 형태로 반환
-        Page<Quiz> paging = quizService.getList(page);
+    @GetMapping("/list")
+    public ResponseEntity<Page<QuizDto>> quizBoard(@RequestParam(value = "page", defaultValue = "0") int page) {
+        Page<QuizDto> paging = quizDtoService.getList(page);
         return ResponseEntity.ok(paging);
     }
 
