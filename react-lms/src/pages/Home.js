@@ -81,7 +81,7 @@ const PopularProblemsSection = ({ problems }) => (
         ))}
       </ul>
     ) : (
-      <p>인기 문제가 없습니다.</p>
+      <p className='text-color'>인기 문제가 없습니다.</p>
     )}
   </div>
 );
@@ -96,8 +96,8 @@ const PopularBlog = ({blogs}) => (
       <ul>
         {blogs.map((blogs, index) => (
           <li key={index} className='d-flex justify-content-between'>
-            <Link to={`/coding-page/${blogs.quizId}`} className='text-decoration-none text-white'>{blogs.title}</Link>
-            <span className="problem-difficulty">난이도: {blogs}</span>
+            <Link to={`/coding-page/${blogs.title}`} className='text-decoration-none text-white'>{blogs.title}</Link>
+            <span className="problem-difficulty">추천수: {blogs.like}</span>
           </li>
         ))}
       </ul>
@@ -117,8 +117,8 @@ const RecommendedEmployment = ({recommends}) => (
       <ul>
         {recommends.map((recommends, index) => (
           <li key={index} className='d-flex justify-content-between'>
-            <Link to={`/coding-page/${recommends.quizId}`} className='text-decoration-none text-white'>{recommends.title}</Link>
-            <span className="problem-difficulty">난이도: {recommends.quizRank}</span>
+            <Link to={`/coding-page/${recommends.title}`} className='text-decoration-none text-white'>{recommends.title}</Link>
+            <span className="problem-difficulty">{recommends.company}</span>
           </li>
         ))}
       </ul>
@@ -144,6 +144,8 @@ const Home = () => {
   const [challenges, setChallenges] = useState([]);
   const [notices, setNotices] = useState([]);
   const [problems, setProblems] = useState([]);
+  const [blogs, setBlogs] = useState([]);
+  const [recommends, setRecommends] = useState([]);
 
 
 
@@ -158,6 +160,10 @@ const Home = () => {
         setChallenges(challengeResponse.data);
         const noticeResponse = await axios.get('/api/notice');
         setNotices(noticeResponse.data);
+        const blogResponse = await axios.get('/api/etc/blogs');
+        setBlogs(blogResponse.data);
+        const recommendsResponse = await axios.get('/api/etc/recommends');
+        setRecommends(recommendsResponse.data);
       } catch (error) {
         console.error('데이터를 불러오는데 실패하였습니다. :', error);
       }
@@ -183,8 +189,8 @@ const Home = () => {
             <ChallengesSection challenges={challenges} />
             <NoticeSection notices={notices} />
             <PopularProblemsSection problems={problems} />
-            <PopularBlog />
-            <RecommendedEmployment />
+            <PopularBlog blogs={blogs}/>
+            <RecommendedEmployment recommends={recommends}/>
           </div>
         </main>
       </div>
