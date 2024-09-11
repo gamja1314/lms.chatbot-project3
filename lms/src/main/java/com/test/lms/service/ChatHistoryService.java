@@ -50,7 +50,7 @@ public class ChatHistoryService {
 
 		Quiz quiz = quizService.getQuizById(quizId);
 
-		log.debug("getChatHistory 메서드 시작: member={}, quizId={}", member.getUsername(), quizId);
+		//log.debug("getChatHistory 메서드 시작: member={}, quizId={}", member.getUsername(), quizId);
         
         List<ChatHistory> chatHistories = chatHistoryRepository.findByMemberAndQuiz(member, quiz);
         
@@ -59,7 +59,7 @@ public class ChatHistoryService {
             return Collections.emptyList();
         }
         
-        log.debug("getChatHistory 메서드 끝. 반환된 채팅 기록 수: {}", chatHistories.size());
+       // log.debug("getChatHistory 메서드 끝. 반환된 채팅 기록 수: {}", chatHistories.size());
         return chatHistories;
     }
 	

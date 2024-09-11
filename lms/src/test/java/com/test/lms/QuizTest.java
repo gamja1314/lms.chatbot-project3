@@ -25,7 +25,7 @@ public class QuizTest {
             String output = "";
             quizService.create(title, content, correct, quizRank, output);
 
-            // quizService.create(title, content, correct, quizRank);
+
         }
     }
 
