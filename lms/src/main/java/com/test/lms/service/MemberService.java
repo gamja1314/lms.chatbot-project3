@@ -20,6 +20,7 @@ import com.test.lms.exception.DataNotFoundException;
 import com.test.lms.repository.ExpRepository;
 import com.test.lms.repository.MemberRepository;
 import com.test.lms.repository.PersistentLoginsRepository;
+import com.test.lms.repository.QuizAnswerRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class MemberService implements UserDetailsService{
     private final BCryptPasswordEncoder passwordEncoder;
     private final ExpRepository expRepository;
     private final PersistentLoginsRepository persistentLoginsRepository;
+    private final QuizAnswerRepository quizAnswerRepository;
 
     // 회원 가입
     public Member create(String username, String password, String nickname, String email) {
@@ -185,8 +187,8 @@ public class MemberService implements UserDetailsService{
 	            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 	        }
 	        
-	        
-	        
+	        // QuizAnswer 삭제
+	        quizAnswerRepository.deleteByMember(member);
 	        // Exp 삭제
 	        expRepository.deleteByMember(member);
 	        // RemberMe 삭제

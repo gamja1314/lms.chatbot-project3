@@ -92,7 +92,7 @@ public class SecurityConfig {
             )
             .rememberMe(rememberMe -> rememberMe
                     .key("uniqueAndSecretKey")
-                    .tokenValiditySeconds(86400)
+                    .tokenValiditySeconds(86400) // RemeberMe 7일 설정
                     .userDetailsService(userDetailsService)
                     .tokenRepository(persistentTokenRepository())
             );

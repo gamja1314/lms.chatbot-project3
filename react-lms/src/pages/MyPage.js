@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { useAuth } from '../AuthContext';
 
 const MyPage = () => {
   const [memberInfo, setMemberInfo] = useState({
@@ -17,6 +18,7 @@ const MyPage = () => {
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   useEffect(() => {
     // API 호출하여 사용자 정보 가져오기
@@ -54,6 +56,7 @@ const MyPage = () => {
     try {
       await axios.post('/api/member/withdraw', { password });
       alert('회원 탈퇴가 완료되었습니다.');
+      await logout(); // 회원탈퇴 성공 후 로그아웃 처리
       navigate('/'); // 홈페이지로 이동
     } catch (error) {
       setError('비밀번호가 올바르지 않거나 탈퇴 처리 중 오류가 발생했습니다.');

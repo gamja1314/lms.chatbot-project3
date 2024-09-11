@@ -157,7 +157,6 @@ public class RestMemberController {
             Cookie cookie = new Cookie("JSESSIONID", null);
             cookie.setPath("/");
             cookie.setMaxAge(0); // 쿠키 만료
-            cookie.setHttpOnly(true);
             httpServletResponse.addCookie(cookie);
             
             // 응답으로 성공 메시지 반환
