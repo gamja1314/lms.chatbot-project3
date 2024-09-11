@@ -18,6 +18,6 @@ public class QuizDto {
     private int solvedBy;
     // 정답률
     private String correctRate;
-    // 문제를 푼 날짜 추가
+    // 문제를 푼 날짜
     private LocalDateTime solvedQuizTime;
 }	
