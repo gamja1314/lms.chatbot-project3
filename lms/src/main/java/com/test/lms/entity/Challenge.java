@@ -21,6 +21,7 @@ public class Challenge {
 
     private String title;
 
+    @Column(nullable=false, columnDefinition = "LONGTEXT")
     private String content;
 
     private int expPoints;
