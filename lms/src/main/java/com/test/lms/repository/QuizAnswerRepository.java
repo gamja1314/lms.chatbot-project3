@@ -31,4 +31,7 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Long> {
     
     @Query("SELECT DISTINCT qa.quiz FROM QuizAnswer qa WHERE qa.member.memberNum = :memberId AND qa.isCorrect = true")
     Page<Quiz> findDistinctQuizIdsByMemberAndIsCorrectTrue(@Param("memberId") Long memberId, Pageable pageable);
+    
+    @Query("SELECT qa.quiz, qa.solvedQuizTime FROM QuizAnswer qa WHERE qa.member.memberNum = :memberId AND qa.isCorrect = true")
+    Page<Object[]> findCorrectQuizzesWithSolvedTimeByMember(@Param("memberId") Long memberId, Pageable pageable);
 }

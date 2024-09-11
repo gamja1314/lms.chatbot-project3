@@ -84,17 +84,27 @@ public class QuizAnswerService {
 
             String correctRateString = String.format("%.2f%%", correctRate);
 
-            return new QuizDto(quiz.getQuizId(), quiz.getTitle(), quiz.getQuizRank(), quiz.getCount(), correctRateString);
+            return new QuizDto(quiz.getQuizId(), quiz.getTitle(), quiz.getQuizRank(), quiz.getCount(), correctRateString, null);
         });
     }
     
+    // 특정 
+    
     public Page<QuizDto> getMemberCorrectQuizList(Long memberNum, int page) {
         Pageable pageable = PageRequest.of(page, 5);
-        Page<Quiz> quizPage = quizAnswerRepository.findDistinctQuizIdsByMemberAndIsCorrectTrue(memberNum, pageable);
+        Page<Object[]> quizAnswerPage = quizAnswerRepository.findCorrectQuizzesWithSolvedTimeByMember(memberNum, pageable);
 
-        	return quizPage.map(quiz -> 
-        		new QuizDto(quiz.getQuizId(), quiz.getTitle(), quiz.getQuizRank(), quiz.getCount(), null)
-        );
+        return quizAnswerPage.map(result -> {
+            Quiz quiz = (Quiz) result[0]; // Quiz 객체
+            LocalDateTime solvedQuizTime = (LocalDateTime) result[1]; // solvedQuizTime
+
+            return new QuizDto(
+                quiz.getQuizId(),
+                quiz.getTitle(),
+                quiz.getQuizRank(),
+                quiz.getCount(),
+                null, solvedQuizTime // solvedQuizTime 포함
+            );
+        });
     }
-    
 }
