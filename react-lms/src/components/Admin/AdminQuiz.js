@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Form, Table, Button } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import CustomPagination from '../CustomPagination';
 import api from '../Api';
 
@@ -60,7 +59,7 @@ const AdminQuiz = () => {
 
   return (
     <div className='container mt-4'>
-      <h1 className="mb-4">퀴즈 관리</h1>
+      <h1 className="mb-4 text-color">퀴즈 관리</h1>
       
       <Button variant="primary" className="mb-3" onClick={handleAddQuiz}>
         퀴즈 등록

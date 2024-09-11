@@ -76,7 +76,7 @@ const AdminNotice = () => {
 
     return (
         <div className='container mt-4'>
-            <h1 className="mb-4">공지사항 관리</h1>
+            <h1 className="mb-4 text-color">공지사항 관리</h1>
 
             <Button variant="primary" className="mb-3" onClick={handleAddNotice}>
                 공지사항 등록

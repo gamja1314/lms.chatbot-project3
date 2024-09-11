@@ -7,7 +7,6 @@ body {
   height: 100%;
 }
 
-
 .home-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -18,47 +17,43 @@ body {
 
 header p {
   font-size: 1.2rem;
-  color: #7f8c8d;
+  color: #B0BEC5; /* 밝은 회색으로 변경하여 가독성 향상 */
 }
 
 main {
   color: #f5f5f5;
   padding: 2rem;
 }
+
 .grid-container {
-  /* display: grid;
+  display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem; */
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .card {
-  /* background-color: #fff;
+  flex: 1;
+  background-color: #37474F !important;
+  color: #f5f5f5; /* 카드 내 텍스트 색상 변경 */
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* 그림자 강화 */
   padding: 1.5rem;
-  transition: transform 0.3s ease; */
-  flex: 1; /* 각 섹션의 너비를 동일하게 설정 */
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* 호버 시 그림자 강화 */
 }
 
-.card h2 {
-  font-size: 1.5rem;
-  color: #2c3e50;
+.card .title {
   margin-bottom: 1rem;
-  border-bottom: 2px solid #3498db;
+  border-bottom: 2px solid #4FC3F7;
   padding-bottom: 0.5rem;
+}
+.card .title h2 {
+  font-size: 1.5rem;
+  color: #64FFDA;
 }
 
 table {
@@ -69,17 +64,18 @@ table {
 th, td {
   padding: 0.75rem;
   text-align: left;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #546E7A; /* 테이블 선 색상 변경 */
 }
 
 th {
-  background-color: #f2f2f2;
+  background-color: #296b5c;
+  color: #f5f5f5;
   font-weight: bold;
 }
 
 ul {
   list-style-type: none;
-  padding: 0;
+  padding: 0 !important;
 }
 
 li {
@@ -90,11 +86,12 @@ li {
   font-weight: bold;
   display: block;
   margin-bottom: 0.3rem;
+  color: #4FC3F7; /* 링크 색상 변경 */
 }
 
 .notice-date, .problem-difficulty {
   font-size: 0.9rem;
-  color: #7f8c8d;
+  color: #B0BEC5; /* 부가 정보 색상 변경 */
 }
 
 .cta-section {
@@ -119,26 +116,27 @@ li {
   border-radius: 5px;
   text-decoration: none;
   font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.btn-primary {
-  background-color: #3498db;
-  color: white;
-}
-
-.btn-secondary {
-  background-color: #2ecc71;
-  color: white;
-}
-
-.btn-tertiary {
-  background-color: #e74c3c;
-  color: white;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .btn:hover {
   opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background-color: #4FC3F7;
+  color: #263238;
+}
+
+.btn-secondary {
+  background-color: #64FFDA;
+  color: #263238;
+}
+
+.btn-tertiary {
+  background-color: #FF8A65;
+  color: #263238;
 }
 
 .ctm-section {
@@ -149,10 +147,14 @@ li {
 
 .ctm-image {
   width: 50%;
-  max-width: 500px; /* 이미지가 부모 요소 너비를 넘지 않도록 설정 */
-  height: auto; /* 이미지 비율을 유지 */
+  max-width: 500px;
+  height: auto;
 }
 
+.text-color {
+  color: rgb(176, 190, 197) !important;
+  text-decoration: none;
+}
 
 @media (max-width: 768px) {
   .grid-container {
@@ -167,21 +169,4 @@ li {
     width: 100%;
     margin-bottom: 0.5rem;
   }
-
-  @media (max-width: 768px) {
-  .grid-container {
-    flex-direction: column; /* 작은 화면에서는 세로로 정렬 */
-  }
-
-  .btn {
-    width: 100%; /* 버튼이 전체 너비를 차지하도록 설정 */
-    margin-bottom: 0.5rem; /* 버튼 간의 간격 설정 */
-  }
-
-  .cta-buttons {
-    flex-direction: column; /* CTA 버튼도 세로로 정렬 */
-  }
-
-
-}
 }
