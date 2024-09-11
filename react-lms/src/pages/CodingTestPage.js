@@ -5,7 +5,6 @@ import axios from 'axios';
 import { useAuth } from '../AuthContext';
 import { MessageCircle, Send } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/mode/javascript/javascript';
@@ -141,12 +140,80 @@ const CodingTestPage = () => {
     }
   };
 
+  //비동기방식
+  // const sendMessage = async () => {
+  //   if (inputMessage.trim() !== '') {
+  //     const newUserMessage = { text: inputMessage, sender: 'user' };
+  //     setMessages(prevMessages => [...prevMessages, newUserMessage]);
+  //     setInputMessage('');
+  
+  //     // 로딩 메시지 추가
+  //     const loadingMessage = { text: '답변을 생성 중입니다...', sender: 'bot', isLoading: true };
+  //     setMessages(prevMessages => [...prevMessages, loadingMessage]);
+  
+  //     try {
+  //       const response = await fetch(`/ai/generateStream?quizId=${quizId}&message=${encodeURIComponent(inputMessage)}`, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Accept': 'text/event-stream',
+  //         },
+  //       });
+  
+  //       // 로딩 메시지 제거
+  //       setMessages(prevMessages => prevMessages.filter(msg => !msg.isLoading));
+  
+  //       const reader = response.body.getReader();
+  //       const decoder = new TextDecoder('utf-8');
+  
+  //       let botMessage = { text: '', sender: 'bot' };
+  
+  //       while (true) {
+  //         const { done, value } = await reader.read();
+  //         if (done) break;
+  
+  //         const chunk = decoder.decode(value);
+  //         const lines = chunk.split('\n');
+          
+  //         for (const line of lines) {
+  //           if (line.startsWith('data:')) {
+  //             const data = line.slice(5).trim();
+  //             if (data) {
+  //               botMessage.text += data;
+  
+  //               setMessages(prevMessages => {
+  //                 const updatedMessages = [...prevMessages];
+  //                 if (updatedMessages[updatedMessages.length - 1].sender === 'bot') {
+  //                   updatedMessages[updatedMessages.length - 1] = { ...botMessage };
+  //                 } else {
+  //                   updatedMessages.push({ ...botMessage });
+  //                 }
+  //                 return updatedMessages;
+  //               });
+  //             }
+  //           }
+  //         }
+  //       }
+  
+  //     } catch (error) {
+  //       console.error('Error details:', error);
+  //       setMessages(prevMessages => prevMessages.filter(msg => !msg.isLoading));
+  //       const errorMessage = { text: 'Sorry, I encountered an error.', sender: 'bot' };
+  //       setMessages(prevMessages => [...prevMessages, errorMessage]);
+  //     }
+  //   }
+  // };
+
+  //동기방식
   const sendMessage = async () => {
     if (inputMessage.trim() !== '') {
       const newUserMessage = { text: inputMessage, sender: 'user' };
       setMessages(prevMessages => [...prevMessages, newUserMessage]);
       setInputMessage('');
-
+  
+      // 로딩 메시지 추가
+      const loadingMessage = { text: '답변을 생성 중입니다...', sender: 'bot', isLoading: true };
+      setMessages(prevMessages => [...prevMessages, loadingMessage]);
+  
       try {
         const response = await axios.get('/ai/generate', {
           params: {
@@ -155,15 +222,51 @@ const CodingTestPage = () => {
           }
         });
         console.log('Server response:', response.data);
-        const botMessage = { text: response.data.generation, sender: 'bot' };
-        setMessages(prevMessages => [...prevMessages, botMessage]);
+  
+        // 로딩 메시지 제거
+        setMessages(prevMessages => prevMessages.filter(msg => !msg.isLoading));
+  
+        // 응답을 여러 개의 메시지로 나누어 표시
+        const botResponses = response.data.generation.split('\n').filter(text => text.trim() !== '');
+        botResponses.forEach((text, index) => {
+          setTimeout(() => {
+            const botMessage = { text, sender: 'bot' };
+            setMessages(prevMessages => [...prevMessages, botMessage]);
+          }, index * 100); // 각 메시지를 100ms 간격으로 표시
+        });
       } catch (error) {
         console.error('Error details:', error.response ? error.response.data : error.message);
+        setMessages(prevMessages => prevMessages.filter(msg => !msg.isLoading));
         const errorMessage = { text: 'Sorry, I encountered an error.', sender: 'bot' };
         setMessages(prevMessages => [...prevMessages, errorMessage]);
       }
     }
   };
+
+
+  // const sendMessage = async () => {
+  //   if (inputMessage.trim() !== '') {
+  //     const newUserMessage = { text: inputMessage, sender: 'user' };
+  //     setMessages(prevMessages => [...prevMessages, newUserMessage]);
+  //     setInputMessage('');
+
+  //     try {
+  //       const response = await axios.get('/ai/generate', {
+  //         params: {
+  //           quizId,
+  //           message: inputMessage
+  //         }
+  //       });
+  //       console.log('Server response:', response.data);
+  //       const botMessage = { text: response.data.generation, sender: 'bot' };
+  //       setMessages(prevMessages => [...prevMessages, botMessage]);
+  //     } catch (error) {
+  //       console.error('Error details:', error.response ? error.response.data : error.message);
+  //       const errorMessage = { text: 'Sorry, I encountered an error.', sender: 'bot' };
+  //       setMessages(prevMessages => [...prevMessages, errorMessage]);
+  //     }
+  //   }
+  // };
 
   return (
     <div className="container-fluid vh-100 d-flex flex-column" style={{ backgroundColor: '#263238', color: '#B0BEC5' }}>
