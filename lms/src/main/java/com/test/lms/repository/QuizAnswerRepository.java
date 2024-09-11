@@ -2,6 +2,7 @@ package com.test.lms.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +36,12 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Long> {
     // 특정 회원의 맞춘 문제 조회
     @Query("SELECT qa.quiz, qa.solvedQuizTime FROM QuizAnswer qa WHERE qa.member.memberNum = :memberId AND qa.isCorrect = true")
     Page<Object[]> findCorrectQuizzesWithSolvedTimeByMember(@Param("memberId") Long memberId, Pageable pageable);
+    // 특정 회원의 틀린 문제 조회
+    @Query("SELECT qa.quiz, qa.solvedQuizTime FROM QuizAnswer qa WHERE qa.member.memberNum = :memberId AND qa.isCorrect = false")
+    Page<Object[]> findIncorrectQuizzesWithSolvedTimeByMember(@Param("memberId") Long memberId, Pageable pageable);
+    
+    Optional<QuizAnswer> findByQuizAndMemberAndIsCorrect(Quiz quiz, Member member, boolean isCorrect);
+    Optional<QuizAnswer> findByQuizAndMember(Quiz quiz, Member member);
 //    @Query("SELECT DISTINCT qa.quiz FROM QuizAnswer qa WHERE qa.member.memberNum = :memberId AND qa.isCorrect = true")
 //    Page<Quiz> findDistinctQuizIdsByMemberAndIsCorrectTrue(@Param("memberId") Long memberId, Pageable pageable);
 }

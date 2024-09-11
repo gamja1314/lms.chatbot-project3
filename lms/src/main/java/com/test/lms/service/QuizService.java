@@ -91,69 +91,82 @@ public class QuizService {
 
         //퀴즈 정답
         public boolean submitQuizAnswer(Long quizId, String answer, String output, boolean isPublic, String userName) {
-                log.debug("Received answer submission - quizId: {}, answer: {}, isPublic: {}, userName: {}", quizId, answer, isPublic, userName);
+            log.debug("Received answer submission - quizId: {}, answer: {}, isPublic: {}, userName: {}", quizId, answer, isPublic, userName);
 
-                // quiz ID로 퀴즈 정보 가져오기
-                Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new EntityNotFoundException("퀴즈를 찾을 수 없습니다."));
+            // quiz ID로 퀴즈 정보 가져오기
+            Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new EntityNotFoundException("퀴즈를 찾을 수 없습니다."));
 
-                // 사용자 ID로 멤버 정보 가져오기
-                Member member = memberRepository.findByUsername(userName).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
-        
-                // 제출된 답과 퀴즈의 정답을 비교
-                String trimmedOutput = output.trim();
-                String trimmedCorrect = quiz.getOutput().trim();
-                boolean isCorrect = trimmedCorrect.equalsIgnoreCase(trimmedOutput);
-                
-                // 퀴즈 제출 카운트 증가
-                quiz.setCount(quiz.getCount() + 1);
-                quizRepository.save(quiz);  // 변경 사항 저장
-                
-                // 정답일 경우에만 DB에 저장
-                
-                // QuizAnswer 생성과 저장
-                QuizAnswer quizAnswer = new QuizAnswer();
-                quizAnswer.setAnswer(answer);
-                quizAnswer.setOutput(trimmedOutput);
-                quizAnswer.setPublic(isPublic);
-                quizAnswer.setMember(member);
-                quizAnswer.setQuiz(quiz);
-                quizAnswer.setSolvedQuizTime(LocalDateTime.now());
-                if (isCorrect) {
-                    quizAnswer.setCorrect(isCorrect);
-        
-                    
-                    
-                    int expPoints = 0;
-                    // quizRank에 따라 경험치 결정
-                    switch (quiz.getQuizRank()) {
-                        case "D":
+            // 사용자 ID로 멤버 정보 가져오기
+            Member member = memberRepository.findByUsername(userName)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+            // 제출된 답과 퀴즈의 정답을 비교
+            String trimmedOutput = output.trim();
+            String trimmedCorrect = quiz.getOutput().trim();
+            boolean isCorrect = trimmedCorrect.equalsIgnoreCase(trimmedOutput);
+
+            // 퀴즈 제출 카운트 증가
+            quiz.setCount(quiz.getCount() + 1);
+            quizRepository.save(quiz); // 변경 사항 저장
+
+            // 기존 답변을 찾거나 새로운 답변 생성
+            QuizAnswer quizAnswer = quizAnswerRepository.findByQuizAndMember(quiz, member)
+                .orElse(new QuizAnswer());
+
+            boolean wasIncorrectBefore = quizAnswer.getId() != null && !quizAnswer.isCorrect();
+
+            // 답변 정보 설정
+            quizAnswer.setAnswer(answer);
+            quizAnswer.setOutput(trimmedOutput);
+            quizAnswer.setPublic(isPublic);
+            quizAnswer.setMember(member);
+            quizAnswer.setQuiz(quiz);
+            quizAnswer.setSolvedQuizTime(LocalDateTime.now());
+            quizAnswer.setCorrect(isCorrect);
+
+            int expPoints = 0;
+
+            if (isCorrect) {
+                // quizRank에 따라 경험치 결정
+                switch (quiz.getQuizRank()) {
+                    case "D":
                         expPoints = 5;
                         break;
-                        case "C":
+                    case "C":
                         expPoints = 10;
                         break;
-                        case "B":
+                    case "B":
                         expPoints = 20;
                         break;
-                        case "A":
+                    case "A":
                         expPoints = 30;
                         break;
-                        default:
-                        log.warn("존재하지 않는 랭크 입니다.: {}", quiz.getQuizRank());
+                    default:
+                        log.warn("존재하지 않는 랭크입니다.: {}", quiz.getQuizRank());
                         break;
-                    }
-                    
+                }
+
+                if (quizAnswer.getId() == null) {
+                    log.debug("New correct answer submitted");
+                } else if (wasIncorrectBefore) {
+                    log.debug("Answer updated from incorrect to correct");
+                    // 오답에서 정답으로 바뀐 경우에도 동일한 경험치 부여
+                } else {
+                    log.debug("Correct answer resubmitted");
+                    expPoints = 0; // 이미 정답이었던 경우 추가 경험치 없음
+                }
+
+                if (expPoints > 0) {
                     memberService.addExpPoints(member.getMemberNum(), expPoints);
                     log.debug("Added {} experience points to user {}", expPoints, member.getUsername());
-                } else {
-                    log.debug("Answer is incorrect, not saving to database");
-                    quizAnswer.setCorrect(false);
                 }
-                // DB에 저장
-                quizAnswerRepository.save(quizAnswer);
-                
-                // 정답 비교 결과 반환
-                return isCorrect;
+            } else {
+                log.debug("Answer is incorrect, updating existing record or creating new one");
+            }
+
+            quizAnswerRepository.save(quizAnswer);
+            return isCorrect;
         }
         
         // 퀴즈 카운트가 많은 5개 퀴즈

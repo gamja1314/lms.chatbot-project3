@@ -3,29 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Modal, Button, Form, Table } from 'react-bootstrap';
 import { useAuth } from '../AuthContext';
-import { format} from 'date-fns';
-
+import { format } from 'date-fns';
 
 const MyPage = () => {
-
-  const handleQuizClick = (quizId) => {
-
-  };
-  // 날짜 형식을 보기 좋게 변환하는 함수
-  const formatSolvedQuizTime = (timeString) => {
-    try {
-      if (!timeString) {
-        return "날짜 정보 없음"; // solvedQuizTime이 없을 때 기본값 표시
-      }
-      const date = new Date(timeString);
-      if (isNaN(date.getTime())) {
-        return "유효하지 않은 날짜"; // 유효하지 않은 날짜 값일 때
-      }
-      return format(date, 'yyyy-MM-dd HH:mm:ss'); // 원하는 날짜 형식으로 변환
-    } catch (error) {
-      return "날짜 정보 없음"; // 에러 발생 시 기본값 표시
-    }
-  };
   const [memberInfo, setMemberInfo] = useState({
     username: '',
     nickname: '',
@@ -40,6 +20,7 @@ const MyPage = () => {
   const [password, setPassword] = useState('');
   const [confirmText, setConfirmText] = useState('');
   const [error, setError] = useState('');
+  const [selectedTab, setSelectedTab] = useState('correct');
 
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -56,15 +37,19 @@ const MyPage = () => {
       });
   }, []);
 
-    // 맞춘 문제 목록 가져오기
-    useEffect(() => {
-      fetchCorrectQuizzes(currentPage);
-    }, [currentPage]);
-  
-    // 맞춘 문제를 가져오는 API 호출
-    const fetchCorrectQuizzes = (page) => {
-      axios
-        .get(`/api/member/my-correct-quizs`, {
+  // 맞춘 문제 또는 틀린 문제 목록 가져오기
+  useEffect(() => {
+    fetchQuizzes(currentPage);
+  }, [currentPage, selectedTab]);
+
+  // 맞춘 문제 또는 틀린 문제를 가져오는 API 호출
+  const fetchQuizzes = (page) => {
+    const url =
+      selectedTab === 'correct'
+        ? '/api/member/my-correct-quizs'
+        : '/api/member/my-incorrect-quizs';
+    axios
+      .get(url, {
           params: { page: page }
         })
         .then((response) => {
@@ -90,6 +75,10 @@ const MyPage = () => {
       }
     };
 
+    const handleQuizClick = (quizId) => {
+      // 퀴즈 클릭 시 처리
+    };
+  
   const handleChangePasswordClick = () => {
     navigate('/change-password'); // 비밀번호 변경 페이지로 이동
   };
@@ -121,13 +110,16 @@ const MyPage = () => {
     }
   };
 
-
+  const handleTabChange = (tab) => {
+    setSelectedTab(tab);
+    setCurrentPage(0); // 탭 변경 시 페이지 초기화
+  };
 
   return (
 <div className='container-fluid'>
   <div className='container'>
     <div className="row">
-      {/* 왼쪽: 회원 정보 및 버튼 */}
+      {/* 회원 정보 */}
       <div className="col-md-6">
         <h1>My Page</h1>
         <p><strong>아이디:</strong> {memberInfo.username}</p>
@@ -143,10 +135,27 @@ const MyPage = () => {
         </div>
       </div>
 
-      {/*  맞춘 문제 목록 */}
-      <div className="container mt-4">
-        <h2>내가 맞춘 문제</h2>
+          {/* 맞춘 문제와 틀린 문제 탭 */}
+          <div className="container mt-4">
+            <h2>내가 푼 문제</h2>
 
+            {/* 탭 버튼 */}
+            <div className="d-flex mb-3">
+              <button
+                className={`btn ${selectedTab === 'correct' ? 'btn-primary' : 'btn-secondary'} me-2`}
+                onClick={() => handleTabChange('correct')}
+              >
+                맞춘 문제
+              </button>
+              <button
+                className={`btn ${selectedTab === 'incorrect' ? 'btn-primary' : 'btn-secondary'}`}
+                onClick={() => handleTabChange('incorrect')}
+              >
+                틀린 문제
+              </button>
+            </div>
+
+            {/* 퀴즈 목록 */}
         {quizAnswers.length > 0 ? (
           <>
             <Table striped bordered hover>
@@ -162,13 +171,13 @@ const MyPage = () => {
                   <tr key={index} onClick={() => handleQuizClick(quiz.quizId)} style={{ cursor: 'pointer' }}>
                     <td>{quiz.title}</td>
                     <td>{quiz.quizRank}</td>
-                    <td>{formatSolvedQuizTime(quiz.solvedQuizTime)}</td>
+                    <td>{format(new Date(quiz.solvedQuizTime), 'yyyy-MM-dd HH:mm:ss')}</td>
                   </tr>
                 ))}
               </tbody>
             </Table>
 
-            {/* 페이지네이션 버튼 */}
+            {/* 페이징 버튼 */}
             <div className="pagination">
               <button onClick={handlePrevPage} disabled={currentPage === 0} className="btn btn-secondary me-2">
                 이전
@@ -180,7 +189,7 @@ const MyPage = () => {
             </div>
           </>
         ) : (
-          <p>맞춘 문제가 없습니다.</p>
+          <p>{selectedTab === 'correct' ? '맞춘 문제가 없습니다.' : '틀린 문제가 없습니다.'}</p>
         )}
       </div>
     </div>
