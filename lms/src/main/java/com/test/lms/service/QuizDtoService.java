@@ -33,7 +33,7 @@ public class QuizDtoService {
 	            // correctRate를 String으로 변환하여 QuizDto 생성
 	            String correctRateString = String.format("%.2f%%", correctRate); // 소수점 두 자리까지만 표시하고 % 붙이기
 
-	            return new QuizDto(quiz.getQuizId(), quiz.getTitle(), quiz.getQuizRank(), quiz.getCount(), correctRateString);
+	            return new QuizDto(quiz.getQuizId(), quiz.getTitle(), quiz.getQuizRank(), quiz.getCount(), correctRateString, null);
 	        });
 	    }
 	    
