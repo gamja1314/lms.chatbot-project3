@@ -35,11 +35,17 @@ export function Header() {
         </h1>
         <div className="header-flex">
           <div>
-            <Link to="/coding-test" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1rem' }}>
+            <Link to="/coding-test" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1.5rem' }}>
               Coding Test
             </Link>
-            <Link to="/solved" style={{ ...linkStyle, textDecoration: 'none' }}>
-              SolvedQuiz
+            <Link to="/rankings" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1.5rem' }}>
+              랭킹
+            </Link>
+            <Link to="/notices" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1.5rem' }}>
+              공지사항
+            </Link>
+            <Link to="/recommends" style={{ ...linkStyle, textDecoration: 'none' }}>
+              추천 채용
             </Link>
           </div>
           <div>
