@@ -76,7 +76,7 @@ const MyPage = () => {
     };
 
     const handleQuizClick = (quizId) => {
-      // 퀴즈 클릭 시 처리
+      navigate(`/coding-page/${quizId}`);
     };
   
   const handleChangePasswordClick = () => {
