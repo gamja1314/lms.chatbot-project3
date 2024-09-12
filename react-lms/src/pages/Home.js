@@ -8,7 +8,7 @@ const RankingSection = ({ rankings }) => (
   <div className="card ranking-card">
     <div className='d-flex align-content-center justify-content-between title'>
       <h2 className='mb-0'>랭킹</h2>
-      <Link to="/all-jobs" className="text-decoration-none small text-color mb-0">전체보기</Link>
+      <Link to="/rankings" className="text-decoration-none small text-color mb-0">전체보기</Link>
     </div>
     <table>
       <thead>
@@ -37,7 +37,7 @@ const ChallengesSection = ({ challenges }) => (
   <div className="card challenge-card">
     <div className='d-flex align-content-center justify-content-between title'>
       <h2 className='mb-0'>도전과제 및 대회</h2>
-      <Link to="/all-challenge" className="text-decoration-none small text-color mb-0">전체보기</Link>
+      <Link to="/challenges" className="text-decoration-none small text-color mb-0">전체보기</Link>
     </div>
     <ul>
       {challenges.map((challenge, index) => (
@@ -53,7 +53,7 @@ const NoticeSection = ({ notices }) => (
   <div className="card notice-card">
     <div className='d-flex align-content-center justify-content-between title'>
       <h2 className='mb-0'>공지사항</h2>
-      <Link to="/all-notice" className="text-decoration-none small text-color mb-0">전체보기</Link>
+      <Link to="/notices" className="text-decoration-none small text-color mb-0">전체보기</Link>
     </div>
     <ul>
       {notices.map((notice, index) => (
@@ -90,7 +90,7 @@ const PopularBlog = ({blogs}) => (
   <div className="card problem-card">
     <div className='d-flex align-content-center justify-content-between title'>
       <h2 className='mb-0'>HOT! IT 소식</h2>
-      <Link to="/all-blogs" className="text-decoration-none small text-color mb-0">전체보기</Link>
+      <Link to="/blogs" className="text-decoration-none small text-color mb-0">전체보기</Link>
     </div>
     {Array.isArray(blogs) && blogs.length > 0 ? (
       <ul>
@@ -111,7 +111,7 @@ const RecommendedEmployment = ({recommends}) => (
   <div className="card problem-card">
     <div className='d-flex align-content-center justify-content-between title'>
       <h2 className='mb-0'>추천 채용</h2>
-      <Link to="/all-jobs" className="text-decoration-none small text-color mb-0">전체보기</Link>
+      <Link to="/recommends" className="text-decoration-none small text-color mb-0">전체보기</Link>
     </div>
     {Array.isArray(recommends) && recommends.length > 0 ? (
       <ul>
@@ -130,13 +130,12 @@ const RecommendedEmployment = ({recommends}) => (
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
   
-  return `${year}-${month}-${day} ${hours}:${minutes}`;
+  return `${month}-${day} ${hours}:${minutes}`;
 };
 
 const Home = () => {
