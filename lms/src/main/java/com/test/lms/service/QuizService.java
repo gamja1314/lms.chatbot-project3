@@ -88,7 +88,7 @@ public class QuizService {
                 return this.quizRepository.findAll(pageable);
         }
 
-
+        
         //퀴즈 정답
         public boolean submitQuizAnswer(Long quizId, String answer, String output, boolean isPublic, String userName) {
             log.debug("Received answer submission - quizId: {}, answer: {}, isPublic: {}, userName: {}", quizId, answer, isPublic, userName);
