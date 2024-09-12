@@ -2,6 +2,7 @@ package com.test.lms.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,15 +23,16 @@ public class QuizAnswer {
     private Long id;
 
     // 작성한 코드
+    @Column(nullable=false, columnDefinition = "LONGTEXT")
     private String answer;
     // 제출한 답안
     private String output;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name="member_id")
     private Member member;
 
