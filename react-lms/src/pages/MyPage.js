@@ -151,7 +151,7 @@ const MyPage = () => {
                 className={`btn ${selectedTab === 'incorrect' ? 'btn-primary' : 'btn-secondary'}`}
                 onClick={() => handleTabChange('incorrect')}
               >
-                틀린 문제
+                미해결 문제
               </button>
             </div>
 
@@ -189,7 +189,7 @@ const MyPage = () => {
             </div>
           </>
         ) : (
-          <p>{selectedTab === 'correct' ? '맞춘 문제가 없습니다.' : '틀린 문제가 없습니다.'}</p>
+          <p>{selectedTab === 'correct' ? '맞춘 문제가 없습니다.' : '미해결 문제가 없습니다.'}</p>
         )}
       </div>
     </div>

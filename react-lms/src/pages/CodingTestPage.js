@@ -97,7 +97,7 @@ const CodingTestPage = () => {
         
         // quizAnswer가 있으면 code를 설정, 없으면 기본 코드 설정
         if (answerResponse.data && answerResponse.data.answer) {
-          setCode(decodeURIComponent(answerResponse.data.answer));
+          setCode(answerResponse.data.answer);
         } else {
           setCode("// Write your code here\nconsole.log('Hello, World!');");
         }
