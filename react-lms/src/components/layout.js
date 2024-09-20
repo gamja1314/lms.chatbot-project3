@@ -38,11 +38,8 @@ export function Header() {
             <Link to="/coding-test" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1.5rem' }}>
               Coding Test
             </Link>
-            <Link to="/rankings" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1.5rem' }}>
-              랭킹
-            </Link>
-            <Link to="/notices" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1.5rem' }}>
-              공지사항
+            <Link to="/boards" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1.5rem' }}>
+              자유게시판
             </Link>
             <Link to="/recommends" style={{ ...linkStyle, textDecoration: 'none' }}>
               추천 채용
