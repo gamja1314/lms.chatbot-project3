@@ -1,12 +1,17 @@
 package com.test.lms.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,5 +43,13 @@ public class Member {
     private String role;    // 권한
     
     private LocalDateTime createTime;   // 가입날짜
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "member")
+    private List<UserChallenge> userChallenges;
+
+    @JsonBackReference
+    @OneToOne(mappedBy = "member")
+    private UserChallenge activeChallenge;
 
 }
