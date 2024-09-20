@@ -172,7 +172,7 @@ public class MemberService implements UserDetailsService{
 	    }
 	    
 	    public List<ExpDto> getTop5MembersByExp() {
-	    	Pageable topFive = PageRequest.of(0, 5);
+	    	Pageable topFive = PageRequest.of(0, 10);
 	    	return memberRepository.findTop5MembersByExp(topFive);
 	    }
 	    
