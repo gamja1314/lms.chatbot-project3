@@ -1,10 +1,29 @@
 package com.test.lms;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.test.lms.service.MemberService;
 
 @SpringBootTest
 public class ShTest {
+
+    @Autowired
+    private MemberService memberService;
+
+    @Test
+    public void insertRandomMembers() {
+        for(int i = 0; i<100; i++){
+            String username = "user" + i;
+            String password = UUID.randomUUID().toString();
+            String nickname = "nickname" + i;
+            String email = "email" + i + "@test.com";
+        
+        memberService.create(username, password, nickname, email);
+        }
+    } 
 
     // @Test
     // public void testQuizAnswer(){
