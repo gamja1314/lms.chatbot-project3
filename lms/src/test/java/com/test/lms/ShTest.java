@@ -13,17 +13,17 @@ public class ShTest {
     @Autowired
     private MemberService memberService;
 
-    @Test
-    public void insertRandomMembers() {
-        for(int i = 0; i<100; i++){
-            String username = "user" + i;
-            String password = UUID.randomUUID().toString();
-            String nickname = "nickname" + i;
-            String email = "email" + i + "@test.com";
+    // @Test
+    // public void insertRandomMembers() {
+    //     for(int i = 0; i<100; i++){
+    //         String username = "user" + i;
+    //         String password = UUID.randomUUID().toString();
+    //         String nickname = "nickname" + i;
+    //         String email = "email" + i + "@test.com";
         
-        memberService.create(username, password, nickname, email);
-        }
-    } 
+    //     memberService.create(username, password, nickname, email);
+    //     }
+    // } 
 
     // @Test
     // public void testQuizAnswer(){

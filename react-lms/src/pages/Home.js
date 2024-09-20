@@ -8,7 +8,7 @@ const RankingSection = ({ rankings }) => (
   <div className="card ranking-card">
     <div className='d-flex align-content-center justify-content-between title'>
       <h2 className='mb-0'>랭킹</h2>
-      <Link to="/rankings" className="text-decoration-none small text-color mb-0">전체보기</Link>
+      <Link to="/member-ranking" className="text-decoration-none small text-color mb-0">전체보기</Link>
     </div>
     <table>
       <thead>
