@@ -42,13 +42,13 @@ public class BoardController {
         return ResponseEntity.ok(pagedBoards);
     }
 
-    // 게시글 작성
     @PostMapping("/create")
     public ResponseEntity<Board> createBoard(@RequestBody @Valid BoardDto boardDto) {
-        Board newBoard = boardService.create(boardDto);
+        Long memberNum = boardDto.getMemberNum();  // 요청 바디에서 memberNum 추출
+        Board newBoard = boardService.create(boardDto, memberNum);
         return ResponseEntity.ok(newBoard);
     }
-
+    
     // 게시글 수정 (작성자 또는 관리자만)
     @PutMapping("/update/{boardId}")
     public ResponseEntity<Board> updateBoard(@PathVariable("boardId") Long boardId, @RequestBody BoardDto boardDto) {

@@ -4,13 +4,15 @@ import { Form, Button } from 'react-bootstrap';
 import MdEditor from 'react-markdown-editor-lite';
 import MarkdownIt from 'markdown-it';
 import 'react-markdown-editor-lite/lib/index.css';
-import api from '../Api'; 
+import { useAuth } from '../AuthContext';
+import api from '../components/Api';
 
 const mdParser = new MarkdownIt();
 
 const BoardForm = () => {
     const { boardId } = useParams(); // 게시글 ID를 URL에서 받아옴
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [board, setBoard] = useState({
         title: '',
         content: '',
@@ -25,7 +27,6 @@ const BoardForm = () => {
             setBoard(response.data);
         } catch (error) {
             console.error('게시글 불러오기 중 오류 발생:', error);
-            // 오류 처리 로직 (사용자에게 알림 등)
         }
     }, [boardId]);
 
@@ -61,8 +62,19 @@ const BoardForm = () => {
                 // 게시글 수정
                 response = await api.put(`/api/board/update/${boardId}`, board);
             } else {
-                // 새 게시글 작성
-                response = await api.post(`/api/board/create`, board);
+                // user가 없는 경우 (관리자 모드 또는 예외 처리)
+                if (!user || !user.memberNum) {
+                    alert("사용자 정보가 없습니다. 로그인 후 다시 시도해주세요.");
+                    return;
+                }
+
+                // 새 게시글 작성 (user 정보와 함께 보냄)
+                const requestBody = {
+                    ...board,
+                    memberNum: user.memberNum  // 사용자 ID를 게시글 정보와 함께 전송
+                };
+
+                response = await api.post(`/api/board/create`, requestBody);
             }
             console.log('서버 응답:', response.data);
             navigate('/board'); // 게시글 목록 페이지로 리디렉션

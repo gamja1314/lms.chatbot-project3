@@ -44,6 +44,9 @@ export function Header() {
             <Link to="/notices" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1.5rem' }}>
               공지사항
             </Link>
+            <Link to="/board" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1.5rem' }}>
+              게시판
+            </Link>
             <Link to="/recommends" style={{ ...linkStyle, textDecoration: 'none' }}>
               추천 채용
             </Link>
