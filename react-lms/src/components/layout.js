@@ -41,6 +41,9 @@ export function Header() {
             <Link to="/boards" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1.5rem' }}>
               자유게시판
             </Link>
+            <Link to="/board" style={{ ...linkStyle, textDecoration: 'none', marginRight: '1.5rem' }}>
+              게시판
+            </Link>
             <Link to="/recommends" style={{ ...linkStyle, textDecoration: 'none' }}>
               추천 채용
             </Link>

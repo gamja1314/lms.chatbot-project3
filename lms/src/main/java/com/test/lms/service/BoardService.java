@@ -9,8 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.test.lms.entity.Board;
+import com.test.lms.entity.Member;
 import com.test.lms.entity.dto.BoardDto;
 import com.test.lms.repository.BoardRepository;
+import com.test.lms.repository.MemberRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 	
 	private final BoardRepository boardRepository;
+	private final MemberRepository memberRepository;
 	
     // 게시글 하나 가져오기
     public Board getOne(Long id) {
@@ -38,29 +41,33 @@ public class BoardService {
     }
 
     //게시글 작성
-    public Board create(BoardDto BoardDto) {
-        Board Board = new Board();
-        Board.setTitle(BoardDto.getTitle());
-        Board.setContent(BoardDto.getContent());
-        Board.setCreateDate(LocalDateTime.now());
+    public Board create(BoardDto boardDto, Long memberNum) {
+        Board board = new Board();
+        board.setTitle(boardDto.getTitle());
+        board.setContent(boardDto.getContent());
+        board.setCreateDate(LocalDateTime.now());
+        
+        Member member = memberRepository.findByMemberNum(memberNum)
+                .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다. ID : " + memberNum));
+        board.setMember(member);
 
-        return boardRepository.save(Board);
+        return boardRepository.save(board);
     }
 
     //게시글 수정
-    public Board updateBoard(Long id, BoardDto BoardDto){
+    public Board updateBoard(Long id, BoardDto boardDto){
 
         Board existingBoard = boardRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다. ID : " + id));
-        existingBoard.setTitle(BoardDto.getTitle());
-        existingBoard.setContent(BoardDto.getContent());
+        existingBoard.setTitle(boardDto.getTitle());
+        existingBoard.setContent(boardDto.getContent());
 
         return boardRepository.save(existingBoard);
     }
 
     //게시글 삭제
     public void delete(Long id){
-        Board Board = boardRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다. ID : " + id));
-        this.boardRepository.delete(Board);
+        Board board = boardRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다. ID : " + id));
+        this.boardRepository.delete(board);
     }
     
     // 게시글 추천 수 증가
