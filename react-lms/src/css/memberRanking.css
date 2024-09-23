@@ -1,0 +1,6 @@
+tr.focused {
+    border: 3px solid red !important;  /* 빨간색 테두리를 더 두껍게 하고, 강제 적용 */
+    background-color: #ffe6e6 !important;  /* 배경색 적용, 강제 적용 */
+    transition: border 0.3s ease, background-color 0.3s ease;  /* 부드러운 전환 효과 */
+  }
+  

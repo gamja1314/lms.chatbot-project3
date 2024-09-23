@@ -121,12 +121,12 @@ const MyPage = () => {
     <div className="row">
       {/* 회원 정보 */}
       <div className="col-md-6">
-        <h1>My Page</h1>
-        <p><strong>아이디:</strong> {memberInfo.username}</p>
-        <p><strong>닉네임:</strong> {memberInfo.nickname}</p>
-        <p><strong>Email:</strong> {memberInfo.email}</p>
-        <p><strong>등급:</strong> {memberInfo.rank}</p>
-        <p><strong>경험치:</strong> {memberInfo.expPoints}</p>
+        <h1 className='text-color'>My Page</h1>
+        <p className='text-color'><strong>아이디:</strong> {memberInfo.username}</p>
+        <p className='text-color'><strong>닉네임:</strong> {memberInfo.nickname}</p>
+        <p className='text-color'><strong>Email:</strong> {memberInfo.email}</p>
+        <p className='text-color'><strong>등급:</strong> {memberInfo.rank}</p>
+        <p className='text-color'><strong>경험치:</strong> {memberInfo.expPoints}</p>
 
         {/* 비밀번호 변경 및 회원 탈퇴 버튼 */}
         <div className="d-flex justify-content-start">
@@ -137,7 +137,7 @@ const MyPage = () => {
 
           {/* 맞춘 문제와 틀린 문제 탭 */}
           <div className="container mt-4">
-            <h2>내가 푼 문제</h2>
+            <h2 className='text-color'>내가 푼 문제</h2>
 
             {/* 탭 버튼 */}
             <div className="d-flex mb-3">
@@ -182,14 +182,14 @@ const MyPage = () => {
               <button onClick={handlePrevPage} disabled={currentPage === 0} className="btn btn-secondary me-2">
                 이전
               </button>
-              <span>페이지 {currentPage + 1} / {totalPages}</span>
+              <span className='text-color'>페이지 {currentPage + 1} / {totalPages}</span>
               <button onClick={handleNextPage} disabled={currentPage === totalPages - 1} className="btn btn-secondary ms-2">
                 다음
               </button>
             </div>
           </>
         ) : (
-          <p>{selectedTab === 'correct' ? '맞춘 문제가 없습니다.' : '미해결 문제가 없습니다.'}</p>
+          <p className='text-color'>{selectedTab === 'correct' ? '맞춘 문제가 없습니다.' : '미해결 문제가 없습니다.'}</p>
         )}
       </div>
     </div>
