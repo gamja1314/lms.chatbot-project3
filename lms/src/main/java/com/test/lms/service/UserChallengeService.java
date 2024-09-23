@@ -39,14 +39,23 @@ public class UserChallengeService {
     // 도전 가능한 챌린지
     public boolean canUserParticipateInChallenge(Long memberNum, Long challengeId) {
         Member member = memberRepository.findById(memberNum).orElse(null);
-        Challenge challenge = challengeRepository.findById(challengeId).orElse(null);
-        UserChallenge userChallenge = userChallengeRepo.findByMemberAndChallenge(member, challenge).orElse(null);
-
-        if (userChallenge == null) {
-            return true;
+        if (member == null) {
+            return false;
         }
-
-        return userChallenge.isCompleted();
+        
+        // 사용자가 현재 활성화된 챌린지를 가지고 있는지 확인
+        boolean hasActiveChallenge = userChallengeRepo.existsByMemberAndActiveTrue(member);
+        if (hasActiveChallenge) {
+            return false;
+        }
+        
+        // 특정 챌린지에 이미 참여했는지 확인
+        Challenge challenge = challengeRepository.findById(challengeId).orElse(null);
+        if (challenge == null) {
+            return false;
+        }
+        
+        return !userChallengeRepo.existsByMemberAndChallenge(member, challenge);
     }
 
 
