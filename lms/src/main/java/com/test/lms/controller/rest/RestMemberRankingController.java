@@ -23,25 +23,26 @@ public class RestMemberRankingController {
 
     
     @GetMapping("/api/member-ranking")
-    public Map<String, Object> getMemberRanking(){
+    public Map<String, Object> getMemberRanking() {
 
-        //전체 랭킹 리스트 가져오기
+        // 전체 랭킹 리스트 가져오기
         List<Exp> rankingList = memberRankingService.getMemberRanking();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String curretnUsername = authentication.getName();
+        String currentUsername = authentication.getName(); // 로그인된 사용자의 이름(주로 username)
 
         int userRanking = -1;
-        List<MemberRankingDto> rankingDtos = new ArrayList<>(); //  DTO 리스트 초기화
+        List<MemberRankingDto> rankingDtos = new ArrayList<>(); // DTO 리스트 초기화
 
-        for (int i = 0; i < rankingList.size(); i ++){
+        for (int i = 0; i < rankingList.size(); i++) {
             Exp exp = rankingList.get(i);
-            MemberRankingDto dto = new MemberRankingDto(exp.getMember().getNickname(), exp.getExpPoints()); //DTO생성
+            MemberRankingDto dto = new MemberRankingDto(exp.getMember().getNickname(), exp.getExpPoints()); // DTO 생성
 
             rankingDtos.add(dto); // DTO 리스트에 추가
 
-            if(exp.getMember().getNickname().equals(curretnUsername)){
-                userRanking = i + 1; //1부터 랭킹 시작
+            // 여기서 username을 비교해야 하는지, nickname을 비교해야 하는지 확인 필요
+            if (exp.getMember().getUsername().equals(currentUsername)) {
+                userRanking = i + 1; // 1부터 랭킹 시작
             }
         }
 
