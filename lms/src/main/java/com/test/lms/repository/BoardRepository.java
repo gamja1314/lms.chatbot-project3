@@ -15,5 +15,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findAll(Pageable pageable);
 
     @Query("SELECT n FROM Board n ORDER BY n.createDate DESC")
-    List<Board> findRecent5(Pageable pageable);
+    List<Board> findRecent10(Pageable pageable);
 }

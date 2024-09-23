@@ -85,7 +85,7 @@ const BoardList = () => {
                 </Form.Group>
             </Form>
 
-            <div className="mb-3">
+            <div className="mb-3 text-color">
                 <span>{boards.length} 게시글</span>
             </div>
 
@@ -95,7 +95,6 @@ const BoardList = () => {
                         <th>제목</th>
                         <th>작성자</th>
                         <th>작성일</th>
-                        <th>액션</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -106,9 +105,6 @@ const BoardList = () => {
                             </td>
                             <td>{board.member.nickname}</td> {/* 작성자의 닉네임 */}
                             <td>{formatDate(board.createDate)}</td> {/* 작성일 표시 */}
-                            <td>
-                                <Button variant="primary" size="sm" onClick={() => handleBoardClick(board.boardId)}>보기</Button>
-                            </td>
                         </tr>
                     ))}
                 </tbody>

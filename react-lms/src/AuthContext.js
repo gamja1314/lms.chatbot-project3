@@ -10,8 +10,7 @@ export const AuthProvider = ({ children }) => {
       isLoggedIn: false,
       username: '',
       nickname: '',
-      role: '',
-      memberNum: ''
+      role: ''
     };
   });
 
@@ -24,8 +23,7 @@ export const AuthProvider = ({ children }) => {
       isLoggedIn: true,
       username: userData.username,
       nickname: userData.nickname,
-      role: userData.role,
-      memberNum: userData.memberNum
+      role: userData.role
     });
   };
 
@@ -36,8 +34,7 @@ export const AuthProvider = ({ children }) => {
         isLoggedIn: false,
         username: '',
         nickname: '',
-        role: '',
-        memberNum: ''
+        role: ''
       });
       localStorage.removeItem('authState');
     } catch (error) {

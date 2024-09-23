@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.test.lms.entity.Board;
@@ -36,19 +37,19 @@ public class BoardService {
 
      //페이징 처리
     public Page<Board> getList(int page){
-        Pageable pageable = PageRequest.of(page,10);
+        Pageable pageable = PageRequest.of(page,10, Sort.by(Sort.Direction.DESC, "createDate"));
         return this.boardRepository.findAll(pageable);
     }
 
     //게시글 작성
-    public Board create(BoardDto boardDto, Long memberNum) {
+    public Board create(BoardDto boardDto, String username) {
         Board board = new Board();
         board.setTitle(boardDto.getTitle());
         board.setContent(boardDto.getContent());
         board.setCreateDate(LocalDateTime.now());
-        
-        Member member = memberRepository.findByMemberNum(memberNum)
-                .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다. ID : " + memberNum));
+
+        Member member = memberRepository.findByUsername(username)
+            .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다. Username : " + username));
         board.setMember(member);
 
         return boardRepository.save(board);

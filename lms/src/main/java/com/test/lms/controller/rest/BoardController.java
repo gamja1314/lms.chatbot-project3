@@ -2,7 +2,11 @@ package com.test.lms.controller.rest;
 
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +21,7 @@ import com.test.lms.entity.Board;
 import com.test.lms.entity.dto.BoardDto;
 import com.test.lms.service.BoardService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -43,9 +48,14 @@ public class BoardController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Board> createBoard(@RequestBody @Valid BoardDto boardDto) {
-        Long memberNum = boardDto.getMemberNum();  // 요청 바디에서 memberNum 추출
-        Board newBoard = boardService.create(boardDto, memberNum);
+    public ResponseEntity<Board> createBoard(@RequestBody @Valid BoardDto boardDto, HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        String username = authentication.getName();
+        Board newBoard = boardService.create(boardDto, username);
         return ResponseEntity.ok(newBoard);
     }
     
