@@ -91,6 +91,23 @@ const BoardList = () => {
 
             <Table striped bordered hover>
                 <thead>
+                    <th>공지사항</th>
+                    <th>작성자</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>코딩테스트몬스터에 오신 것을 환영합니다.</td>
+                        <td>관리자</td>
+                    </tr>
+                    <tr>
+                        <td>이용방법</td>
+                        <td>관리자</td>
+                    </tr>
+                </tbody>
+            </Table>
+
+            <Table striped bordered hover>
+                <thead>
                     <tr>
                         <th>제목</th>
                         <th>작성자</th>
