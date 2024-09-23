@@ -12,5 +12,9 @@ import com.test.lms.entity.UserChallenge;
 public interface UserChallengeRepo extends JpaRepository<UserChallenge, Long> {
 
     Optional<UserChallenge> findByMemberAndChallenge(Member member, Challenge challenge);
+
+    boolean existsByMemberAndActiveTrue(Member member);
+
+    boolean existsByMemberAndChallenge(Member member, Challenge challenge);
     
 }

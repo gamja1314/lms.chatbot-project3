@@ -21,6 +21,7 @@ import ChangePassword from './pages/ChangePassword';
 import ChallengeForm from './components/Admin/ChallengeForm';
 import BoardForm from './pages/BoardForm';
 import BoardList from './pages/BoardList';
+import ChallengeList from './pages/ChallengeList';
 import MemberRanking from './pages/MemberRanking';
 
 const AppRoutes = () => {
@@ -47,6 +48,7 @@ const AppRoutes = () => {
       <Route path='/admin/quiz/edit/:quizId' element={<QuizForm />}></Route>
       <Route path="/change-password" element={<ChangePassword />} />
       <Route path='/challenges/:id' element={<ChallengePage />}/>
+      <Route path="/challenges" element={<ChallengeList />}/> 
       <Route path='/notice/:id' element={<NoticePage />}/>
       <Route path="/board" element={<BoardList />} />
       <Route path="/board/create" element={<BoardForm />} />  

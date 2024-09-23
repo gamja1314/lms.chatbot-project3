@@ -11,28 +11,42 @@ const ChallengeDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [challengeResponse, statusResponse] = await Promise.all([
-                    axios.get(`/api/challenges/${id}`),
-                    axios.get(`/api/challenges-user/${id}/status`)
-                ]);
-                setChallenge(challengeResponse.data);
-                setChallengeStatus(statusResponse.data);
-                setLoading(false);
-            } catch (err) {
-                setError('데이터를 불러오는 데 실패했습니다.');
-                setLoading(false);
-            }
-        };
-
-        fetchData();
+    const fetchChallengeStatus = React.useCallback(async () => {
+        try {
+            const [challengeResponse, statusResponse] = await Promise.all([
+                axios.get(`/api/challenges/${id}`),
+                axios.get(`/api/challenges-user/${id}/status`)
+            ]);
+            setChallenge(challengeResponse.data);
+            setChallengeStatus(statusResponse.data);
+            setLoading(false);
+        } catch (err) {
+            setError('데이터를 불러오는 데 실패했습니다.');
+            setLoading(false);
+        }
     }, [id]);
 
+    useEffect(() => {
+        fetchChallengeStatus();
+    }, [fetchChallengeStatus]);
+
     const handleParticipate = async () => {
-        // Implement the logic to participate in the challenge
-        // This might involve calling another API endpoint
+        const isConfirmed = window.confirm("한 번 도전하면 다른 챌린지를 동시에 도전할 수 없습니다. 도전하시겠습니까?");
+        
+        if (isConfirmed) {
+            try {
+                const response = await axios.post(`/api/challenges-user/${id}`);
+                if (response.status === 200) {
+                    alert('챌린지에 성공적으로 참여하셨습니다!');
+                    fetchChallengeStatus(); // 상태 업데이트를 위해 다시 데이터를 가져옵니다.
+                }
+            } catch (error) {
+                console.error('챌린지 참여 중 오류 발생:', error);
+                alert('챌린지 참여에 실패했습니다. 다시 시도해주세요.');
+            }
+        } else {
+            console.log('사용자가 챌린지 참여를 취소했습니다.');
+        }
     };
     
     if (loading) return (
@@ -55,14 +69,16 @@ const ChallengeDetail = () => {
                         {challengeStatus && (
                             challengeStatus.isParticipating ? (
                                 <Badge bg="success">도전 중</Badge>
-                            ) : (
+                            ) : challengeStatus.canParticipate ? (
                                 <Button 
                                     variant="primary" 
-                                    disabled={!challengeStatus.canParticipate || challenge.close}
+                                    disabled={challenge.close}
                                     onClick={handleParticipate}
                                 >
                                     도전하기
                                 </Button>
+                            ) : (
+                                <Badge bg="warning">다른 챌린지 참여 중</Badge>
                             )
                         )}
                     </div>
