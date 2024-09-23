@@ -21,6 +21,7 @@ import ChangePassword from './pages/ChangePassword';
 import ChallengeForm from './components/Admin/ChallengeForm';
 import BoardForm from './pages/BoardForm';
 import BoardList from './pages/BoardList';
+import BoardDetail from './pages/BoardDetail';
 import ChallengeList from './pages/ChallengeList';
 import MemberRanking from './pages/MemberRanking';
 
@@ -52,7 +53,8 @@ const AppRoutes = () => {
       <Route path='/notice/:id' element={<NoticePage />}/>
       <Route path="/board" element={<BoardList />} />
       <Route path="/board/create" element={<BoardForm />} />  
-      <Route path="/board/edit/:boardId" element={<BoardForm />}/> 
+      <Route path="/board/edit/:boardId" element={<BoardForm />}/>
+      <Route path="/board/view/:boardId" element={<BoardDetail />} /> 
       <Route path='/member-ranking' element={<MemberRanking />} />
     </Routes>
   ), [username]);  // username이 변경될 때만 재생성

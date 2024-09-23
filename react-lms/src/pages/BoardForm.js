@@ -12,11 +12,11 @@ const mdParser = new MarkdownIt();
 const BoardForm = () => {
     const { boardId } = useParams(); // 게시글 ID를 URL에서 받아옴
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { username, nickname, isLoggedIn } = useAuth();
     const [board, setBoard] = useState({
         title: '',
         content: '',
-        nickname: '' 
+        nickname: nickname || '' 
     });
 
     // 게시글 정보 불러오기 (수정 시)
@@ -34,7 +34,10 @@ const BoardForm = () => {
         fetchBoard();
     }, [fetchBoard]);
 
-    // 폼 필드 값 변경 시 호출
+    useEffect(() => {
+        setBoard(prev => ({ ...prev, nickname }));
+    }, [nickname]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setBoard(prevBoard => ({
@@ -55,27 +58,26 @@ const BoardForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!isLoggedIn) {
+            alert("로그인 후 이용해주세요.");
+            navigate('/login');
+            return;
+        }
+
         try {
+            const requestBody = {
+                ...board,
+                username  // AuthContext에서 제공하는 username 사용
+            };
+
             let response;
-            
             if (boardId) {
                 // 게시글 수정
-                response = await api.put(`/api/board/update/${boardId}`, board);
+                response = await api.put(`/api/board/update/${boardId}`, requestBody);
             } else {
-                // user가 없는 경우 (관리자 모드 또는 예외 처리)
-                if (!user || !user.memberNum) {
-                    alert("사용자 정보가 없습니다. 로그인 후 다시 시도해주세요.");
-                    return;
-                }
-
-                // 새 게시글 작성 (user 정보와 함께 보냄)
-                const requestBody = {
-                    ...board,
-                    memberNum: user.memberNum  // 사용자 ID를 게시글 정보와 함께 전송
-                };
-
                 response = await api.post(`/api/board/create`, requestBody);
             }
+
             console.log('서버 응답:', response.data);
             navigate('/board'); // 게시글 목록 페이지로 리디렉션
         } catch (error) {
@@ -85,7 +87,7 @@ const BoardForm = () => {
     };
 
     return (
-        <div className="container mt-4">
+        <div className="container mt-4 text-color">
             <h1>{boardId ? '게시글 수정' : '게시글 작성'}</h1>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
