@@ -21,6 +21,7 @@ import ChangePassword from './pages/ChangePassword';
 import ChallengeForm from './components/Admin/ChallengeForm';
 import BoardForm from './pages/BoardForm';
 import BoardList from './pages/BoardList';
+import MemberRanking from './pages/MemberRanking';
 
 const AppRoutes = () => {
   const { username } = useAuth();
@@ -50,6 +51,7 @@ const AppRoutes = () => {
       <Route path="/board" element={<BoardList />} />
       <Route path="/board/create" element={<BoardForm />} />  
       <Route path="/board/edit/:boardId" element={<BoardForm />}/> 
+      <Route path='/member-ranking' element={<MemberRanking />} />
     </Routes>
   ), [username]);  // username이 변경될 때만 재생성
 
