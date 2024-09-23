@@ -35,7 +35,7 @@ const MemberRanking = () => {
 
       {userRanking && (
         <div className="mb-4">
-          <h2>My Ranking</h2>
+          <h2 className='text-white'>나의 랭킹</h2>
           <Table striped bordered hover>
             <thead>
               <tr>
@@ -55,7 +55,7 @@ const MemberRanking = () => {
         </div>
       )}
 
-      <h2>All Members Ranking</h2>
+      <h2 className='text-white'>전체 랭킹</h2>
       <Table striped bordered hover>
         <thead>
           <tr>
